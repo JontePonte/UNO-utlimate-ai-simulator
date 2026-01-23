@@ -1,0 +1,16 @@
+# Godot 4.x
+.import/
+.export/
+*.import
+*.translation
+*.mono
+*.tmp
+
+# Godot cache
+.godot/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
