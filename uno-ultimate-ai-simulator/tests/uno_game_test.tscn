@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bobxjsga2t2mm"]
+
+[ext_resource type="Script" uid="uid://dwpe7ltyy0nxe" path="res://tests/uno_game_test.gd" id="1_1qr7c"]
+
+[node name="UnoGameTest" type="Node"]
+script = ExtResource("1_1qr7c")
