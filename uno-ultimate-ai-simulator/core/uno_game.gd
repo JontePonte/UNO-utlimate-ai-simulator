@@ -39,3 +39,47 @@ func start_discard_pile():
 
 	state.discard_pile.append(card)
 	print("First discard:", card.card_to_string())
+
+func next_player():
+	var num_players = state.players.size()
+	state.current_player_index = (state.current_player_index + state.play_direction + num_players) % num_players
+	return state.players[state.current_player_index]
+
+func play_card(player: Player, card: Card) -> bool:
+	var top_card = state.discard_pile[-1]
+	
+	if not card.is_playable_on(top_card):
+		print("Card not playable:", card.card_to_string())
+		return false
+
+	# Remove card from player's hand
+	player.hand.erase(card)
+	state.discard_pile.append(card)
+	print("%s played %s" % [player.id, card.card_to_string()])
+
+	# Handle special cards
+	match card.value:
+		Card.CardValue.SKIP:
+			next_player()  # skip next player
+		Card.CardValue.REVERSE:
+			state.play_direction *= -1
+		Card.CardValue.DRAW_TWO:
+			var next_p = next_player()
+			draw_cards(next_p, 2)
+		Card.CardValue.WILD_DRAW_FOUR:
+			var next_p = next_player()
+			draw_cards(next_p, 4)
+		_:
+			pass
+
+	# Move to next player normally
+	next_player()
+	return true
+
+func draw_cards(player: Player, amount: int):
+	for i in range(amount):
+		var card = state.draw_pile.draw()
+		if card != null:
+			player.hand.append(card)
+		else:
+			print("Draw pile empty!")
