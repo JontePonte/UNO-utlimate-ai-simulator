@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8ag7kbrqbljn"]
+
+[ext_resource type="Script" uid="uid://31cbwsg28mhw" path="res://tests/card_playability_test.gd" id="1_s8els"]
+
+[node name="CardPlayabilityTest" type="Node"]
+script = ExtResource("1_s8els")

@@ -45,3 +45,16 @@ func card_to_string() -> String:
 	if color == CardColor.WILD:
 		return value_to_string()
 	return "%s of %s" % [value_to_string(), color_to_string()]
+	
+func is_playable_on(top_card: Card) -> bool:
+	# Wild cards can always be played
+	if value == CardValue.WILD or value == CardValue.WILD_DRAW_FOUR:
+		return true
+	# Match color
+	if color == top_card.color:
+		return true
+	# Match value
+	if value == top_card.value:
+		return true
+	# Otherwise, not playable
+	return false
