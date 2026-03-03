@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://54mmtdgbr3u0"]
+
+[ext_resource type="Script" uid="uid://bmyx5rfwa4rbv" path="res://tests/multi_ai_game_test.gd" id="1_acssd"]
+
+[node name="MultiAiGameTest" type="Node2D"]
+script = ExtResource("1_acssd")

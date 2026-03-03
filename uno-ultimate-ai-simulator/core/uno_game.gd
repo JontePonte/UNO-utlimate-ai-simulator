@@ -3,7 +3,7 @@ class_name UnoGame
 var state: GameState
 var rules: Rules
 
-var START_CARD_AMOUNT = 30
+var START_CARD_AMOUNT = 7
 
 func _init(_players: Array[Player], _rules := Rules.new()):
 	state = GameState.new()
