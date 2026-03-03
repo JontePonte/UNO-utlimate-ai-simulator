@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://f12cfams2ly7"]
+
+[ext_resource type="Script" uid="uid://cg362r2wkotq3" path="res://tests/uno_game_move_test.gd" id="1_lju7u"]
+
+[node name="UnoGameMoveTest" type="Node2D"]
+script = ExtResource("1_lju7u")
