@@ -3,7 +3,7 @@ class_name UnoGame
 var state: GameState
 var rules: Rules
 
-var START_CARD_AMOUNT = 7
+var START_CARD_AMOUNT = 30
 
 func _init(_players: Array[Player], _rules := Rules.new()):
 	state = GameState.new()
@@ -112,7 +112,8 @@ func play_card(player_index: int, card: Card, declared_color: Card.CardColor = C
 		state.current_color = declared_color
 	else:
 		state.current_color = card.color
-
+	
+	_log_move(player_index, Move.MoveType.PLAY_CARD, card, declared_color) # log before specia-card-print
 	match card.value:
 		Card.CardValue.SKIP:
 			state.pending_skip = true
@@ -130,7 +131,6 @@ func play_card(player_index: int, card: Card, declared_color: Card.CardColor = C
 			draw_cards(next_idx, 4)
 			state.pending_skip = true
 
-	_log_move(player_index, Move.MoveType.PLAY_CARD, card, declared_color)
 	return true
 
 # Hjälpfunktion för att titta framåt utan att ändra state
@@ -140,14 +140,37 @@ func get_next_player_index_simple(steps: int) -> int:
 
 func draw_cards(player_index: int, amount: int = 1):
 	var player = state.players[player_index]
+	
 	for i in range(amount):
+		# Kolla om plockhögen är tom (eller håller på att ta slut)
+		if state.draw_pile.cards.size() == 0:
+			_reshuffle_discard_into_draw()
+			
 		var card = state.draw_pile.draw()
+		
 		if card != null:
 			player.hand.append(card)
 			_log_move(player_index, Move.MoveType.DRAW_CARD, card)
 		else:
-			# Draw pile empty
-			pass
+			print("Kritiskt fel: Inga kort finns kvar ens efter omblandning!")
+
+# Helpfunction for reshuffle the drawdeck
+func _reshuffle_discard_into_draw():
+	print("--- Reshuffle discard deck ---") # Avkommentera om du vill se detta i loggen
+	
+	# Spara det översta kortet i kasthögen
+	var top_card = state.discard_pile.pop_back()
+	
+	# Flytta alla andra kort från kasthögen till plockhögen
+	state.draw_pile.cards.append_array(state.discard_pile)
+	state.discard_pile.clear()
+	
+	# Blanda den nya plockhögen
+	state.draw_pile.shuffle()
+	
+	# Lägg tillbaka det översta kortet i kasthögen
+	if top_card != null:
+		state.discard_pile.append(top_card)
 
 
 func pass_turn(player_index: int):
@@ -171,17 +194,18 @@ func _log_move(player_index: int, move_type: Move.MoveType, card: Card = null, d
 
 func create_player_view(player_index: int) -> PlayerView:
 	var player = state.players[player_index]
-	
 	var top_card = state.discard_pile[-1]
 	
 	var card_counts: Array[int] = []
 	for p in state.players:
 		card_counts.append(p.hand.size())
 	
+	# Lägg till state.current_color som det fjärde argumentet
 	return PlayerView.new(
 		player_index,
 		player.hand.duplicate(),
 		top_card,
+		state.current_color, 
 		card_counts.duplicate(),
 		state.current_player_index,
 		state.play_direction,

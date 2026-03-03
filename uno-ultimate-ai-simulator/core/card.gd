@@ -35,19 +35,19 @@ func _init(_color: CardColor, _value: CardValue):
 	value = _value
 
 
-func is_playable_on(other: Card) -> bool:
+func is_playable_on(top_card: Card, active_color: Card.CardColor) -> bool:
+	# Wild-kort får (nästan) alltid spelas
 	if color == CardColor.WILD:
 		return true
-	
-	if other.color == CardColor.WILD:
+		
+	# Matchar den gällande färgen? (Detta löser problemet när en Wild ligger överst!)
+	if color == active_color:
 		return true
-	
-	if color == other.color:
+		
+	# Matchar valören? (T.ex. röd 7:a på blå 7:a)
+	if value == top_card.value:
 		return true
-	
-	if value == other.value:
-		return true
-	
+		
 	return false
 
 
