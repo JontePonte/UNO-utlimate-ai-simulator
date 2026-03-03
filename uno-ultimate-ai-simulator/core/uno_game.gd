@@ -46,6 +46,22 @@ func start_discard_pile():
 
 # --- TURN MANAGEMENT ---
 
+func process_turn():
+	var player = state.players[state.current_player_index]
+	var player_view = create_player_view(player.id)
+	
+	if player.is_human:
+		# GUI väntar på input → använd ett signal/event för drag
+		pass
+	elif player.ai_controller != null:
+		var chosen_card = player.ai_controller.choose_action(player_view)
+		if chosen_card != null:
+			play_card(player.id, chosen_card)
+		else:
+			draw_cards(player.id, 1)
+	
+	next_player()  # gå vidare i turordningen
+
 func next_player():
 	var num_players = state.players.size()
 	state.current_player_index = (state.current_player_index + state.play_direction + num_players) % num_players
