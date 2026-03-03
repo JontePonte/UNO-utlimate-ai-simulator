@@ -21,12 +21,14 @@ func _init(_players: Array[Player], _rules := Rules.new()):
 	deal_initial_hands(START_CARD_AMOUNT)
 	start_discard_pile()
 
+
 func deal_initial_hands(cards_per_player: int):
 	for player in state.players:
 		for i in range(cards_per_player):
 			var card = state.draw_pile.draw()
 			if card != null:
 				player.hand.append(card)
+
 
 func start_discard_pile():
 	var card = state.draw_pile.draw()
@@ -38,57 +40,73 @@ func start_discard_pile():
 		card = state.draw_pile.draw()
 
 	state.discard_pile.append(card)
-	print("First discard:", card.card_to_string())
+	# Första kortet
+	# print("First discard:", card.card_to_string())
+
+
+# --- TURN MANAGEMENT ---
 
 func next_player():
 	var num_players = state.players.size()
 	state.current_player_index = (state.current_player_index + state.play_direction + num_players) % num_players
-	return state.players[state.current_player_index]
+	return state.current_player_index
 
-func play_card(player: Player, card: Card, declared_color: Card.CardColor = Card.CardColor.RED) -> bool:
+
+# --- PLAYER ACTIONS ---
+
+func play_card(player_index: int, card: Card, declared_color: Card.CardColor = Card.CardColor.RED) -> bool:
+	var player = state.players[player_index]
 	var top_card = state.discard_pile[-1]
 	
 	if not card.is_playable_on(top_card):
-		print("Card not playable:", card.card_to_string())
+		# Kort kan inte spelas
 		return false
 
-	# Remove card from player's hand
+	# Ta bort kort från hand
 	player.hand.erase(card)
 	state.discard_pile.append(card)
-	print("%s played %s" % [player.id, card.card_to_string()])
 
-	# Handle special cards
+	# Hantera specialkort
 	match card.value:
 		Card.CardValue.SKIP:
 			next_player()  # skip next player
 		Card.CardValue.REVERSE:
 			state.play_direction *= -1
 		Card.CardValue.DRAW_TWO:
-			var next_p = next_player()
-			draw_cards(next_p, 2)
+			var next_p_index = next_player()
+			draw_cards(next_p_index, 2)
 		Card.CardValue.WILD_DRAW_FOUR:
-			var next_p = next_player()
-			draw_cards(next_p, 4)
+			var next_p_index = next_player()
+			draw_cards(next_p_index, 4)
 		_:
 			pass
-	
-	_log_move(player.id, Move.MoveType.PLAY_CARD, card, declared_color)
-	# Move to next player normally
+
+	# Logga draget
+	_log_move(player_index, Move.MoveType.PLAY_CARD, card, declared_color)
+
+	# Gå till nästa spelare
 	next_player()
 	return true
 
-func draw_cards(player: Player, amount: int):
+
+func draw_cards(player_index: int, amount: int = 1):
+	var player = state.players[player_index]
 	for i in range(amount):
 		var card = state.draw_pile.draw()
 		if card != null:
 			player.hand.append(card)
-			_log_move(player.id, Move.MoveType.DRAW_CARD, card)
+			_log_move(player_index, Move.MoveType.DRAW_CARD, card)
 		else:
-			print("Draw pile empty!")
+			# Draw pile empty
+			pass
+
 
 func pass_turn(player_index: int):
 	_log_move(player_index, Move.MoveType.PASS)
 	next_player()
+
+
+# --- MOVE LOGGING ---
 
 func _log_move(player_index: int, move_type: Move.MoveType, card: Card = null, declared_color: Card.CardColor = Card.CardColor.RED):
 	var move = Move.new(
@@ -99,6 +117,9 @@ func _log_move(player_index: int, move_type: Move.MoveType, card: Card = null, d
 		state.turn_number
 	)
 	state.move_history.append(move)
+
+
+# --- PLAYER VIEW ---
 
 func create_player_view(player_index: int) -> PlayerView:
 	var player = state.players[player_index]
