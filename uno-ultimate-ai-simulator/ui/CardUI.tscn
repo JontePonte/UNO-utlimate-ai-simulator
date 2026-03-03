@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://ukfpjno5na0i"]
+
+[ext_resource type="Script" uid="uid://b6vumjxowbqjd" path="res://ui/card_ui.gd" id="1_5b3sr"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_sph2m"]
+font_color = Color(0, 0, 0, 1)
+
+[node name="CardUi" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5b3sr")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 100.0
+offset_bottom = 150.0
+
+[node name="Label" type="Label" parent="ColorRect"]
+layout_mode = 0
+offset_right = 100.0
+offset_bottom = 150.0
+text = "7"
+label_settings = SubResource("LabelSettings_sph2m")
+horizontal_alignment = 1
+vertical_alignment = 1
