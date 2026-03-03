@@ -83,3 +83,22 @@ func draw_cards(player: Player, amount: int):
 			player.hand.append(card)
 		else:
 			print("Draw pile empty!")
+
+func create_player_view(player_index: int) -> PlayerView:
+	var player = state.players[player_index]
+	
+	var top_card = state.discard_pile[-1]
+	
+	var card_counts: Array[int] = []
+	for p in state.players:
+		card_counts.append(p.hand.size())
+	
+	return PlayerView.new(
+		player_index,
+		player.hand.duplicate(),
+		top_card,
+		card_counts.duplicate(),
+		state.current_player_index,
+		state.play_direction,
+		state.turn_number
+	)
