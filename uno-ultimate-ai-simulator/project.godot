@@ -11,4 +11,5 @@ config_version=5
 [application]
 
 config/name="UNO-ultimate-ai-simulator"
+run/main_scene="uid://dfl4w1ugrnwbg"
 config/features=PackedStringArray("4.5", "Forward Plus")

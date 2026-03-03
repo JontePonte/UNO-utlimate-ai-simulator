@@ -4,6 +4,7 @@ var players: Array[Player] = []
 var current_player_index: int = 0
 var play_direction: int = 1
 var turn_number: int = 0
+var move_history: Array[Move] = []
 var draw_pile: Deck
 var discard_pile: Array[Card] = []
 

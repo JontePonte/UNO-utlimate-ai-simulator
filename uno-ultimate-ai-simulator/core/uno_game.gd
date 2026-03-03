@@ -100,5 +100,6 @@ func create_player_view(player_index: int) -> PlayerView:
 		card_counts.duplicate(),
 		state.current_player_index,
 		state.play_direction,
-		state.turn_number
+		state.turn_number,
+		state.move_history.duplicate()
 	)
