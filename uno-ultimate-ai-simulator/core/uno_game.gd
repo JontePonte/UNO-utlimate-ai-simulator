@@ -45,7 +45,7 @@ func next_player():
 	state.current_player_index = (state.current_player_index + state.play_direction + num_players) % num_players
 	return state.players[state.current_player_index]
 
-func play_card(player: Player, card: Card) -> bool:
+func play_card(player: Player, card: Card, declared_color: Card.CardColor = Card.CardColor.RED) -> bool:
 	var top_card = state.discard_pile[-1]
 	
 	if not card.is_playable_on(top_card):
@@ -71,7 +71,8 @@ func play_card(player: Player, card: Card) -> bool:
 			draw_cards(next_p, 4)
 		_:
 			pass
-
+	
+	_log_move(player.id, Move.MoveType.PLAY_CARD, card, declared_color)
 	# Move to next player normally
 	next_player()
 	return true
@@ -81,8 +82,23 @@ func draw_cards(player: Player, amount: int):
 		var card = state.draw_pile.draw()
 		if card != null:
 			player.hand.append(card)
+			_log_move(player.id, Move.MoveType.DRAW_CARD, card)
 		else:
 			print("Draw pile empty!")
+
+func pass_turn(player_index: int):
+	_log_move(player_index, Move.MoveType.PASS)
+	next_player()
+
+func _log_move(player_index: int, move_type: Move.MoveType, card: Card = null, declared_color: Card.CardColor = Card.CardColor.RED):
+	var move = Move.new(
+		player_index,
+		move_type,
+		card,
+		declared_color,
+		state.turn_number
+	)
+	state.move_history.append(move)
 
 func create_player_view(player_index: int) -> PlayerView:
 	var player = state.players[player_index]
