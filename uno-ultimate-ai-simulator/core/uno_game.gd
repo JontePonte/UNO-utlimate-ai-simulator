@@ -45,65 +45,98 @@ func start_discard_pile():
 
 
 # --- TURN MANAGEMENT ---
-
 func process_turn():
 	var player = state.players[state.current_player_index]
-	var player_view = create_player_view(player.id)
+	var player_view = create_player_view(state.current_player_index)
 	
 	if player.is_human:
-		# GUI väntar på input → använd ett signal/event för drag
-		pass
+		return 
 	elif player.ai_controller != null:
-		var chosen_card = player.ai_controller.choose_action(player_view)
-		if chosen_card != null:
-			play_card(player.id, chosen_card)
+		# Nu får vi tillbaka ett PlayerAction-paket
+		var action = player.ai_controller.choose_action(player_view)
+		
+		# Kolla om paketet innehåller ett kort att spela
+		if action != null and action.card != null:
+			play_card(state.current_player_index, action.card, action.declared_color)
 		else:
-			draw_cards(player.id, 1)
+			# Om card är null betyder det att vi måste dra ett kort
+			draw_cards(state.current_player_index, 1)
 	
-	next_player()  # gå vidare i turordningen
+	next_player()
+	state.turn_number += 1
 
 func next_player():
+	# Om ett SKIP-kort spelades, hoppar vi ett extra steg
+	var steps = 1
+	if state.pending_skip:
+		steps = 2
+		state.pending_skip = false # Återställ flaggan
+		
 	var num_players = state.players.size()
-	state.current_player_index = (state.current_player_index + state.play_direction + num_players) % num_players
-	return state.current_player_index
+	state.current_player_index = (state.current_player_index + (state.play_direction * steps) + num_players) % num_players
 
+
+# Run a full game between AI players for testing
+func run_full_game(max_turns: int = 100):
+	print("Spelet startar med ", state.players.size(), " spelare.")
+	var turn_count = 0
+	while turn_count < max_turns:
+		var player = state.players[state.current_player_index]
+		
+		# Logga varje tur
+		# print("Tur ", turn_count, ": Spelare ", player.name, "s tur.")
+		
+		if not player.is_human:
+			process_turn()
+		
+		# Kolla vinstkriterier
+		for p in state.players:
+			if p.hand.size() == 0:
+				print("SPEL SLUT: ", p.name, " vann på tur ", turn_count)
+				return
+				
+		turn_count += 1
+	print("Max turns nådda (", max_turns, "). Spelet slutade oavgjort.")
 
 # --- PLAYER ACTIONS ---
-
 func play_card(player_index: int, card: Card, declared_color: Card.CardColor = Card.CardColor.RED) -> bool:
 	var player = state.players[player_index]
-	var top_card = state.discard_pile[-1]
 	
-	if not card.is_playable_on(top_card):
-		# Kort kan inte spelas
-		return false
+	# (Validering här...)
 
-	# Ta bort kort från hand
 	player.hand.erase(card)
 	state.discard_pile.append(card)
 
-	# Hantera specialkort
+	# FIX: Använd declared_color för att uppdatera spelets färg
+	if card.color == Card.CardColor.WILD:
+		state.current_color = declared_color
+	else:
+		state.current_color = card.color
+
 	match card.value:
 		Card.CardValue.SKIP:
-			next_player()  # skip next player
+			state.pending_skip = true
 		Card.CardValue.REVERSE:
-			state.play_direction *= -1
+			if state.players.size() == 2:
+				state.pending_skip = true
+			else:
+				state.play_direction *= -1
 		Card.CardValue.DRAW_TWO:
-			var next_p_index = next_player()
-			draw_cards(next_p_index, 2)
+			var next_idx = get_next_player_index_simple(1)
+			draw_cards(next_idx, 2)
+			state.pending_skip = true
 		Card.CardValue.WILD_DRAW_FOUR:
-			var next_p_index = next_player()
-			draw_cards(next_p_index, 4)
-		_:
-			pass
+			var next_idx = get_next_player_index_simple(1)
+			draw_cards(next_idx, 4)
+			state.pending_skip = true
 
-	# Logga draget
 	_log_move(player_index, Move.MoveType.PLAY_CARD, card, declared_color)
-
-	# Gå till nästa spelare
-	next_player()
 	return true
 
+# Hjälpfunktion för att titta framåt utan att ändra state
+func get_next_player_index_simple(steps: int) -> int:
+	var num_players = state.players.size()
+	return (state.current_player_index + (state.play_direction * steps) + num_players) % num_players
 
 func draw_cards(player_index: int, amount: int = 1):
 	var player = state.players[player_index]
@@ -119,7 +152,6 @@ func draw_cards(player_index: int, amount: int = 1):
 
 func pass_turn(player_index: int):
 	_log_move(player_index, Move.MoveType.PASS)
-	next_player()
 
 
 # --- MOVE LOGGING ---

@@ -4,7 +4,7 @@ class_name PlayerView
 var player_index: int
 
 # The player's own hand (copy, not reference to original array)
-var own_hand: Array[Card]
+var own_hand: Array[Card] = []
 
 # Top card of the discard pile
 var top_discard: Card

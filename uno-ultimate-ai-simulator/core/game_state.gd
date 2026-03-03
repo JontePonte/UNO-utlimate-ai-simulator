@@ -3,6 +3,8 @@ class_name GameState
 var players: Array[Player] = []
 var current_player_index: int = 0
 var play_direction: int = 1
+var pending_skip: bool = false
+var current_color: Card.CardColor
 var turn_number: int = 0
 var move_history: Array[Move] = []
 var draw_pile: Deck
