@@ -1,39 +1,58 @@
 class_name CardUI
 extends Control
 
-@onready var background = $ColorRect
-@onready var label = $ColorRect/Label
+# Hämta referenser till dina noder
+@onready var inner_color_panel = $Base/InnerColor
+@onready var center_text = $Base/InnerColor/CenterText
+@onready var top_left_text = $Base/InnerColor/TopLeftText
+@onready var bottom_right_text = $Base/InnerColor/BottomRightText
 
-# Denna funktion anropas när vi vill visa ett specifikt kort på skärmen
+# Denna funktion kallas för att uppdatera kortets utseende
 func set_card_data(card: Card):
 	if card == null:
 		return
 		
-	# 1. Sätt rätt text baserat på valören
-	label.text = get_value_string(card.value)
+	# 1. Sätt texten
+	var display_text = get_value_string(card.value)
+	center_text.text = display_text
+	top_left_text.text = display_text
+	bottom_right_text.text = display_text
 	
-	# 2. Sätt rätt färg baserat på kortets färg
+	# 2. Ändra färg på kortet
+	# Vi duplicerar styleboxen för att inte råka ändra färg på ALLA kort samtidigt!
+	var stylebox = inner_color_panel.get_theme_stylebox("panel").duplicate()
+	
 	match card.color:
 		Card.CardColor.RED:
-			background.color = Color(0.8, 0.1, 0.1) # Röd
+			stylebox.bg_color = Color(0.85, 0.15, 0.15) # Röd
 		Card.CardColor.BLUE:
-			background.color = Color(0.1, 0.3, 0.8) # Blå
+			stylebox.bg_color = Color(0.15, 0.35, 0.85) # Blå
 		Card.CardColor.GREEN:
-			background.color = Color(0.1, 0.6, 0.2) # Grön
+			stylebox.bg_color = Color(0.20, 0.65, 0.25) # Grön
 		Card.CardColor.YELLOW:
-			background.color = Color(0.9, 0.8, 0.1) # Gul
+			stylebox.bg_color = Color(0.95, 0.80, 0.10) # Gul
 		Card.CardColor.WILD:
-			background.color = Color(0.2, 0.2, 0.2) # Mörkgrå för Wild
+			stylebox.bg_color = Color(0.15, 0.15, 0.15) # Mörkgrå för Wild-kort
+			
+	# Applicera den nya färgen på panelen
+	inner_color_panel.add_theme_stylebox_override("panel", stylebox)
 
-# Hjälpfunktion för att göra valören till text
+# Hjälpfunktion för att översätta valör till text
 func get_value_string(val: Card.CardValue) -> String:
 	match val:
 		Card.CardValue.ZERO: return "0"
 		Card.CardValue.ONE: return "1"
-		# ... fortsätt för 2-9 ...
-		Card.CardValue.SKIP: return "SKIP"
-		Card.CardValue.REVERSE: return "REV"
+		Card.CardValue.TWO: return "2"
+		Card.CardValue.THREE: return "3"
+		Card.CardValue.FOUR: return "4"
+		Card.CardValue.FIVE: return "5"
+		Card.CardValue.SIX: return "6_" # Understreck för att skilja från 9
+		Card.CardValue.SEVEN: return "7"
+		Card.CardValue.EIGHT: return "8"
+		Card.CardValue.NINE: return "9_" # Understreck för att skilja från 6
+		Card.CardValue.SKIP: return "Ø" # Tillfällig symbol för Skip
+		Card.CardValue.REVERSE: return "⇄" # Tillfällig symbol för Reverse
 		Card.CardValue.DRAW_TWO: return "+2"
-		Card.CardValue.WILD: return "WILD"
+		Card.CardValue.WILD: return "W"
 		Card.CardValue.WILD_DRAW_FOUR: return "+4"
-		_: return "?"
+		_: return ""

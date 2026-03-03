@@ -1,29 +1,118 @@
-[gd_scene load_steps=3 format=3 uid="uid://ukfpjno5na0i"]
+[gd_scene load_steps=8 format=3 uid="uid://ukfpjno5na0i"]
 
 [ext_resource type="Script" uid="uid://b6vumjxowbqjd" path="res://ui/card_ui.gd" id="1_5b3sr"]
+[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="2_4yc6j"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_sph2m"]
-font_color = Color(0, 0, 0, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ey4q1"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1uok3"]
+bg_color = Color(0.8, 0.101960786, 0.101960786, 1)
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_km5rf"]
+bg_color = Color(0.8, 0.101960786, 0.101960786, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 80
+corner_radius_top_right = 80
+corner_radius_bottom_right = 80
+corner_radius_bottom_left = 80
+
+[sub_resource type="LabelSettings" id="LabelSettings_mioc4"]
+font = ExtResource("2_4yc6j")
+font_size = 150
+shadow_size = 15
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(-2.5, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_b8pxk"]
+font = ExtResource("2_4yc6j")
+font_size = 60
+shadow_size = 9
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(-0.09, 1)
 
 [node name="CardUi" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -952.0
+offset_bottom = -348.0
 grow_horizontal = 2
 grow_vertical = 2
+pivot_offset = Vector2(100, 150)
 script = ExtResource("1_5b3sr")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 0
-offset_right = 100.0
-offset_bottom = 150.0
+[node name="Base" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ey4q1")
 
-[node name="Label" type="Label" parent="ColorRect"]
+[node name="InnerColor" type="Panel" parent="Base"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(100, 150)
+theme_override_styles/panel = SubResource("StyleBoxFlat_1uok3")
+
+[node name="InnerRing" type="Panel" parent="Base/InnerColor"]
 layout_mode = 0
-offset_right = 100.0
-offset_bottom = 150.0
-text = "7"
-label_settings = SubResource("LabelSettings_sph2m")
-horizontal_alignment = 1
-vertical_alignment = 1
+offset_left = 20.0
+offset_top = 30.0
+offset_right = 170.0
+offset_bottom = 250.0
+rotation = 0.5235988
+pivot_offset = Vector2(75, 100)
+theme_override_styles/panel = SubResource("StyleBoxFlat_km5rf")
+
+[node name="CenterText" type="Label" parent="Base/InnerColor"]
+layout_mode = 0
+offset_left = 56.0
+offset_top = 69.0
+offset_right = 140.0
+offset_bottom = 220.0
+text = "1"
+label_settings = SubResource("LabelSettings_mioc4")
+
+[node name="TopLeftText" type="Label" parent="Base/InnerColor"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 3.0
+offset_right = 53.0
+offset_bottom = 89.0
+text = "1"
+label_settings = SubResource("LabelSettings_b8pxk")
+
+[node name="BottomRightText" type="Label" parent="Base/InnerColor"]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 279.0
+offset_right = 210.0
+offset_bottom = 365.0
+rotation = 3.1415927
+text = "1"
+label_settings = SubResource("LabelSettings_b8pxk")
