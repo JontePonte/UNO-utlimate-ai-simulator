@@ -11,7 +11,7 @@ corner_radius_bottom_right = 15
 corner_radius_bottom_left = 15
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1uok3"]
-bg_color = Color(0.8, 0.101960786, 0.101960786, 1)
+bg_color = Color(0.80784315, 0.14901961, 0.14901961, 1)
 border_color = Color(1, 1, 1, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
@@ -19,7 +19,7 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_km5rf"]
-bg_color = Color(0.8, 0.101960786, 0.101960786, 1)
+bg_color = Color(0.8, 0.101960786, 0.101960786, 0)
 border_width_left = 6
 border_width_top = 6
 border_width_right = 6
@@ -45,6 +45,7 @@ shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(-0.09, 1)
 
 [node name="CardUi" type="Control"]
+custom_minimum_size = Vector2(200, 300)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -91,12 +92,14 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_km5rf")
 
 [node name="CenterText" type="Label" parent="Base/InnerColor"]
 layout_mode = 0
-offset_left = 56.0
-offset_top = 69.0
-offset_right = 140.0
-offset_bottom = 220.0
+offset_left = 21.0
+offset_top = 68.0
+offset_right = 151.0
+offset_bottom = 219.0
 text = "1"
 label_settings = SubResource("LabelSettings_mioc4")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TopLeftText" type="Label" parent="Base/InnerColor"]
 layout_mode = 0

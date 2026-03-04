@@ -9,7 +9,7 @@ func _ready() -> void:
 	add_child(visual_card)
 
 	# Testa att skapa ett blått +2 kort!
-	var test_card = Card.new(Card.CardColor.BLUE, Card.CardValue.DRAW_TWO)
+	var test_card = Card.new(Card.CardColor.BLUE, Card.CardValue.TWO)
 	visual_card.set_card_data(test_card)
 
 	# Flytta in det lite på skärmen så det syns
@@ -17,5 +17,5 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
