@@ -7,8 +7,15 @@ extends Control
 @onready var top_left_text = $Base/InnerColor/TopLeftText
 @onready var bottom_right_text = $Base/InnerColor/BottomRightText
 
+@onready var center_underline = $Base/InnerColor/CenterText/UnderLineC
+@onready var top_left_underline = $Base/InnerColor/TopLeftText/UnderLineL
+@onready var bottom_right_underline = $Base/InnerColor/BottomRightText/UnderLineR
+
+@onready var wild_icon = $Base/InnerColor/WildIcon
+
+
 func _ready() -> void:
-	var test_card = Card.new(Card.CardColor.BLUE, Card.CardValue.FOUR)
+	var test_card = Card.new(Card.CardColor.WILD, Card.CardValue.WILD_DRAW_FOUR)
 	set_card_data(test_card)
 
 # Denna funktion kallas för att uppdatera kortets utseende
@@ -22,7 +29,23 @@ func set_card_data(card: Card):
 	top_left_text.text = display_text
 	bottom_right_text.text = display_text
 	
-# 2. Ändra färg på kortet
+	# 1.5 Slå på understrykning BARA för 6 och 9
+	var needs_underline = (card.value == Card.CardValue.SIX or card.value == Card.CardValue.NINE)
+	center_underline.visible = needs_underline
+	top_left_underline.visible = needs_underline
+	bottom_right_underline.visible = needs_underline
+	
+	# 1.8 Hantera Wild-kortens utseende
+	var is_wild = (card.color == Card.CardColor.WILD)
+	wild_icon.visible = is_wild
+	
+	# Om det är ett rent Wild-kort döljer vi centertexten (vi vill bara se färg-ovalen)
+	# Men är det ett +4-kort så vill vi att "+4" ska stå kvar ovanpå ovalen!
+	if is_wild and card.value == Card.CardValue.WILD:
+		center_text.visible = false
+	else:
+		center_text.visible = true
+	
 	# 2. Ändra färg på kortet
 	var new_color = Color.WHITE
 	match card.color:
@@ -64,12 +87,12 @@ func get_value_string(val: Card.CardValue) -> String:
 		Card.CardValue.THREE: return "3"
 		Card.CardValue.FOUR: return "4"
 		Card.CardValue.FIVE: return "5"
-		Card.CardValue.SIX: return "6_" # Understreck för att skilja från 9
+		Card.CardValue.SIX: return "6"
 		Card.CardValue.SEVEN: return "7"
 		Card.CardValue.EIGHT: return "8"
-		Card.CardValue.NINE: return "9_" # Understreck för att skilja från 6
-		Card.CardValue.SKIP: return "Ø" # Tillfällig symbol för Skip
-		Card.CardValue.REVERSE: return "⇄" # Tillfällig symbol för Reverse
+		Card.CardValue.NINE: return "9"
+		Card.CardValue.SKIP: return "Ø"
+		Card.CardValue.REVERSE: return "⇄"
 		Card.CardValue.DRAW_TWO: return "+2"
 		Card.CardValue.WILD: return "W"
 		Card.CardValue.WILD_DRAW_FOUR: return "+4"

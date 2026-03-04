@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://ukfpjno5na0i"]
+[gd_scene load_steps=13 format=3 uid="uid://ukfpjno5na0i"]
 
 [ext_resource type="Script" uid="uid://b6vumjxowbqjd" path="res://ui/card_ui.gd" id="1_5b3sr"]
 [ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="2_4yc6j"]
@@ -33,13 +33,57 @@ corner_radius_bottom_left = 80
 [sub_resource type="LabelSettings" id="LabelSettings_mioc4"]
 font = ExtResource("2_4yc6j")
 font_size = 150
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
 shadow_size = 15
 shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(-2.5, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4yc6j"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 80
+corner_radius_top_right = 80
+corner_radius_bottom_right = 80
+corner_radius_bottom_left = 80
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mioc4"]
+bg_color = Color(0.2, 0.6509804, 0.2509804, 1)
+border_width_left = 6
+border_width_top = 6
+border_color = Color(0.8, 0.8, 0.8, 0)
+corner_radius_top_left = 80
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b8pxk"]
+bg_color = Color(0.9490196, 0.8, 0.14901961, 1)
+border_width_top = 6
+border_width_right = 6
+border_color = Color(0.8, 0.8, 0.8, 0)
+corner_radius_top_right = 80
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fem6l"]
+bg_color = Color(0.14901961, 0.34901962, 0.8509804, 1)
+border_width_left = 6
+border_width_bottom = 6
+border_color = Color(0.8, 0.8, 0.8, 0)
+corner_radius_bottom_left = 80
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_04ul4"]
+bg_color = Color(0.8509804, 0.14901961, 0.14901961, 1)
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.8, 0.8, 0.8, 0)
+corner_radius_bottom_right = 80
+
 [sub_resource type="LabelSettings" id="LabelSettings_b8pxk"]
 font = ExtResource("2_4yc6j")
 font_size = 60
+outline_size = 7
+outline_color = Color(0, 0, 0, 1)
 shadow_size = 9
 shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(-0.09, 1)
@@ -101,6 +145,69 @@ label_settings = SubResource("LabelSettings_mioc4")
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="UnderLineC" type="Label" parent="Base/InnerColor/CenterText"]
+visible = false
+layout_mode = 0
+offset_left = 3.0
+offset_right = 133.0
+offset_bottom = 151.0
+text = "_"
+label_settings = SubResource("LabelSettings_mioc4")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WildIcon" type="Panel" parent="Base/InnerColor"]
+visible = false
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 30.0
+offset_right = -10.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 0.5235988
+pivot_offset = Vector2(75, 100)
+theme_override_styles/panel = SubResource("StyleBoxFlat_4yc6j")
+
+[node name="GridContainer" type="GridContainer" parent="Base/InnerColor/WildIcon"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 2
+
+[node name="Panel" type="Panel" parent="Base/InnerColor/WildIcon/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_mioc4")
+
+[node name="Panel2" type="Panel" parent="Base/InnerColor/WildIcon/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_b8pxk")
+
+[node name="Panel3" type="Panel" parent="Base/InnerColor/WildIcon/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_fem6l")
+
+[node name="Panel4" type="Panel" parent="Base/InnerColor/WildIcon/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_04ul4")
+
 [node name="TopLeftText" type="Label" parent="Base/InnerColor"]
 layout_mode = 0
 offset_left = 13.0
@@ -108,6 +215,15 @@ offset_top = 3.0
 offset_right = 53.0
 offset_bottom = 89.0
 text = "1"
+label_settings = SubResource("LabelSettings_b8pxk")
+
+[node name="UnderLineL" type="Label" parent="Base/InnerColor/TopLeftText"]
+visible = false
+layout_mode = 0
+offset_left = 6.0
+offset_right = 46.0
+offset_bottom = 86.0
+text = "_"
 label_settings = SubResource("LabelSettings_b8pxk")
 
 [node name="BottomRightText" type="Label" parent="Base/InnerColor"]
@@ -118,4 +234,15 @@ offset_right = 210.0
 offset_bottom = 365.0
 rotation = 3.1415927
 text = "1"
+label_settings = SubResource("LabelSettings_b8pxk")
+
+[node name="UnderLineR" type="Label" parent="Base/InnerColor/BottomRightText"]
+visible = false
+layout_mode = 0
+offset_left = 3.9999924
+offset_top = 0.9999995
+offset_right = 43.999992
+offset_bottom = 126.0
+text = "_
+"
 label_settings = SubResource("LabelSettings_b8pxk")
