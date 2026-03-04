@@ -30,15 +30,6 @@ corner_radius_top_right = 80
 corner_radius_bottom_right = 80
 corner_radius_bottom_left = 80
 
-[sub_resource type="LabelSettings" id="LabelSettings_mioc4"]
-font = ExtResource("2_4yc6j")
-font_size = 150
-outline_size = 15
-outline_color = Color(0, 0, 0, 1)
-shadow_size = 15
-shadow_color = Color(0, 0, 0, 1)
-shadow_offset = Vector2(-2.5, 1)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4yc6j"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 border_width_left = 6
@@ -78,6 +69,15 @@ border_width_right = 6
 border_width_bottom = 6
 border_color = Color(0.8, 0.8, 0.8, 0)
 corner_radius_bottom_right = 80
+
+[sub_resource type="LabelSettings" id="LabelSettings_mioc4"]
+font = ExtResource("2_4yc6j")
+font_size = 150
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 15
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(-2.5, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_b8pxk"]
 font = ExtResource("2_4yc6j")
@@ -134,28 +134,6 @@ rotation = 0.5235988
 pivot_offset = Vector2(75, 100)
 theme_override_styles/panel = SubResource("StyleBoxFlat_km5rf")
 
-[node name="CenterText" type="Label" parent="Base/InnerColor"]
-layout_mode = 0
-offset_left = 21.0
-offset_top = 68.0
-offset_right = 151.0
-offset_bottom = 219.0
-text = "1"
-label_settings = SubResource("LabelSettings_mioc4")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="UnderLineC" type="Label" parent="Base/InnerColor/CenterText"]
-visible = false
-layout_mode = 0
-offset_left = 3.0
-offset_right = 133.0
-offset_bottom = 151.0
-text = "_"
-label_settings = SubResource("LabelSettings_mioc4")
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="WildIcon" type="Panel" parent="Base/InnerColor"]
 visible = false
 clip_contents = true
@@ -207,6 +185,29 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_04ul4")
+
+[node name="CenterText" type="Label" parent="Base/InnerColor"]
+layout_mode = 0
+offset_left = 21.0
+offset_top = 68.0
+offset_right = 151.0
+offset_bottom = 219.0
+pivot_offset = Vector2(65, 75)
+text = "1"
+label_settings = SubResource("LabelSettings_mioc4")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="UnderLineC" type="Label" parent="Base/InnerColor/CenterText"]
+visible = false
+layout_mode = 0
+offset_left = 3.0
+offset_right = 133.0
+offset_bottom = 151.0
+text = "_"
+label_settings = SubResource("LabelSettings_mioc4")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TopLeftText" type="Label" parent="Base/InnerColor"]
 layout_mode = 0

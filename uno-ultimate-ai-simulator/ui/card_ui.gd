@@ -15,7 +15,7 @@ extends Control
 
 
 func _ready() -> void:
-	var test_card = Card.new(Card.CardColor.WILD, Card.CardValue.WILD_DRAW_FOUR)
+	var test_card = Card.new(Card.CardColor.GREEN, Card.CardValue.REVERSE)
 	set_card_data(test_card)
 
 # Denna funktion kallas för att uppdatera kortets utseende
@@ -34,6 +34,43 @@ func set_card_data(card: Card):
 	center_underline.visible = needs_underline
 	top_left_underline.visible = needs_underline
 	bottom_right_underline.visible = needs_underline
+	
+	# 1.6 Ändra textstorlek för specialkort (+2 och +4)
+	var is_plus_card = (card.value == Card.CardValue.DRAW_TWO or card.value == Card.CardValue.WILD_DRAW_FOUR)
+	var is_wild_card = card.value == Card.CardValue.WILD
+	var is_reverse_card = card.value == Card.CardValue.REVERSE
+	
+	# Byt ut dessa mot de värden du använder i din UI-editor!
+	var center_normal_size = 150
+	var center_small_size = 130
+	var center_reverse_size = 140
+	
+	var corner_normal_size = 60
+	var corner_wild_size = 55
+	var corner_small_size = 50
+	
+	if is_plus_card:
+		center_text.label_settings.font_size = center_small_size
+		top_left_text.label_settings.font_size = corner_small_size
+		bottom_right_text.label_settings.font_size = corner_small_size
+	elif is_wild_card:
+		top_left_text.label_settings.font_size = corner_wild_size 
+		bottom_right_text.label_settings.font_size = corner_wild_size
+	elif is_reverse_card:
+		center_text.label_settings.font_size = center_reverse_size
+		center_text.rotation_degrees = -50
+		center_text.position = Vector2(0,40)
+		top_left_text.label_settings.font_size = corner_small_size
+		top_left_text.rotation_degrees = -50
+		top_left_text.position = Vector2(-20,20)
+		bottom_right_text.label_settings.font_size = corner_small_size
+		bottom_right_text.rotation_degrees = -50
+		bottom_right_text.position = Vector2(110, 240)
+	else:
+		center_text.label_settings.font_size = center_normal_size
+		top_left_text.label_settings.font_size = corner_normal_size
+		bottom_right_text.label_settings.font_size = corner_normal_size
+	
 	
 	# 1.8 Hantera Wild-kortens utseende
 	var is_wild = (card.color == Card.CardColor.WILD)
