@@ -13,10 +13,16 @@ extends Control
 
 @onready var wild_icon = $Base/InnerColor/WildIcon
 
+@onready var center_skip = $Base/InnerColor/CenterStkip
+@onready var left_skip = $Base/InnerColor/LeftCornerSkip
+@onready var right_skip = $Base/InnerColor/RightCornerSkip
+
+@onready var card_back = $CardBack
 
 func _ready() -> void:
-	var test_card = Card.new(Card.CardColor.GREEN, Card.CardValue.REVERSE)
+	var test_card = Card.new(Card.CardColor.GREEN, Card.CardValue.SKIP)
 	set_card_data(test_card)
+	set_face_up(true)
 
 # Denna funktion kallas för att uppdatera kortets utseende
 func set_card_data(card: Card):
@@ -56,6 +62,7 @@ func set_card_data(card: Card):
 	elif is_wild_card:
 		top_left_text.label_settings.font_size = corner_wild_size 
 		bottom_right_text.label_settings.font_size = corner_wild_size
+		wild_icon.visible = is_wild_card
 	elif is_reverse_card:
 		center_text.label_settings.font_size = center_reverse_size
 		center_text.rotation_degrees = -50
@@ -72,17 +79,24 @@ func set_card_data(card: Card):
 		bottom_right_text.label_settings.font_size = corner_normal_size
 	
 	
-	# 1.8 Hantera Wild-kortens utseende
-	var is_wild = (card.color == Card.CardColor.WILD)
-	wild_icon.visible = is_wild
-	
 	# Om det är ett rent Wild-kort döljer vi centertexten (vi vill bara se färg-ovalen)
 	# Men är det ett +4-kort så vill vi att "+4" ska stå kvar ovanpå ovalen!
-	if is_wild and card.value == Card.CardValue.WILD:
+	if is_wild_card and card.value == Card.CardValue.WILD:
 		center_text.visible = false
 	else:
 		center_text.visible = true
 	
+	# 1.81 Handle Skip-card visability
+	var is_skip = (card.value == Card.CardValue.SKIP)
+	if is_skip:
+		center_skip.visible = true
+		left_skip.visible = true
+		right_skip.visible = true
+		
+		center_text.visible = false
+		top_left_text.visible = false
+		bottom_right_text.visible = false
+		
 	# 2. Ändra färg på kortet
 	var new_color = Color.WHITE
 	match card.color:
@@ -128,9 +142,13 @@ func get_value_string(val: Card.CardValue) -> String:
 		Card.CardValue.SEVEN: return "7"
 		Card.CardValue.EIGHT: return "8"
 		Card.CardValue.NINE: return "9"
-		Card.CardValue.SKIP: return "Ø"
+		Card.CardValue.SKIP: return ""
 		Card.CardValue.REVERSE: return "⇄"
 		Card.CardValue.DRAW_TWO: return "+2"
 		Card.CardValue.WILD: return "W"
 		Card.CardValue.WILD_DRAW_FOUR: return "+4"
 		_: return ""
+
+# Använd denna för att vända på kortet
+func set_face_up(is_face_up: bool):
+	card_back.visible = !is_face_up
