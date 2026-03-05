@@ -62,7 +62,7 @@ func _adjust_card_spacing():
 func test_hand():
 	var dummy_hand = []
 	# Kasta in 15 kort för att se magin jobba!
-	for i in range(28):
-		dummy_hand.append(Card.new(Card.CardColor.RED, Card.CardValue.FIVE))
+	for i in range(2):
+		dummy_hand.append(Card.new(Card.CardColor.GREEN, Card.CardValue.SIX))
 	
 	update_hand(dummy_hand)

@@ -60,13 +60,13 @@ func set_card_data(card: Card):
 	var is_reverse_card = card.value == Card.CardValue.REVERSE
 	
 	# Byt ut dessa mot de värden du använder i din UI-editor!
-	var center_normal_size = 150
-	var center_small_size = 130
-	var center_reverse_size = 140
+	var center_normal_size = 120
+	var center_small_size = 105
+	var center_reverse_size = 110
 	
-	var corner_normal_size = 60
-	var corner_wild_size = 55
-	var corner_small_size = 50
+	var corner_normal_size = 48
+	var corner_wild_size = 45
+	var corner_small_size = 40
 	
 	if is_plus_two_card:
 		center_text.label_settings.font_size = center_small_size
@@ -91,7 +91,7 @@ func set_card_data(card: Card):
 		top_left_text.position = Vector2(-20,20)
 		bottom_right_text.label_settings.font_size = corner_small_size
 		bottom_right_text.rotation_degrees = -50
-		bottom_right_text.position = Vector2(110, 240)
+		bottom_right_text.position = Vector2(80, 192)
 	else:
 		center_text.label_settings.font_size = center_normal_size
 		top_left_text.label_settings.font_size = corner_normal_size
