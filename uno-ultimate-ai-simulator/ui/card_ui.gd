@@ -22,6 +22,9 @@ extends Control
 @onready var base_node = $Base
 var base_start_y: float = 0.0
 
+signal card_clicked(card: Card)
+var my_card: Card
+
 func _ready() -> void:
 	# Spara var Base-noden ligger från början (oftast 0)
 	base_start_y = base_node.position.y
@@ -29,12 +32,15 @@ func _ready() -> void:
 	# Koppla mus-händelserna till funktioner via kod
 	mouse_entered.connect(_on_hover_enter)
 	mouse_exited.connect(_on_hover_exit)
+	
+	gui_input.connect(_on_gui_input)
 
 # Denna funktion kallas för att uppdatera kortets utseende
 func set_card_data(card: Card):
 	if card == null:
 		return
-		
+	my_card = card
+	
 	# 1. Sätt texten
 	var display_text = get_value_string(card.value)
 	center_text.text = display_text
@@ -174,3 +180,8 @@ func _on_hover_exit():
 	# 2. Animera tillbaka Base-noden till sin startposition
 	var tween = create_tween()
 	tween.tween_property(base_node, "position:y", base_start_y, 0.1)
+
+func _on_gui_input(event: InputEvent):
+	# Om händelsen är ett musklick, det är vänster knapp, och den trycks NER (inte släpps)
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		card_clicked.emit(my_card) # Skrik ut till världen vilket kort som klickades!
