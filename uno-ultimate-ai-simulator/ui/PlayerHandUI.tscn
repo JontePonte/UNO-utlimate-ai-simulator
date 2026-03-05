@@ -1,5 +1,29 @@
-[gd_scene format=3 uid="uid://dhuo4vga4p62u"]
+[gd_scene load_steps=3 format=3 uid="uid://dhuo4vga4p62u"]
+
+[ext_resource type="Script" uid="uid://ci0n3urj0n7gj" path="res://ui/player_hand_ui.gd" id="1_sha0n"]
+[ext_resource type="PackedScene" uid="uid://ukfpjno5na0i" path="res://ui/CardUI.tscn" id="2_ln5nq"]
 
 [node name="PlayerHandUi" type="Control"]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_sha0n")
+card_ui_scene = ExtResource("2_ln5nq")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = -60

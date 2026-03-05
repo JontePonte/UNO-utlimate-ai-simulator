@@ -15,10 +15,10 @@ func run_test():
 	var p2 = Player.new(1, "AI_Two", false, ai2)
 	
 	# --- Skapa UnoGame med dessa spelare ---
-	var game = UnoGame.new([p1, p2])
+	var game = GameManager.new([p1, p2])
 	
 	# --- Kör ett kort spel, max 200 turer ---
-	game.run_full_game(200)
+	await game.run_full_game(200)	
 	
 	# --- Skriv ut move history för båda spelare ---
 	for move in game.state.move_history:

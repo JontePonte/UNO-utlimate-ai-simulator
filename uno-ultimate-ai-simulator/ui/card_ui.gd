@@ -19,10 +19,16 @@ extends Control
 
 @onready var card_back = $CardBack
 
+@onready var base_node = $Base
+var base_start_y: float = 0.0
+
 func _ready() -> void:
-	var test_card = Card.new(Card.CardColor.GREEN, Card.CardValue.SKIP)
-	set_card_data(test_card)
-	set_face_up(true)
+	# Spara var Base-noden ligger från början (oftast 0)
+	base_start_y = base_node.position.y
+	
+	# Koppla mus-händelserna till funktioner via kod
+	mouse_entered.connect(_on_hover_enter)
+	mouse_exited.connect(_on_hover_exit)
 
 # Denna funktion kallas för att uppdatera kortets utseende
 func set_card_data(card: Card):
@@ -42,8 +48,9 @@ func set_card_data(card: Card):
 	bottom_right_underline.visible = needs_underline
 	
 	# 1.6 Ändra textstorlek för specialkort (+2 och +4)
-	var is_plus_card = (card.value == Card.CardValue.DRAW_TWO or card.value == Card.CardValue.WILD_DRAW_FOUR)
+	var is_plus_two_card = card.value == Card.CardValue.DRAW_TWO
 	var is_wild_card = card.value == Card.CardValue.WILD
+	var is_wild_four_card = card.value == Card.CardValue.WILD_DRAW_FOUR
 	var is_reverse_card = card.value == Card.CardValue.REVERSE
 	
 	# Byt ut dessa mot de värden du använder i din UI-editor!
@@ -55,14 +62,20 @@ func set_card_data(card: Card):
 	var corner_wild_size = 55
 	var corner_small_size = 50
 	
-	if is_plus_card:
+	if is_plus_two_card:
 		center_text.label_settings.font_size = center_small_size
 		top_left_text.label_settings.font_size = corner_small_size
 		bottom_right_text.label_settings.font_size = corner_small_size
 	elif is_wild_card:
 		top_left_text.label_settings.font_size = corner_wild_size 
 		bottom_right_text.label_settings.font_size = corner_wild_size
-		wild_icon.visible = is_wild_card
+		wild_icon.visible = true
+		center_text.visible = false
+	elif is_wild_four_card:
+		center_text.label_settings.font_size = center_small_size
+		top_left_text.label_settings.font_size = corner_small_size
+		bottom_right_text.label_settings.font_size = corner_small_size
+		wild_icon.visible = true
 	elif is_reverse_card:
 		center_text.label_settings.font_size = center_reverse_size
 		center_text.rotation_degrees = -50
@@ -77,14 +90,6 @@ func set_card_data(card: Card):
 		center_text.label_settings.font_size = center_normal_size
 		top_left_text.label_settings.font_size = corner_normal_size
 		bottom_right_text.label_settings.font_size = corner_normal_size
-	
-	
-	# Om det är ett rent Wild-kort döljer vi centertexten (vi vill bara se färg-ovalen)
-	# Men är det ett +4-kort så vill vi att "+4" ska stå kvar ovanpå ovalen!
-	if is_wild_card and card.value == Card.CardValue.WILD:
-		center_text.visible = false
-	else:
-		center_text.visible = true
 	
 	# 1.81 Handle Skip-card visability
 	var is_skip = (card.value == Card.CardValue.SKIP)
@@ -152,3 +157,20 @@ func get_value_string(val: Card.CardValue) -> String:
 # Använd denna för att vända på kortet
 func set_face_up(is_face_up: bool):
 	card_back.visible = !is_face_up
+
+func _on_hover_enter():
+	# 1. Tvinga detta kort att ritas OVANPÅ alla andra i handen
+	z_index = 10 
+	
+	# 2. Skapa en mjuk animation (Tween) som flyttar Base-noden uppåt (-40 pixlar)
+	var tween = create_tween()
+	# Sätt animationen till att ta 0.1 sekunder för en snabb, snärtig känsla
+	tween.tween_property(base_node, "position:y", base_start_y - 40, 0.1)
+
+func _on_hover_exit():
+	# 1. Återställ Z-index så det smälter in i handen igen
+	z_index = 0
+	
+	# 2. Animera tillbaka Base-noden till sin startposition
+	var tween = create_tween()
+	tween.tween_property(base_node, "position:y", base_start_y, 0.1)

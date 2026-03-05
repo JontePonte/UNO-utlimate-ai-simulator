@@ -20,10 +20,10 @@ func run_multi_test(player_count: int):
 		players.append(p)
 	
 	# --- Skapa UnoGame med den genererade listan av spelare ---
-	var game = UnoGame.new(players)
+	var game = GameManager.new(players)
 	
 	# --- Kör spelet! (Jag höjde max_turns till 500 eftersom fler spelare ofta tar längre tid) ---
-	game.run_full_game(500)
+	await game.run_full_game(500)
 	
 	# --- Skriv ut move history ---
 	for move in game.state.move_history:
