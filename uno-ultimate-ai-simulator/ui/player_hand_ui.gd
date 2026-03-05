@@ -8,6 +8,7 @@ extends Control
 var default_separation: float = -60.0 
 
 func _ready() -> void:
+	resized.connect(_adjust_card_spacing)
 	test_hand()
 
 func update_hand(hand_cards: Array):
@@ -62,7 +63,7 @@ func _adjust_card_spacing():
 func test_hand():
 	var dummy_hand = []
 	# Kasta in 15 kort för att se magin jobba!
-	for i in range(2):
-		dummy_hand.append(Card.new(Card.CardColor.GREEN, Card.CardValue.SIX))
+	for i in range(50):
+		dummy_hand.append(Card.new(Card.CardColor.RED, Card.CardValue.SIX))
 	
 	update_hand(dummy_hand)

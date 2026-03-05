@@ -6,7 +6,7 @@ extends Control
 @onready var right_hand = $RightHand
 
 # Hur många pixlar från skärmens kant händerna ska ligga
-@export var edge_margin: float = 30.0 
+@export var edge_margin: float = 100.0 
 
 func _ready():
 	# Vänta en frame så Godot hinner rita upp fönstret och händerna
@@ -19,32 +19,46 @@ func _ready():
 	get_tree().root.size_changed.connect(_update_layout)
 
 func _update_layout():
-	# Hämta skärmens exakta storlek i pixlar just nu
 	var screen_size = get_viewport_rect().size
 	var center = screen_size / 2.0
 	
-	# 1. Centrera rotationspunkten (Pivot) på alla händer
+# --- 1. SÄTT DYNAMISK STORLEK (NYTT OCH SÄKERT!) ---
+	# Händerna får max ta upp X% av skärmens längd åt sitt håll. 
+	# Då lämnar vi trygga tomrum i alla fyra hörn!
+	var horizontal_width = screen_size.x * 0.60 
+	var vertical_width = screen_size.y * 0.70 
+	
+	# Höjden på det nedskalade kortet
+	var hand_height = 160.0 
+	
+	bottom_hand.size = Vector2(horizontal_width, hand_height)
+	top_hand.size = Vector2(horizontal_width, hand_height)
+	
+	# Observera att X här är vertical_width, eftersom vi definierar boxen 
+	# INNAN vi roterar den 90 grader!
+	left_hand.size = Vector2(vertical_width, hand_height)
+	right_hand.size = Vector2(vertical_width, hand_height)
+
+	# --- 2. CENTRERA PIVOT ---
 	_set_center_pivot(bottom_hand)
 	_set_center_pivot(top_hand)
 	_set_center_pivot(left_hand)
 	_set_center_pivot(right_hand)
 
-	# 2. Placera ut och rotera! 
-	# (Vi drar av halva handens storlek så de centreras exakt på koordinaten)
-	
-	# Botten (Människan) - Rakt upp
+	# --- 3. PLACERA OCH ROTERA ---
+	# Botten (Människan)
 	bottom_hand.position = Vector2(center.x - bottom_hand.size.x / 2.0, screen_size.y - edge_margin - bottom_hand.size.y / 2.0)
 	bottom_hand.rotation_degrees = 0
 	
-	# Toppen (Motspelare mittemot) - Upp och ner
+	# Toppen 
 	top_hand.position = Vector2(center.x - top_hand.size.x / 2.0, edge_margin - top_hand.size.y / 2.0)
 	top_hand.rotation_degrees = 180
 	
-	# Vänster (Snurrad 90 grader medurs)
+	# Vänster 
 	left_hand.position = Vector2(edge_margin - left_hand.size.x / 2.0, center.y - left_hand.size.y / 2.0)
 	left_hand.rotation_degrees = 90
 	
-	# Höger (Snurrad 90 grader moturs)
+	# Höger 
 	right_hand.position = Vector2(screen_size.x - edge_margin - right_hand.size.x / 2.0, center.y - right_hand.size.y / 2.0)
 	right_hand.rotation_degrees = -90
 
