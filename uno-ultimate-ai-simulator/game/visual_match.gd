@@ -283,16 +283,21 @@ func _on_turn_started(current_player_index: int):
 		# Någon blev överhoppad! Peka på dem och visa skip-symbolen
 		player_uis[expected_next].show_skip_animation(UNO_COLORS[current_color])
 		
-	# 4. Flytta och rotera pilen
-	# (Se till att dina Marker2D heter exakt "AnchorCW" och "AnchorCCW")
-	var anchor_name = "AnchorCW" if direction == 1 else "AnchorCCW"
-	var start_node = player_uis[last_player_index].get_node(anchor_name)
+	# 4. Flytta och rotera pilen (NY LOGIK: Ankare till Ankare)
 	
-	# Pilen utgår från förra spelarens ankare
+	# Om vi spelar medsols (1) startar vi på CW, och siktar på nästa spelares CCW. 
+	# Om vi spelar moturs (-1) gör vi tvärtom!
+	var start_anchor_name = "AnchorCW" if direction == 1 else "AnchorCCW"
+	var target_anchor_name = "AnchorCCW" if direction == 1 else "AnchorCW"
+	
+	var start_node = player_uis[last_player_index].get_node(start_anchor_name)
+	var target_node = player_uis[current_player_index].get_node(target_anchor_name)
+	
+	# Pilen utgår från förra spelarens start-ankare
 	turn_arrow.global_position = start_node.global_position
 	
-	# Pilen tittar rakt på den nya spelarens hand-centrum
-	turn_arrow.look_at(player_uis[current_player_index].global_position)
+	# Pilen tittar nu exakt på den nya spelarens mål-ankare istället för mitten av handen!
+	turn_arrow.look_at(target_node.global_position)
 	
 	# Färga pilen
 	turn_arrow.modulate = UNO_COLORS[current_color]

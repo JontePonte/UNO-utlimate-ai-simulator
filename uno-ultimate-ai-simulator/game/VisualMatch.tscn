@@ -71,6 +71,7 @@ offset_bottom = 0.0
 rotation = -1.5707964
 
 [node name="TurnArrow" type="Sprite2D" parent="."]
+position = Vector2(-300, 0)
 
 [node name="Outline" type="TextureRect" parent="TurnArrow"]
 modulate = Color(0, 0, 0, 1)
