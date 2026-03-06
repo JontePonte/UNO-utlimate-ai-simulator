@@ -160,27 +160,29 @@ func start_real_game():
 	update_all_visuals()
 	_spawn_discard_card(game_manager.state.discard_pile[-1]) # Det allra första kortet
 	
-	# Bygg den falska plockhögen (som bara ligger där för att se snygg ut)
-	for i in range(15): # 15 kort räcker för att skapa en snygg 3D-effekt!
-		var dummy = card_ui_scene.instantiate()
-		draw_pile_node.add_child(dummy)
-		dummy.set_interactable(false)
-		dummy.set_face_up(false) 
-		dummy.position = (-dummy.size / 2.0) + Vector2(-i * 0.5, -i * 0.5)
+	await get_tree().create_timer(1.5).timeout
+	for hand in player_uis:
+		hand._adjust_card_spacing()
 	
 	# 6. STARTA MATCHEN! 
 	game_manager.run_full_game()
 
 
 func update_all_visuals():
-	# Synka de fysiska händerna med de logiska händerna
+	# Synka de fysiska händerna
 	for i in range(game_manager.state.players.size()):
 		var logical_player = game_manager.state.players[i]
 		player_uis[i].update_hand(logical_player.hand)
+		
+	# Synka plockhögen i mitten
+	_update_draw_pile_visual()
+	
+	# Kolla om hjärnan precis har blandat om kasthögen!
+	if discard_pile_node.get_child_count() > game_manager.state.discard_pile.size():
+		_cleanup_discard_pile_visual()
 
 
 # --- SIGNAL MOTTAGARE ---
-
 func _on_card_drawn(_player_index: int, _card: Card):
 	# Uppdatera bara händerna när någon drar ett kort
 	update_all_visuals()
@@ -194,7 +196,6 @@ func _on_card_played(_player_index: int, card: Card, _declared_color: Card.CardC
 
 
 # --- VISUELLA HJÄLPARE ---
-
 func _spawn_discard_card(card_data: Card):
 	var visual_card = card_ui_scene.instantiate()
 	discard_pile_node.add_child(visual_card)
@@ -212,3 +213,35 @@ func _spawn_discard_card(card_data: Card):
 	visual_card.rotation_degrees = randf_range(-randomness_rotate, randomness_rotate)
 	
 	visual_card.position = center_offset + messy_offset
+
+func _update_draw_pile_visual():
+	# 1. Rensa bort den gamla grafiska högen
+	for child in draw_pile_node.get_children():
+		child.queue_free()
+		
+	# 2. Kolla hur många kort hjärnan faktiskt har i plockhögen just nu
+	var cards_left = game_manager.state.draw_pile.cards.size()
+	
+	# 3. Bygg upp högen på nytt!
+	for i in range(cards_left):
+		var visual_card = card_ui_scene.instantiate()
+		draw_pile_node.add_child(visual_card)
+		
+		visual_card.set_interactable(false)
+		visual_card.set_face_up(false) 
+		
+		var center_offset = -visual_card.size / 2.0
+		# Tätare mellanrum (0.2) så en lek med 80 kort inte blir onaturligt hög
+		var depth_offset = Vector2(-i * 0.2, -i * 0.2) 
+		
+		visual_card.position = center_offset + depth_offset
+
+func _cleanup_discard_pile_visual():
+	# 1. Radera alla grafiska kort i den stökiga högen
+	for child in discard_pile_node.get_children():
+		child.queue_free()
+		
+	# 2. Lägg tillbaka det enda kortet som hjärnan sparade
+	if game_manager.state.discard_pile.size() > 0:
+		var top_card = game_manager.state.discard_pile[-1]
+		_spawn_discard_card(top_card)
