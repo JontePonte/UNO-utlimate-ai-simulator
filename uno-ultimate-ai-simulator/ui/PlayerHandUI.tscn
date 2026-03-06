@@ -72,3 +72,25 @@ offset_top = -804.2857
 offset_right = 363.99997
 offset_bottom = 318.7143
 texture = ExtResource("3_eonab")
+
+[node name="AnchorCW" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -220.0
+offset_top = -80.0
+offset_right = -220.0
+offset_bottom = -80.0
+grow_horizontal = 2
+
+[node name="AnchorCCW" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 180.0
+offset_top = -80.0
+offset_right = 180.0
+offset_bottom = -80.0
+grow_horizontal = 2

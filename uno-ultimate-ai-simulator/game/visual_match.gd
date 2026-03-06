@@ -10,6 +10,19 @@ extends Control
 @onready var draw_pile_node = $Table/DrawPile
 @onready var discard_pile_node = $Table/DiscardPile
 
+@onready var turn_arrow = $TurnArrow
+
+# En ordbok som översätter spelets färger till riktiga färgkoder!
+const UNO_COLORS = {
+	Card.CardColor.RED: Color(0.9, 0.2, 0.2),
+	Card.CardColor.BLUE: Color(0.2, 0.4, 0.9),
+	Card.CardColor.GREEN: Color(0.2, 0.8, 0.2),
+	Card.CardColor.YELLOW: Color(0.9, 0.8, 0.2),
+	Card.CardColor.WILD: Color(1.0, 1.0, 1.0)
+}
+
+var last_player_index: int = -1
+
 # --- SPELETS LOGIK ---
 var game_manager: GameManager
 var player_uis: Array[PlayerHandUI] = []
@@ -155,6 +168,7 @@ func start_real_game():
 	# 4. Koppla hjärnans signaler till våra ögon (UI)
 	game_manager.card_played.connect(_on_card_played)
 	game_manager.card_drawn.connect(_on_card_drawn)
+	game_manager.turn_started.connect(_on_turn_started)
 	
 	# 5. Rita upp startläget! (Dela ut kort och visa första kortet i kasthögen)
 	update_all_visuals()
@@ -245,3 +259,43 @@ func _cleanup_discard_pile_visual():
 	if game_manager.state.discard_pile.size() > 0:
 		var top_card = game_manager.state.discard_pile[-1]
 		_spawn_discard_card(top_card)
+
+func _on_turn_started(current_player_index: int):
+	var current_color = game_manager.state.current_color
+	var direction = game_manager.state.play_direction
+	var num_players = game_manager.state.players.size()
+	
+	# 1. Tänd den aktiva spelaren, släck de andra
+	for i in range(player_uis.size()):
+		player_uis[i].set_active(i == current_player_index)
+		
+	# 2. Om det är allra första draget sätter vi bara startspelaren och avbryter
+	if last_player_index == -1:
+		last_player_index = current_player_index
+		turn_arrow.hide() # Göm pilen tills det faktiskt sker ett drag
+		return
+		
+	turn_arrow.show()
+	
+	# 3. Kalkylera om någon blev överhoppad (Den matematiska magin!)
+	var expected_next = (last_player_index + direction + num_players) % num_players
+	if expected_next != current_player_index:
+		# Någon blev överhoppad! Peka på dem och visa skip-symbolen
+		player_uis[expected_next].show_skip_animation(UNO_COLORS[current_color])
+		
+	# 4. Flytta och rotera pilen
+	# (Se till att dina Marker2D heter exakt "AnchorCW" och "AnchorCCW")
+	var anchor_name = "AnchorCW" if direction == 1 else "AnchorCCW"
+	var start_node = player_uis[last_player_index].get_node(anchor_name)
+	
+	# Pilen utgår från förra spelarens ankare
+	turn_arrow.global_position = start_node.global_position
+	
+	# Pilen tittar rakt på den nya spelarens hand-centrum
+	turn_arrow.look_at(player_uis[current_player_index].global_position)
+	
+	# Färga pilen
+	turn_arrow.modulate = UNO_COLORS[current_color]
+	
+	# Spara vem som fick turen till nästa gång
+	last_player_index = current_player_index

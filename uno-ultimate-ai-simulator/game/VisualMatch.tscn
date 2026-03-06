@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://cfrlmcljgwx5r"]
+[gd_scene load_steps=5 format=3 uid="uid://cfrlmcljgwx5r"]
 
 [ext_resource type="PackedScene" uid="uid://dhuo4vga4p62u" path="res://ui/PlayerHandUI.tscn" id="1_noqqh"]
 [ext_resource type="Script" uid="uid://d1k0fup1h3448" path="res://game/visual_match.gd" id="1_s5ib6"]
 [ext_resource type="PackedScene" uid="uid://ukfpjno5na0i" path="res://ui/CardUI.tscn" id="2_x83vr"]
+[ext_resource type="Texture2D" uid="uid://c8lva1kt21l64" path="res://ui/white-arrow.png" id="4_ym86b"]
 
 [node name="VisualMatch" type="Control"]
 layout_mode = 3
@@ -68,3 +69,25 @@ layout_mode = 1
 offset_right = 0.0
 offset_bottom = 0.0
 rotation = -1.5707964
+
+[node name="TurnArrow" type="Sprite2D" parent="."]
+
+[node name="Outline" type="TextureRect" parent="TurnArrow"]
+modulate = Color(0, 0, 0, 1)
+offset_left = 121.000015
+offset_top = 95.900024
+offset_right = 921.0
+offset_bottom = 698.9
+rotation = 3.1415927
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("4_ym86b")
+
+[node name="Outline2" type="TextureRect" parent="TurnArrow"]
+offset_left = -390.0
+offset_top = -295.09998
+offset_right = 410.0
+offset_bottom = 307.90002
+rotation = 3.1415927
+scale = Vector2(0.285, 0.285)
+pivot_offset = Vector2(400, 300)
+texture = ExtResource("4_ym86b")
