@@ -13,7 +13,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_s5ib6")
 card_ui_scene = ExtResource("2_x83vr")
-edge_margin = null
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1

@@ -78,6 +78,7 @@ func _set_center_pivot(control_node: Control):
 	# Flyttar nodens "gångjärn" till exakt mitten av dess bredd och höjd
 	control_node.pivot_offset = control_node.size / 2.0
 
+
 # --- BARA FÖR TEST ---
 func _test_piles():
 	# 1. Bygg Plockhögen (Draw Pile)
@@ -132,3 +133,82 @@ func _test_piles():
 		card.rotation_degrees = randf_range(-randomness_rotate, randomness_rotate)
 		
 		card.position = center_offset + messy_offset
+
+func start_real_game():
+	# 1. Skapa fyra AI-spelare 
+	# (Eftersom vi inte har en HumanPlayer än, låter vi 4 bottar slåss!)
+	var players: Array[Player] = [
+		Player.new(0, "AI_Botten", false, AISimple.new()), 
+		Player.new(1, "AI_Vänster", false, AISimple.new()),
+		Player.new(2, "AI_Toppen", false, AISimple.new()),
+		Player.new(3, "AI_Höger", false, AISimple.new())
+	]
+	
+	# 2. Skapa hjärnan och lägg till den i trädet (VIKTIGT för att timers ska funka!)
+	game_manager = GameManager.new(players)
+	add_child(game_manager)
+	
+	# 3. Slå på spelets "TV-läge"
+	game_manager.visual_mode = true
+	game_manager.turn_delay = 1.0 # 1 sekund per drag
+	
+	# 4. Koppla hjärnans signaler till våra ögon (UI)
+	game_manager.card_played.connect(_on_card_played)
+	game_manager.card_drawn.connect(_on_card_drawn)
+	
+	# 5. Rita upp startläget! (Dela ut kort och visa första kortet i kasthögen)
+	update_all_visuals()
+	_spawn_discard_card(game_manager.state.discard_pile[-1]) # Det allra första kortet
+	
+	# Bygg den falska plockhögen (som bara ligger där för att se snygg ut)
+	for i in range(15): # 15 kort räcker för att skapa en snygg 3D-effekt!
+		var dummy = card_ui_scene.instantiate()
+		draw_pile_node.add_child(dummy)
+		dummy.set_interactable(false)
+		dummy.set_face_up(false) 
+		dummy.position = (-dummy.size / 2.0) + Vector2(-i * 0.5, -i * 0.5)
+	
+	# 6. STARTA MATCHEN! 
+	game_manager.run_full_game()
+
+
+func update_all_visuals():
+	# Synka de fysiska händerna med de logiska händerna
+	for i in range(game_manager.state.players.size()):
+		var logical_player = game_manager.state.players[i]
+		player_uis[i].update_hand(logical_player.hand)
+
+
+# --- SIGNAL MOTTAGARE ---
+
+func _on_card_drawn(_player_index: int, _card: Card):
+	# Uppdatera bara händerna när någon drar ett kort
+	update_all_visuals()
+
+func _on_card_played(_player_index: int, card: Card, _declared_color: Card.CardColor):
+	# 1. Släng kortet i mitten med vår snygga "stökiga" effekt
+	_spawn_discard_card(card)
+	
+	# 2. Uppdatera händerna (så kortet försvinner från spelarens hand)
+	update_all_visuals()
+
+
+# --- VISUELLA HJÄLPARE ---
+
+func _spawn_discard_card(card_data: Card):
+	var visual_card = card_ui_scene.instantiate()
+	discard_pile_node.add_child(visual_card)
+	
+	visual_card.set_interactable(false)
+	visual_card.set_card_data(card_data)
+	visual_card.set_face_up(true)
+	
+	var center_offset = -visual_card.size / 2.0
+	
+	# Stökigheten! Slumpa fram en liten knuff och rotation
+	var randomness_translate = 5.0
+	var randomness_rotate = 7.0
+	var messy_offset = Vector2(randf_range(-randomness_translate, randomness_translate), randf_range(-randomness_translate, randomness_translate))
+	visual_card.rotation_degrees = randf_range(-randomness_rotate, randomness_rotate)
+	
+	visual_card.position = center_offset + messy_offset
