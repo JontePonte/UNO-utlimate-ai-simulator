@@ -5,18 +5,29 @@ extends Control
 @onready var left_hand = $LeftHand
 @onready var right_hand = $RightHand
 
+@export var card_ui_scene: PackedScene
+
+@onready var draw_pile_node = $Table/DrawPile
+@onready var discard_pile_node = $Table/DiscardPile
+
+# --- SPELETS LOGIK ---
+var game_manager: GameManager
+var player_uis: Array[PlayerHandUI] = []
+
 # Hur många pixlar från skärmens kant händerna ska ligga
 @export var edge_margin: float = 100.0 
 
 func _ready():
-	# Vänta en frame så Godot hinner rita upp fönstret och händerna
-	# (Annars kan deras 'size' vara 0 när vi försöker mäta dem)
 	await get_tree().process_frame
+	
+	# Lägg in händerna i en lista så plats 0 = bottom, plats 1 = left, osv.
+	player_uis = [bottom_hand, left_hand, top_hand, right_hand]
 	
 	_update_layout()
 	
-	# Magi: Lyssna på om fönstret ändrar storlek under spelets gång!
-	get_tree().root.size_changed.connect(_update_layout)
+	# _test_piles() 
+	
+	start_real_game()
 
 func _update_layout():
 	var screen_size = get_viewport_rect().size
@@ -66,3 +77,58 @@ func _update_layout():
 func _set_center_pivot(control_node: Control):
 	# Flyttar nodens "gångjärn" till exakt mitten av dess bredd och höjd
 	control_node.pivot_offset = control_node.size / 2.0
+
+# --- BARA FÖR TEST ---
+func _test_piles():
+	# 1. Bygg Plockhögen (Draw Pile)
+	# Vi loopar 108 gånger för att skapa den tjocka leken
+	for i in range(108):
+		var card = card_ui_scene.instantiate()
+		draw_pile_node.add_child(card)
+		
+		card.set_interactable(false)
+		
+		# Vänd baksidan uppåt (Eftersom vi inte har anropat set_card_data är kortet 'tomt')
+		card.set_face_up(false) 
+		
+		# Centrera kortet över vår punkt, minus halva dess storlek
+		var center_offset = -card.size / 2.0
+		
+		# Den falska 3D-effekten! Varje kort flyttas 0.3 pixlar snett uppåt vänster
+		var depth_offset = Vector2(-i * 0.3, -i * 0.3) 
+		
+		card.position = center_offset + depth_offset
+
+
+	# 2. Bygg Kasthögen (Discard Pile)
+	# Vi skapar tre låtsaskort för att se stökigheten
+	var dummy_discard = [
+		Card.new(Card.CardColor.RED, Card.CardValue.FIVE),
+		Card.new(Card.CardColor.BLUE, Card.CardValue.SKIP),
+		Card.new(Card.CardColor.BLUE, Card.CardValue.SKIP),
+		Card.new(Card.CardColor.BLUE, Card.CardValue.SKIP),
+		Card.new(Card.CardColor.BLUE, Card.CardValue.SKIP),
+		Card.new(Card.CardColor.BLUE, Card.CardValue.SKIP),
+		Card.new(Card.CardColor.BLUE, Card.CardValue.SKIP),
+		Card.new(Card.CardColor.BLUE, Card.CardValue.SKIP),
+		Card.new(Card.CardColor.GREEN, Card.CardValue.EIGHT)
+	]
+	
+	for i in range(dummy_discard.size()):
+		var card = card_ui_scene.instantiate()
+		discard_pile_node.add_child(card)
+		
+		card.set_interactable(false)
+		
+		card.set_card_data(dummy_discard[i])
+		card.set_face_up(true)
+		
+		var center_offset = -card.size / 2.0
+		
+		# Stökigheten! Slumpa fram en liten knuff och rotation
+		var randomness_translate = 5
+		var randomness_rotate = 7
+		var messy_offset = Vector2(randf_range(-randomness_translate, randomness_translate), randf_range(-randomness_translate, randomness_translate))
+		card.rotation_degrees = randf_range(-randomness_rotate, randomness_rotate)
+		
+		card.position = center_offset + messy_offset

@@ -6,6 +6,11 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ey4q1"]
 bg_color = Color(1, 1, 1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0.078431375)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -91,7 +96,7 @@ shadow_offset = Vector2(-0.09, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1uok3"]
 bg_color = Color(0.039215688, 0.039215688, 0.039215688, 1)
-border_color = Color(1, 1, 1, 1)
+border_color = Color(0, 0, 0, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
@@ -120,7 +125,7 @@ shadow_offset = Vector2(-3.5, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_2l2f6"]
 font = ExtResource("2_4yc6j")
-font_size = 10
+font_size = 8
 outline_color = Color(0, 0, 0, 1)
 shadow_size = 0
 shadow_color = Color(0, 0, 0, 1)
@@ -415,7 +420,6 @@ texture = ExtResource("3_ey4q1")
 expand_mode = 1
 
 [node name="CardBack" type="Panel" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -454,10 +458,10 @@ vertical_alignment = 1
 
 [node name="CenterTextWhite2" type="Label" parent="CardBack"]
 layout_mode = 0
-offset_left = -14.0
-offset_top = 194.0
-offset_right = 249.73898
-offset_bottom = 345.0
+offset_left = -45.0
+offset_top = 134.0
+offset_right = 218.73898
+offset_bottom = 285.0
 pivot_offset = Vector2(65, 75)
 text = "JohnNordstrand Gamez"
 label_settings = SubResource("LabelSettings_2l2f6")

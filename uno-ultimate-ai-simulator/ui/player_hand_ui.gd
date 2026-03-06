@@ -9,7 +9,7 @@ var default_separation: float = -60.0
 
 func _ready() -> void:
 	resized.connect(_adjust_card_spacing)
-	test_hand()
+	#test_hand()
 
 func update_hand(hand_cards: Array):
 	# 1. Rensa bort alla gamla visuella kort först

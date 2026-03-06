@@ -185,3 +185,12 @@ func _on_gui_input(event: InputEvent):
 	# Om händelsen är ett musklick, det är vänster knapp, och den trycks NER (inte släpps)
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		card_clicked.emit(my_card) # Skrik ut till världen vilket kort som klickades!
+
+# Slår av eller på möjligheten att interagera med kortet
+func set_interactable(is_active: bool):
+	if is_active:
+		# Låter musen passera igenom till skriptet (samma som vi ställde in i Editorn)
+		mouse_filter = Control.MOUSE_FILTER_PASS 
+	else:
+		# Kortet blir helt "genomskinligt" för musen
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
