@@ -257,24 +257,28 @@ func _on_card_drawn(player_index: int, _card: Card):
 
 func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardColor):
 	var hand_ui = player_uis[player_index]
-	var start_position = hand_ui.global_position
-	var start_rotation = hand_ui.rotation_degrees # NYTT: Hämta hur handen lutar!
+	var start_rotation = hand_ui.rotation_degrees
 	
-	var child_count = hand_ui.container.get_child_count()
-	if child_count > 0:
-		# FIX: Ta alltid det mittersta kortet i handen istället för kanten!
-		var middle_index = child_count / 2
-		var visual_card = hand_ui.container.get_child(middle_index)
-		
-		start_position = visual_card.get_global_transform() * (visual_card.size / 2.0)
+	var children = hand_ui.container.get_children()
+	var chosen_ui_card = null
+	
+	if children.size() > 0:
+		for ui_card in children:
+			if "card" in ui_card and ui_card.card != null:
+				if ui_card.card.color == card.color and ui_card.card.value == card.value:
+					chosen_ui_card = ui_card
+					break
+					
+		if chosen_ui_card == null:
+			chosen_ui_card = children[randi() % children.size()]
 
-	# Skicka med rotationen till vår spawn-funktion!
-	_spawn_discard_card(card, start_position, start_rotation)
+	# NYTT: Skicka in hela UI-noden istället för koordinaterna!
+	_spawn_discard_card(card, chosen_ui_card, start_rotation)
 	
 	update_all_visuals()
 
 # --- VISUELLA HJÄLPARE ---
-func _spawn_discard_card(card_data: Card, start_global_pos: Vector2 = Vector2.ZERO, start_rot: float = 0.0):
+func _spawn_discard_card(card_data: Card, source_ui_card: Control = null, start_rot: float = 0.0):
 	var visual_card = card_ui_scene.instantiate()
 	discard_pile_node.add_child(visual_card)
 	
@@ -282,7 +286,10 @@ func _spawn_discard_card(card_data: Card, start_global_pos: Vector2 = Vector2.ZE
 	visual_card.set_card_data(card_data)
 	visual_card.set_face_up(true)
 	
-	var center_offset = -visual_card.size / 2.0
+	# Vi sparar kortets "riktiga" storlek för att veta vad det ska landa som
+	var normal_size = visual_card.size
+	
+	var center_offset = -normal_size / 2.0
 	var randomness_translate = 5.0
 	var randomness_rotate = 7.0
 	var messy_offset = Vector2(randf_range(-randomness_translate, randomness_translate), randf_range(-randomness_translate, randomness_translate))
@@ -290,22 +297,33 @@ func _spawn_discard_card(card_data: Card, start_global_pos: Vector2 = Vector2.ZE
 	var final_position = center_offset + messy_offset
 	var final_rotation = randf_range(-randomness_rotate, randomness_rotate)
 	
-	# --- ANIMATIONEN ---
-	if start_global_pos != Vector2.ZERO:
-		visual_card.global_position = start_global_pos
+	if source_ui_card != null:
+		# --- DEN MATEMATISKA KLONEN ---
+		# 1. Klistra på exakt samma storlek som kortet har i handen (även om det är ihoptryckt)
+		visual_card.size = source_ui_card.size
 		
-		# NYTT: Kortet startar med exakt samma vinkel som spelarens hand!
-		visual_card.rotation_degrees = start_rot 
-		visual_card.scale = Vector2(1.2, 1.2)
+		# 2. Sätt pivot i mitten på den NYA, ihoptryckta storleken
+		visual_card.pivot_offset = visual_card.size / 2.0
 		
-		var tween = create_tween().set_parallel(true) 
-		tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT) 
+		# 3. Räkna ut den absolut exakta globala mittpunkten
+		var exact_center = source_ui_card.get_global_transform() * (source_ui_card.size / 2.0)
+		
+		# 4. Placera klonen pixelperfekt!
+		visual_card.global_position = exact_center - visual_card.pivot_offset
+		visual_card.rotation_degrees = start_rot
+		
+		var tween = create_tween().set_parallel(true)
+		tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		
 		tween.tween_property(visual_card, "position", final_position, 0.4)
-		# NYTT: Kortet snurrar nu mjukt i luften från start_rot till final_rotation!
 		tween.tween_property(visual_card, "rotation_degrees", final_rotation, 0.4)
-		tween.tween_property(visual_card, "scale", Vector2(1.0, 1.0), 0.4)
+		
+		# MAGIN: Animationen låter kortet svälla tillbaka till normal storlek medan det flyger!
+		tween.tween_property(visual_card, "size", normal_size, 0.4)
+		# Eftersom storleken ändras, måste gångjärnet flytta med så det inte snurrar snett!
+		tween.tween_property(visual_card, "pivot_offset", normal_size / 2.0, 0.4)
 	else:
+		visual_card.pivot_offset = normal_size / 2.0
 		visual_card.position = final_position
 		visual_card.rotation_degrees = final_rotation
 
