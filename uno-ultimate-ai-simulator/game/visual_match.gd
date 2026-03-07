@@ -197,8 +197,43 @@ func update_all_visuals():
 
 
 # --- SIGNAL MOTTAGARE ---
-func _on_card_drawn(_player_index: int, _card: Card):
-	# Uppdatera bara händerna när någon drar ett kort
+func _on_card_drawn(player_index: int, _card: Card):
+	_update_draw_pile_visual()
+	
+	var flying_card = card_ui_scene.instantiate()
+	add_child(flying_card) 
+	
+	flying_card.set_interactable(false)
+	flying_card.set_face_up(false) 
+	
+	# --- FIXEN: Sätt gångjärnet i mitten av kortet! ---
+	flying_card.pivot_offset = flying_card.size / 2.0
+	
+	# Startposition
+	# Eftersom vi tidigare byggde draw_pile_node som spelets exakta mittpunkt, 
+	# behöver vi bara dra bort halva kortets storlek för att centrera det över högen.
+	var start_pos = draw_pile_node.global_position - (flying_card.size / 2.0)
+	flying_card.position = start_pos	
+	# Målposition
+	var target_hand = player_uis[player_index]
+	var target_rot = target_hand.rotation_degrees
+	
+	# Räkna ut den globala mittpunkten för spelarens hand
+	var target_center = target_hand.get_global_transform() * (target_hand.size / 2.0)
+	
+	# Mål-positionen (övre vänstra hörnet) blir handens mittpunkt minus halva kortet
+	var target_pos = target_center - (flying_card.size / 2.0)
+	
+	# ANIMATIONEN
+	var tween = create_tween().set_parallel(true)
+	tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	
+	tween.tween_property(flying_card, "position", target_pos, 0.4)	
+	tween.tween_property(flying_card, "rotation_degrees", target_rot, 0.4)
+	
+	await tween.finished
+	
+	flying_card.queue_free()
 	update_all_visuals()
 
 func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardColor):
