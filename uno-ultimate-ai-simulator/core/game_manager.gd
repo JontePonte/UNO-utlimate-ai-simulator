@@ -70,38 +70,50 @@ func process_turn():
 	var player = state.players[state.current_player_index]
 	var player_view = create_player_view(state.current_player_index)
 	
-	turn_started.emit(state.current_player_index) 
+	# Vid allra första draget i matchen (tur 0) måste vi tända startspelaren
+	if state.turn_number == 0:
+		turn_started.emit(state.current_player_index)
 	
+	# 1. AI:n tänker och bestämmer sig
 	var action: PlayerAction = await player.take_turn(player_view)
 	
+	# 2. AI:n spelar sitt kort (Animationen startar!)
 	if action != null and action.card != null:
 		play_card(state.current_player_index, action.card, action.declared_color)
 	else:
-		# 1. Spelaren kunde inte lägga. Vi drar ETT kort.
 		draw_cards(state.current_player_index, 1)
-		
-		# 2. Pausa lite extra så vi åskådare hinner se att ett kort drogs!
 		if visual_mode:
-			await get_tree().create_timer(turn_delay / 2.0).timeout
+			await get_tree().create_timer(0.4).timeout
 			
-		# 3. Kika på det nyss dragna kortet (som hamnade sist i handen)
 		var drawn_card = player.hand[-1]
 		var top_card = state.discard_pile[-1]
 		
-		# 4. Använd kortets egen inbyggda regel-koll!
 		if drawn_card.is_playable_on(top_card, state.current_color):
-			
 			var declared_color = drawn_card.color
 			if declared_color == Card.CardColor.WILD:
-				# Slumpa en färg om AI:n precis drog ett Wild-kort
 				var colors = [Card.CardColor.RED, Card.CardColor.BLUE, Card.CardColor.GREEN, Card.CardColor.YELLOW]
 				declared_color = colors.pick_random()
 				
-			# Spela det nyss dragna kortet direkt!
 			play_card(state.current_player_index, drawn_card, declared_color)
 	
+	# 3. PYTTEPAUS: Vi ger kortet ynka 0.1 sekunder att lämna handen...
+	if visual_mode:
+		await get_tree().create_timer(0.1).timeout
+		
+	# 4. Räkna ut vem som är nästa spelare DIREKT
 	await next_player()
 	state.turn_number += 1
+	
+	# 5. SKICKA SIGNALEN NU! 
+	# Pilen uppstår och pekar på nästa spelare (samt skip-symbolen tänds)
+	# exakt samtidigt som kortet flyger genom luften!
+	turn_started.emit(state.current_player_index)
+	
+	# 6. NU pausar vi GameManager! 
+	# Kortet landar i lugn och ro, och vi åskådare ser tydligt vems tur det
+	# har blivit, innan loopen snurrar vidare och den nya spelaren agerar.
+	if visual_mode:
+		await get_tree().create_timer(turn_delay).timeout
 
 func next_player():
 	# Om ett SKIP-kort spelades, hoppar vi ett extra steg
@@ -112,11 +124,6 @@ func next_player():
 		
 	var num_players = state.players.size()
 	state.current_player_index = (state.current_player_index + (state.play_direction * steps) + num_players) % num_players
-
-	# Om vi kör en visuell match, ta en liten paus så åskådarna hinner med!
-	if visual_mode:
-		await get_tree().create_timer(turn_delay).timeout
-
 
 # Run a full game between players for testing
 func run_full_game(max_turns: int = 100):
