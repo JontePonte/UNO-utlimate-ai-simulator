@@ -22,6 +22,7 @@ const UNO_COLORS = {
 }
 
 var last_player_index: int = -1
+var _active_draws: int = 0
 
 # --- SPELETS LOGIK ---
 var game_manager: GameManager
@@ -198,6 +199,9 @@ func update_all_visuals():
 
 # --- SIGNAL MOTTAGARE ---
 func _on_card_drawn(player_index: int, _card: Card):
+	var delay_time = _active_draws * 0.25 
+	_active_draws += 1 
+	
 	_update_draw_pile_visual()
 	
 	var flying_card = card_ui_scene.instantiate()
@@ -205,44 +209,51 @@ func _on_card_drawn(player_index: int, _card: Card):
 	
 	flying_card.set_interactable(false)
 	flying_card.set_face_up(false) 
-	
-	# --- FIXEN: Sätt gångjärnet i mitten av kortet! ---
 	flying_card.pivot_offset = flying_card.size / 2.0
 	
-	# Startposition
-	# Eftersom vi tidigare byggde draw_pile_node som spelets exakta mittpunkt, 
-	# behöver vi bara dra bort halva kortets storlek för att centrera det över högen.
 	var start_pos = draw_pile_node.global_position - (flying_card.size / 2.0)
-	flying_card.position = start_pos	
-	# Målposition
+	flying_card.position = start_pos
+	
 	var target_hand = player_uis[player_index]
 	var target_rot = target_hand.rotation_degrees
+	
 	var target_center = target_hand.get_global_transform() * (target_hand.size / 2.0)
 	
 	var child_count = target_hand.container.get_child_count()
 	if child_count > 0:
-		# --- FIXEN: Ta kortet längst ut till höger (sista kortet i listan) ---
 		var rightmost_card = target_hand.container.get_child(child_count - 1)
+		var current_center = rightmost_card.get_global_transform() * (rightmost_card.size / 2.0)
 		
-		# Räkna ut mittpunkten på just det kortet
-		target_center = rightmost_card.get_global_transform() * (rightmost_card.size / 2.0)
-	
-	# Vi behåller minus halva storleken för att centrera dummy-kortet perfekt över det
+		# --- DEN MAGISKA FIXEN ---
+		# Hitta handens "höger" oavsett om den är roterad 0, 90 eller 180 grader.
+		var right_direction = target_hand.get_global_transform().x.normalized()		
+		# Flytta måltavlan ett halvt kort till höger så den träffar "hålet" 
+		# där det NYA kortet håller på att skapas!
+		target_center = current_center + (right_direction * (flying_card.size.x / 2.0))
+		
 	var target_pos = target_center - (flying_card.size / 2.0)
 	
-	# ANIMATIONEN
-	var tween = create_tween().set_parallel(true)
-	tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	# ... (Härifrån och ner är koden exakt samma som förut, med hide, tween och flex) ...
+	if delay_time > 0:
+		flying_card.hide()
+		
+	var tween = create_tween()
 	
-	tween.tween_property(flying_card, "position", target_pos, 0.4)	
-	tween.tween_property(flying_card, "rotation_degrees", target_rot, 0.4)
+	if delay_time > 0:
+		tween.tween_interval(delay_time)
+		tween.tween_callback(flying_card.show)
+	
+	tween.tween_property(flying_card, "position", target_pos, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(flying_card, "rotation_degrees", target_rot, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	
 	await tween.finished
-	
 	flying_card.queue_free()
-	update_all_visuals()
-	# Få handen att reagera fysiskt på att det nya kortet landade! ---
-	target_hand.play_flex_animation()
+	
+	_active_draws -= 1
+	
+	if _active_draws == 0:
+		update_all_visuals()
+		target_hand.play_flex_animation()
 
 func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardColor):
 	var hand_ui = player_uis[player_index]
