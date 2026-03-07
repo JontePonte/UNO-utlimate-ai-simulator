@@ -217,11 +217,17 @@ func _on_card_drawn(player_index: int, _card: Card):
 	# Målposition
 	var target_hand = player_uis[player_index]
 	var target_rot = target_hand.rotation_degrees
-	
-	# Räkna ut den globala mittpunkten för spelarens hand
 	var target_center = target_hand.get_global_transform() * (target_hand.size / 2.0)
 	
-	# Mål-positionen (övre vänstra hörnet) blir handens mittpunkt minus halva kortet
+	var child_count = target_hand.container.get_child_count()
+	if child_count > 0:
+		# --- FIXEN: Ta kortet längst ut till höger (sista kortet i listan) ---
+		var rightmost_card = target_hand.container.get_child(child_count - 1)
+		
+		# Räkna ut mittpunkten på just det kortet
+		target_center = rightmost_card.get_global_transform() * (rightmost_card.size / 2.0)
+	
+	# Vi behåller minus halva storleken för att centrera dummy-kortet perfekt över det
 	var target_pos = target_center - (flying_card.size / 2.0)
 	
 	# ANIMATIONEN
@@ -235,6 +241,8 @@ func _on_card_drawn(player_index: int, _card: Card):
 	
 	flying_card.queue_free()
 	update_all_visuals()
+	# Få handen att reagera fysiskt på att det nya kortet landade! ---
+	target_hand.play_flex_animation()
 
 func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardColor):
 	var hand_ui = player_uis[player_index]

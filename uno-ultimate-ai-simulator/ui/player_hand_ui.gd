@@ -9,6 +9,7 @@ extends Control
 var default_separation: float = -60.0 
 
 func _ready() -> void:
+	pivot_offset = size / 2.0
 	resized.connect(_adjust_card_spacing)
 	#test_hand()
 	if skip_symbol:
@@ -61,6 +62,15 @@ func _adjust_card_spacing():
 	# Tryck in det nya värdet i HBoxContainern!
 	container.add_theme_constant_override("separation", final_separation)
 
+func play_flex_animation():
+	# Avbryt eventuella tidigare flex-animationer så de inte krockar
+	var tween = create_tween()
+	
+	# 1. Stretcha ut handen lite snabbt (t.ex. 10% större) på 0.1 sekunder
+	tween.tween_property(self, "scale", Vector2(1.1, 1.1), 0.1).set_trans(Tween.TRANS_SINE)
+	
+	# 2. Dra ihop den mjukt och fjädrande tillbaka till normal storlek (1.0)
+	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 # --- BARA FÖR TEST ---
 func test_hand():
