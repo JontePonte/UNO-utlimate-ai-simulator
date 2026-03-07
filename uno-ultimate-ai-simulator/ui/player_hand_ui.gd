@@ -78,7 +78,7 @@ func set_active(is_active: bool):
 		tween.tween_property(self, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.3)
 	else:
 		# Gör de inaktiva spelarna lite mörkare
-		tween.tween_property(self, "modulate", Color(0.5, 0.5, 0.5, 1.0), 0.3)
+		tween.tween_property(self, "modulate", Color(0.8, 0.8, 0.8, 1.0), 0.3)
 
 func show_skip_animation(active_color: Color):
 	skip_symbol.modulate = active_color

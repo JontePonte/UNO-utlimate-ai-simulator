@@ -201,16 +201,17 @@ func _on_card_drawn(_player_index: int, _card: Card):
 	# Uppdatera bara händerna när någon drar ett kort
 	update_all_visuals()
 
-func _on_card_played(_player_index: int, card: Card, _declared_color: Card.CardColor):
-	# 1. Släng kortet i mitten med vår snygga "stökiga" effekt
-	_spawn_discard_card(card)
+func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardColor):
+	# Hämta den globala mittpunkten för spelarens hand
+	var start_position = player_uis[player_index].global_position
 	
-	# 2. Uppdatera händerna (så kortet försvinner från spelarens hand)
+	# Skicka med startpositionen till vår spawn-funktion!
+	_spawn_discard_card(card, start_position)
+	
 	update_all_visuals()
 
-
 # --- VISUELLA HJÄLPARE ---
-func _spawn_discard_card(card_data: Card):
+func _spawn_discard_card(card_data: Card, start_global_pos: Vector2 = Vector2.ZERO):
 	var visual_card = card_ui_scene.instantiate()
 	discard_pile_node.add_child(visual_card)
 	
@@ -218,15 +219,35 @@ func _spawn_discard_card(card_data: Card):
 	visual_card.set_card_data(card_data)
 	visual_card.set_face_up(true)
 	
+	# Räkna ut var kortet ska hamna i mitten (vår stökiga hög)
 	var center_offset = -visual_card.size / 2.0
-	
-	# Stökigheten! Slumpa fram en liten knuff och rotation
 	var randomness_translate = 5.0
 	var randomness_rotate = 7.0
 	var messy_offset = Vector2(randf_range(-randomness_translate, randomness_translate), randf_range(-randomness_translate, randomness_translate))
-	visual_card.rotation_degrees = randf_range(-randomness_rotate, randomness_rotate)
+	var final_position = center_offset + messy_offset
+	var final_rotation = randf_range(-randomness_rotate, randomness_rotate)
 	
-	visual_card.position = center_offset + messy_offset
+	# --- ANIMATIONEN ---
+	if start_global_pos != Vector2.ZERO:
+		# 1. Starta kortet vid spelarens hand
+		visual_card.global_position = start_global_pos
+		visual_card.rotation_degrees = 0
+		
+		# (Frivillig juice: Låt kortet starta lite större och krympa på vägen!)
+		visual_card.scale = Vector2(1.2, 1.2)
+		
+		# 2. Skapa en Tween som flyttar kortet över 0.4 sekunder
+		var tween = create_tween().set_parallel(true) # Parallel gör att pos, rot och scale animeras samtidigt
+		# Sätt en mjuk "inbromsning" på animationen
+		tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT) 
+		
+		tween.tween_property(visual_card, "position", final_position, 0.4)
+		tween.tween_property(visual_card, "rotation_degrees", final_rotation, 0.4)
+		tween.tween_property(visual_card, "scale", Vector2(1.0, 1.0), 0.4)
+	else:
+		# Om vi inte skickade med en startposition (t.ex. vid spelets start), lägg det direkt
+		visual_card.position = final_position
+		visual_card.rotation_degrees = final_rotation
 
 func _update_draw_pile_visual():
 	# 1. Rensa bort den gamla grafiska högen
