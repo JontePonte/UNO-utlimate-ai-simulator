@@ -54,6 +54,15 @@ func start_discard_pile():
 		card = state.draw_pile.draw()
 
 	state.discard_pile.append(card)
+	
+	if card.color == Card.CardColor.WILD:
+		# Om första kortet är ett vanligt Wild-kort, säger officiella UNO-regler 
+		# att första spelaren får bestämma färg, men för AI:ns skull kan vi 
+		# bara slumpa en färg som gäller från start!
+		var colors = [Card.CardColor.RED, Card.CardColor.BLUE, Card.CardColor.GREEN, Card.CardColor.YELLOW]
+		state.current_color = colors.pick_random()
+	else:
+		state.current_color = card.color
 
 
 # --- TURN MANAGEMENT ---
