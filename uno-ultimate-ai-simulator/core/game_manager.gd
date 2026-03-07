@@ -70,17 +70,35 @@ func process_turn():
 	var player = state.players[state.current_player_index]
 	var player_view = create_player_view(state.current_player_index)
 	
-	turn_started.emit(state.current_player_index) # Meddela UI vems tur det är!
+	turn_started.emit(state.current_player_index) 
 	
-	# PAUSA HÄR: Vi väntar på att spelaren (oavsett om det är AI eller Människa) gör sitt drag
 	var action: PlayerAction = await player.take_turn(player_view)
 	
-	# Kolla om paketet innehåller ett kort att spela
 	if action != null and action.card != null:
 		play_card(state.current_player_index, action.card, action.declared_color)
 	else:
-		# Om card är null betyder det att vi måste dra ett kort
+		# 1. Spelaren kunde inte lägga. Vi drar ETT kort.
 		draw_cards(state.current_player_index, 1)
+		
+		# 2. Pausa lite extra så vi åskådare hinner se att ett kort drogs!
+		if visual_mode:
+			await get_tree().create_timer(turn_delay / 2.0).timeout
+			
+		# 3. Kika på det nyss dragna kortet (som hamnade sist i handen)
+		var drawn_card = player.hand[-1]
+		var top_card = state.discard_pile[-1]
+		
+		# 4. Använd kortets egen inbyggda regel-koll!
+		if drawn_card.is_playable_on(top_card, state.current_color):
+			
+			var declared_color = drawn_card.color
+			if declared_color == Card.CardColor.WILD:
+				# Slumpa en färg om AI:n precis drog ett Wild-kort
+				var colors = [Card.CardColor.RED, Card.CardColor.BLUE, Card.CardColor.GREEN, Card.CardColor.YELLOW]
+				declared_color = colors.pick_random()
+				
+			# Spela det nyss dragna kortet direkt!
+			play_card(state.current_player_index, drawn_card, declared_color)
 	
 	await next_player()
 	state.turn_number += 1
