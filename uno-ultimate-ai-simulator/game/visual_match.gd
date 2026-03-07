@@ -202,16 +202,25 @@ func _on_card_drawn(_player_index: int, _card: Card):
 	update_all_visuals()
 
 func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardColor):
-	# Hämta den globala mittpunkten för spelarens hand
-	var start_position = player_uis[player_index].global_position
+	var hand_ui = player_uis[player_index]
+	var start_position = hand_ui.global_position
+	var start_rotation = hand_ui.rotation_degrees # NYTT: Hämta hur handen lutar!
 	
-	# Skicka med startpositionen till vår spawn-funktion!
-	_spawn_discard_card(card, start_position)
+	var child_count = hand_ui.container.get_child_count()
+	if child_count > 0:
+		# FIX: Ta alltid det mittersta kortet i handen istället för kanten!
+		var middle_index = child_count / 2
+		var visual_card = hand_ui.container.get_child(middle_index)
+		
+		start_position = visual_card.get_global_transform() * (visual_card.size / 2.0)
+
+	# Skicka med rotationen till vår spawn-funktion!
+	_spawn_discard_card(card, start_position, start_rotation)
 	
 	update_all_visuals()
 
 # --- VISUELLA HJÄLPARE ---
-func _spawn_discard_card(card_data: Card, start_global_pos: Vector2 = Vector2.ZERO):
+func _spawn_discard_card(card_data: Card, start_global_pos: Vector2 = Vector2.ZERO, start_rot: float = 0.0):
 	var visual_card = card_ui_scene.instantiate()
 	discard_pile_node.add_child(visual_card)
 	
@@ -219,33 +228,30 @@ func _spawn_discard_card(card_data: Card, start_global_pos: Vector2 = Vector2.ZE
 	visual_card.set_card_data(card_data)
 	visual_card.set_face_up(true)
 	
-	# Räkna ut var kortet ska hamna i mitten (vår stökiga hög)
 	var center_offset = -visual_card.size / 2.0
 	var randomness_translate = 5.0
 	var randomness_rotate = 7.0
 	var messy_offset = Vector2(randf_range(-randomness_translate, randomness_translate), randf_range(-randomness_translate, randomness_translate))
+	
 	var final_position = center_offset + messy_offset
 	var final_rotation = randf_range(-randomness_rotate, randomness_rotate)
 	
 	# --- ANIMATIONEN ---
 	if start_global_pos != Vector2.ZERO:
-		# 1. Starta kortet vid spelarens hand
 		visual_card.global_position = start_global_pos
-		visual_card.rotation_degrees = 0
 		
-		# (Frivillig juice: Låt kortet starta lite större och krympa på vägen!)
+		# NYTT: Kortet startar med exakt samma vinkel som spelarens hand!
+		visual_card.rotation_degrees = start_rot 
 		visual_card.scale = Vector2(1.2, 1.2)
 		
-		# 2. Skapa en Tween som flyttar kortet över 0.4 sekunder
-		var tween = create_tween().set_parallel(true) # Parallel gör att pos, rot och scale animeras samtidigt
-		# Sätt en mjuk "inbromsning" på animationen
+		var tween = create_tween().set_parallel(true) 
 		tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT) 
 		
 		tween.tween_property(visual_card, "position", final_position, 0.4)
+		# NYTT: Kortet snurrar nu mjukt i luften från start_rot till final_rotation!
 		tween.tween_property(visual_card, "rotation_degrees", final_rotation, 0.4)
 		tween.tween_property(visual_card, "scale", Vector2(1.0, 1.0), 0.4)
 	else:
-		# Om vi inte skickade med en startposition (t.ex. vid spelets start), lägg det direkt
 		visual_card.position = final_position
 		visual_card.rotation_degrees = final_rotation
 
