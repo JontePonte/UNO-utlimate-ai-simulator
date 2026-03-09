@@ -1,5 +1,7 @@
 class_name Card
 
+signal clicked(card_node)
+
 enum CardColor {
 	RED,
 	GREEN,
@@ -53,3 +55,8 @@ func is_playable_on(top_card: Card, active_color: Card.CardColor) -> bool:
 
 func card_to_string() -> String:
 	return str(CardColor.keys()[color]) + " " + str(CardValue.keys()[value])
+
+func _on_gui_input(event):
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			clicked.emit(self)

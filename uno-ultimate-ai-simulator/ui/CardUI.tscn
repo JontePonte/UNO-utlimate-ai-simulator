@@ -141,7 +141,6 @@ offset_right = -1760.0
 offset_bottom = -840.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
 script = ExtResource("1_5b3sr")
 
 [node name="Base" type="Panel" parent="." unique_id=1340518728]

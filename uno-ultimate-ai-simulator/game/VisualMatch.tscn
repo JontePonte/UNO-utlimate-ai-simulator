@@ -248,13 +248,13 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.78431374)
 script = ExtResource("6_y1ric")
 
-[node name="WinnerLabel" type="Label" parent="PauseOverlay" unique_id=1128328372]
+[node name="PauseLabel" type="Label" parent="PauseOverlay" unique_id=1128328372]
 layout_mode = 0
 offset_left = 346.0
 offset_top = 75.0
 offset_right = 1598.0
 offset_bottom = 460.0
-text = "Game Paused"
+text = "Pause Menu"
 label_settings = SubResource("LabelSettings_etxm3")
 horizontal_alignment = 1
 vertical_alignment = 1
