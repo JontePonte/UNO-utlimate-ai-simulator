@@ -67,6 +67,10 @@ func start_discard_pile():
 
 # --- TURN MANAGEMENT ---
 func process_turn():
+	# Wait if game is paused
+	while get_tree().paused:
+		await get_tree().process_frame
+	
 	var player = state.players[state.current_player_index]
 	var player_view = create_player_view(state.current_player_index)
 	
@@ -83,7 +87,7 @@ func process_turn():
 	else:
 		draw_cards(state.current_player_index, 1)
 		if visual_mode:
-			await get_tree().create_timer(0.4).timeout
+			await get_tree().create_timer(0.4, false).timeout
 			
 		var drawn_card = player.hand[-1]
 		var top_card = state.discard_pile[-1]
@@ -98,7 +102,7 @@ func process_turn():
 	
 	# 3. PYTTEPAUS: Vi ger kortet ynka 0.1 sekunder att lämna handen...
 	if visual_mode:
-		await get_tree().create_timer(0.1).timeout
+		await get_tree().create_timer(0.1, false).timeout
 		
 	# 4. Räkna ut vem som är nästa spelare DIREKT
 	await next_player()
@@ -113,7 +117,7 @@ func process_turn():
 	# Kortet landar i lugn och ro, och vi åskådare ser tydligt vems tur det
 	# har blivit, innan loopen snurrar vidare och den nya spelaren agerar.
 	if visual_mode:
-		await get_tree().create_timer(turn_delay).timeout
+		await get_tree().create_timer(turn_delay, false).timeout
 
 func next_player():
 	# Om ett SKIP-kort spelades, hoppar vi ett extra steg
