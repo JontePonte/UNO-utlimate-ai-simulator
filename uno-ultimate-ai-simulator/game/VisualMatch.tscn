@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://d1k0fup1h3448" path="res://game/visual_match.gd" id="1_s5ib6"]
 [ext_resource type="PackedScene" uid="uid://ukfpjno5na0i" path="res://ui/CardUI.tscn" id="2_x83vr"]
 [ext_resource type="Texture2D" uid="uid://c8lva1kt21l64" path="res://ui/white-arrow.png" id="4_ym86b"]
-[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="5_etxm3"]
+[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="5_etxm3"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_y1ric"]
 font = ExtResource("5_etxm3")
@@ -14,6 +14,15 @@ outline_size = 1
 outline_color = Color(0, 0, 0, 1)
 shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(2, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_etxm3"]
+font = ExtResource("5_etxm3")
+font_size = 130
+outline_size = 20
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 20
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(-2.5, 1)
 
 [node name="VisualMatch" type="Control" unique_id=637252721]
 layout_mode = 3
@@ -153,3 +162,72 @@ text = "Player: Right"
 label_settings = SubResource("LabelSettings_y1ric")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="GameOverOverlay" type="ColorRect" parent="." unique_id=1844327304]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.78431374)
+
+[node name="Label" type="Label" parent="GameOverOverlay" unique_id=1305888887]
+layout_mode = 0
+offset_left = 346.0
+offset_top = 21.0
+offset_right = 1598.0
+offset_bottom = 406.0
+text = "The Winner is: 
+John!"
+label_settings = SubResource("LabelSettings_etxm3")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameOverOverlay" unique_id=9700546]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -234.5
+offset_top = -62.0
+offset_right = 234.5
+offset_bottom = 415.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 13
+
+[node name="PlayAgain" type="Button" parent="GameOverOverlay/VBoxContainer" unique_id=636668052]
+layout_mode = 2
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("5_etxm3")
+theme_override_font_sizes/font_size = 55
+text = "Play Again"
+flat = true
+
+[node name="BackToArena" type="Button" parent="GameOverOverlay/VBoxContainer" unique_id=1211056100]
+layout_mode = 2
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("5_etxm3")
+theme_override_font_sizes/font_size = 55
+text = "Back to Arena"
+flat = true
+
+[node name="MainMenu" type="Button" parent="GameOverOverlay/VBoxContainer" unique_id=237425315]
+layout_mode = 2
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("5_etxm3")
+theme_override_font_sizes/font_size = 55
+text = "Main Menu"
+flat = true
+
+[node name="ExitGame" type="Button" parent="GameOverOverlay/VBoxContainer" unique_id=948537723]
+layout_mode = 2
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("5_etxm3")
+theme_override_font_sizes/font_size = 55
+text = "ExitGame"
+flat = true
