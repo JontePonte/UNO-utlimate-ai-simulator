@@ -65,6 +65,7 @@ offset_left = -120.0
 offset_right = -120.0
 
 [node name="DrawPile" type="Control" parent="Table" unique_id=318494244]
+custom_minimum_size = Vector2(100, 140)
 anchors_preset = 0
 offset_left = 120.0
 offset_right = 120.0
@@ -305,3 +306,5 @@ theme_override_fonts/font = ExtResource("5_etxm3")
 theme_override_font_sizes/font_size = 55
 text = "ExitGame"
 flat = true
+
+[connection signal="gui_input" from="Table/DrawPile" to="." method="_on_draw_pile_gui_input"]

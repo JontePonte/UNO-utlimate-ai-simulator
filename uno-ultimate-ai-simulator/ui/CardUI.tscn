@@ -194,7 +194,7 @@ grow_horizontal = 2
 grow_vertical = 2
 rotation = 0.5235988
 pivot_offset = Vector2(60, 80)
-mouse_filter = 1
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4yc6j")
 
 [node name="GridContainer" type="GridContainer" parent="Base/InnerColor/WildIcon" unique_id=1401259637]
@@ -204,6 +204,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/h_separation = 0
 theme_override_constants/v_separation = 0
 columns = 2
@@ -212,24 +213,28 @@ columns = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_mioc4")
 
 [node name="Panel2" type="Panel" parent="Base/InnerColor/WildIcon/GridContainer" unique_id=1712704574]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_b8pxk")
 
 [node name="Panel3" type="Panel" parent="Base/InnerColor/WildIcon/GridContainer" unique_id=1973368146]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_fem6l")
 
 [node name="Panel4" type="Panel" parent="Base/InnerColor/WildIcon/GridContainer" unique_id=405494071]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_04ul4")
 
 [node name="CenterText" type="Label" parent="Base/InnerColor" unique_id=1109898987]
@@ -239,7 +244,6 @@ offset_top = 54.4
 offset_right = 120.8
 offset_bottom = 175.4
 pivot_offset = Vector2(52, 60)
-mouse_filter = 1
 text = "1"
 label_settings = SubResource("LabelSettings_mioc4")
 horizontal_alignment = 1
@@ -262,7 +266,6 @@ offset_left = -3.0
 offset_top = -5.0
 offset_right = 48.0
 offset_bottom = 56.0
-mouse_filter = 1
 text = "1"
 label_settings = SubResource("LabelSettings_b8pxk")
 horizontal_alignment = 1
@@ -285,7 +288,6 @@ offset_top = 221.0
 offset_right = 189.48196
 offset_bottom = 270.0
 rotation = 3.1415927
-mouse_filter = 1
 text = "1"
 label_settings = SubResource("LabelSettings_b8pxk")
 horizontal_alignment = 1
@@ -430,6 +432,7 @@ offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(100, 150)
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_1uok3")
 
 [node name="InnerRing" type="Panel" parent="CardBack" unique_id=1755905628]
@@ -440,6 +443,7 @@ offset_right = 134.0
 offset_bottom = 200.0
 rotation = 0.5235988
 pivot_offset = Vector2(60, 80)
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_2l2f6")
 
 [node name="CenterTextWhite" type="Label" parent="CardBack" unique_id=407528598]

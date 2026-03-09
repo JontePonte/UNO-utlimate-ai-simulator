@@ -82,23 +82,19 @@ func process_turn():
 	var action: PlayerAction = null
 	
 	if player.is_human:
-		# 1. Hitta huvudscenen för att kunna prata med UI:t
-		var visual_match = get_tree().current_scene
-		
-		# 2. Lås upp klick-funktionen i VisualMatch
+		var visual_match = get_parent()
 		visual_match.human_can_play = true
-		print("Din tur! Väntar på ditt klick...")
 		
-		# 3. STOPPA ALLT: Vänta här tills människan klickar på ett giltigt kort
-		var selected_card = await visual_match.human_card_selected
+		# Vänta på att du antingen väljer ett kort eller klickar på högen
+		var result = await any_signal([visual_match.human_card_selected, visual_match.human_draw_requested])
 		
-		# 4. Skapa ett action-objekt baserat på ditt val
-		action = PlayerAction.new()
-		action.card = selected_card
-		
-		# Om det är ett Wild-kort väljer vi rött som standard tills vidare
-		if selected_card.color == Card.CardColor.WILD:
-			action.declared_color = Card.CardColor.RED
+		if result is Card:
+			action = PlayerAction.new()
+			action.card = result
+			#print("DEBUG: Människan spelade kortet: ", result.value)
+		else:
+			action = null # Betyder 'dra kort'
+			#print("DEBUG: Människan valde att dra kort")
 	else:
 		# AI:n tänker och bestämmer sig precis som förut
 		action = await player.take_turn(player_view)
@@ -279,3 +275,13 @@ func create_player_view(player_index: int) -> PlayerView:
 		state.turn_number,
 		state.move_history.duplicate()
 	)
+
+func any_signal(signals: Array):
+	var signal_received = [null]
+	for s in signals:
+		s.connect(func(arg = null): signal_received[0] = arg if arg != null else true, CONNECT_ONE_SHOT)
+	
+	while signal_received[0] == null:
+		await get_tree().process_frame
+	
+	return signal_received[0]

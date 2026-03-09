@@ -30,6 +30,8 @@ extends Control
 @onready var pause_main_menu_button = $PauseOverlay/VBoxContainer/MainMenu
 @onready var pause_exit_button = $PauseOverlay/VBoxContainer/ExitGame
 
+signal human_draw_requested
+
 var name_labels: Array[Label] = []
 
 # En ordbok som översätter spelets färger till riktiga färgkoder!
@@ -583,6 +585,7 @@ var human_can_play: bool = false
 signal human_card_selected(card_data: Card)
 
 func _on_card_ui_clicked(card_node: Control):
+	#print("DEBUG: Klickade på ett kort. human_can_play är: ", human_can_play)
 	if not human_can_play:
 		print("Inte din tur än!")
 		return
@@ -598,6 +601,13 @@ func _on_card_ui_clicked(card_node: Control):
 			human_card_selected.emit(clicked_card)
 		else:
 			print("Ogiltigt drag!")
+
+func _on_draw_pile_gui_input(event):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		print("DEBUG: Klickade på plockhögen. human_can_play är: ", human_can_play)
+		if human_can_play:
+			human_can_play = false
+			human_draw_requested.emit()
 
 func _on_game_ended(winner_index: int):
 	var winner_name = game_manager.state.players[winner_index].name
