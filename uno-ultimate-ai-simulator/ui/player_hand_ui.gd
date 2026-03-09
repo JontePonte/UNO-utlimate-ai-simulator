@@ -28,6 +28,7 @@ func update_hand(hand_cards: Array):
 		visual_card.set_card_data(card)
 		visual_card.set_face_up(true)
 		visual_card.set_meta("logical_card", card)
+		visual_card.card_clicked.connect(get_tree().current_scene._on_card_ui_clicked)
 		
 	# 3. Kalla på vår nya beräkning, men vänta en "frame" så Godot 
 	# hinner rita upp korten och vi vet deras faktiska bredd!

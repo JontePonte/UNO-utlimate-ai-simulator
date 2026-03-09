@@ -67,7 +67,7 @@ func start_discard_pile():
 
 # --- TURN MANAGEMENT ---
 func process_turn():
-	# Wait if game is paused
+	# Vänta om spelet är pausat
 	while get_tree().paused:
 		await get_tree().process_frame
 	
@@ -78,13 +78,37 @@ func process_turn():
 	if state.turn_number == 0:
 		turn_started.emit(state.current_player_index)
 	
-	# 1. AI:n tänker och bestämmer sig
-	var action: PlayerAction = await player.take_turn(player_view)
+	# --- STEG 1: HÄMTA DRAGET (Människa eller AI) ---
+	var action: PlayerAction = null
 	
-	# 2. AI:n spelar sitt kort (Animationen startar!)
+	if player.is_human:
+		# 1. Hitta huvudscenen för att kunna prata med UI:t
+		var visual_match = get_tree().current_scene
+		
+		# 2. Lås upp klick-funktionen i VisualMatch
+		visual_match.human_can_play = true
+		print("Din tur! Väntar på ditt klick...")
+		
+		# 3. STOPPA ALLT: Vänta här tills människan klickar på ett giltigt kort
+		var selected_card = await visual_match.human_card_selected
+		
+		# 4. Skapa ett action-objekt baserat på ditt val
+		action = PlayerAction.new()
+		action.card = selected_card
+		
+		# Om det är ett Wild-kort väljer vi rött som standard tills vidare
+		if selected_card.color == Card.CardColor.WILD:
+			action.declared_color = Card.CardColor.RED
+	else:
+		# AI:n tänker och bestämmer sig precis som förut
+		action = await player.take_turn(player_view)
+	
+	# --- STEG 2: UTFÖR DRAGET (Samma logik för båda) ---
 	if action != null and action.card != null:
 		play_card(state.current_player_index, action.card, action.declared_color)
 	else:
+		# Här hamnar vi om det är en AI som inte har kort, 
+		# eller om vi senare lägger till en "Dra kort"-knapp för människan.
 		draw_cards(state.current_player_index, 1)
 		if visual_mode:
 			await get_tree().create_timer(0.4, false).timeout
@@ -109,15 +133,12 @@ func process_turn():
 	state.turn_number += 1
 	
 	# 5. SKICKA SIGNALEN NU! 
-	# Pilen uppstår och pekar på nästa spelare (samt skip-symbolen tänds)
-	# exakt samtidigt som kortet flyger genom luften!
 	turn_started.emit(state.current_player_index)
 	
 	# 6. NU pausar vi GameManager! 
-	# Kortet landar i lugn och ro, och vi åskådare ser tydligt vems tur det
-	# har blivit, innan loopen snurrar vidare och den nya spelaren agerar.
 	if visual_mode:
 		await get_tree().create_timer(turn_delay, false).timeout
+
 
 func next_player():
 	# Om ett SKIP-kort spelades, hoppar vi ett extra steg

@@ -22,7 +22,7 @@ extends Control
 @onready var base_node = $Base
 var base_start_y: float = 0.0
 
-signal card_clicked(card: Card)
+signal card_clicked(card_node: Control)
 var my_card: Card
 
 func _ready() -> void:
@@ -189,9 +189,9 @@ func _on_hover_exit():
 	tween.tween_property(base_node, "position:y", base_start_y, 0.1)
 
 func _on_gui_input(event: InputEvent):
-	# Om händelsen är ett musklick, det är vänster knapp, och den trycks NER (inte släpps)
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		card_clicked.emit(my_card) # Skrik ut till världen vilket kort som klickades!
+		# Skicka med 'self' (hela Control-noden) istället för bara datan
+		card_clicked.emit(self)
 
 # Slår av eller på möjligheten att interagera med kortet
 func set_interactable(is_active: bool):

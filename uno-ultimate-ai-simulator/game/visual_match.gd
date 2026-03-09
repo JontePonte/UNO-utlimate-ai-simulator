@@ -171,7 +171,7 @@ func _test_piles():
 
 func start_real_game():
 	# 1. Skapa hjärnorna först
-	var bot1 = AISimple.new()
+	#var bot1 = AISimple.new()
 	var bot2 = AISimple.new()
 	var bot3 = AISimple.new()
 	var bot4 = AISimple.new()
@@ -179,7 +179,7 @@ func start_real_game():
 	# 2. Skapa spelarna och ge dem AI-skriptens egna namn!
 	# (Nu kommer alltså players[0].name automatiskt att bli "AISimple")
 	var players: Array[Player] = [
-		Player.new(0, bot1.ai_name, false, bot1), 
+		Player.new(0, "Human", true, null), 
 		Player.new(1, bot2.ai_name, false, bot2),
 		Player.new(2, bot3.ai_name, false, bot3),
 		Player.new(3, bot4.ai_name, false, bot4)
@@ -578,9 +578,31 @@ func _show_uno_animation(player_index: int):
 	fade_tween.tween_property(uno_label, "modulate:a", 0.0, 0.5) # Tona ut på 0.5s
 	fade_tween.tween_callback(uno_label.queue_free) # Städa bort!
 
+# En variabel för att hålla koll på om det är din tur att klicka
+var human_can_play: bool = false
+signal human_card_selected(card_data: Card)
+
+func _on_card_ui_clicked(card_node: Control):
+	if not human_can_play:
+		print("Inte din tur än!")
+		return
+		
+	if card_node.has_meta("logical_card"):
+		var clicked_card = card_node.get_meta("logical_card")
+		var top_card = game_manager.state.discard_pile[-1]
+		var current_color = game_manager.state.current_color
+		
+		if clicked_card.is_playable_on(top_card, current_color):
+			# Lås dörren direkt så man inte kan dubbelklicka
+			human_can_play = false 
+			human_card_selected.emit(clicked_card)
+		else:
+			print("Ogiltigt drag!")
+
 func _on_game_ended(winner_index: int):
 	var winner_name = game_manager.state.players[winner_index].name
-	winner_label.text = "The Winner is:\n" + winner_name
+	var position_list = [" (Bottom)", " (Left)", " (Top)", " (Right)"]
+	winner_label.text = "The Winner is:\n" + winner_name + position_list[winner_index] 
 	
 	# En snygg inflygning/intoning av skärmen
 	game_over_overlay.modulate.a = 0.0
@@ -621,7 +643,6 @@ func _on_main_menu_pressed():
 	# När du har byggt en, tar du bort #-tecknet på raden under!
 	print("Laddar Main Menu... (Behöver en scen!)")
 	# get_tree().change_scene_to_file("res://din_main_menu_scen.tscn")
-
 
 func _unhandled_input(event):
 	if event is InputEventKey and event.pressed and not event.echo:
