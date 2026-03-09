@@ -335,7 +335,6 @@ func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardCo
 	# När hålet är helt stängt och animationen är klar, ritar vi om den
 	# underliggande logiken för spelaren. Det kommer ske helt sömlöst!
 	hand_ui.update_hand(game_manager.state.players[player_index].hand)
-	_cleanup_discard_pile_visual()
 	
 	if _active_draws == 0:
 		update_all_visuals()

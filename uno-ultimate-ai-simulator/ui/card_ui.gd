@@ -34,6 +34,13 @@ func _ready() -> void:
 	mouse_exited.connect(_on_hover_exit)
 	
 	gui_input.connect(_on_gui_input)
+	# Klipp banden! Ge detta specifika kort unika kopior av textinställningarna
+	if center_text.label_settings:
+		center_text.label_settings = center_text.label_settings.duplicate()
+	if top_left_text.label_settings:
+		top_left_text.label_settings = top_left_text.label_settings.duplicate()
+	if bottom_right_text.label_settings:
+		bottom_right_text.label_settings = bottom_right_text.label_settings.duplicate()
 
 # Denna funktion kallas för att uppdatera kortets utseende
 func set_card_data(card: Card):
