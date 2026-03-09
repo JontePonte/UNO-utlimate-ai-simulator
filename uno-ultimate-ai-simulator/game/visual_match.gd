@@ -540,3 +540,13 @@ func _show_uno_animation(player_index: int):
 	fade_tween.tween_interval(1.5) # Vänta 1.5 sekunder
 	fade_tween.tween_property(uno_label, "modulate:a", 0.0, 0.5) # Tona ut på 0.5s
 	fade_tween.tween_callback(uno_label.queue_free) # Städa bort!
+
+## --- DEBUG ---
+#func _unhandled_input(event):
+	## Kolla om vi trycker ner en tangent, och att det inte är ett "auto-repeat" (håller inne)
+	#if event is InputEventKey and event.pressed and not event.echo:
+		## Om vi trycker på U-tangenten
+		#if event.keycode == KEY_U:
+			## Tvinga fram animationen för alla 4 spelare samtidigt!
+			#for i in range(4):
+				#_show_uno_animation(i)
