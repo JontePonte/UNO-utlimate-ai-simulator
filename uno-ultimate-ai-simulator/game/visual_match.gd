@@ -281,23 +281,32 @@ func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardCo
 	
 	if children.size() > 0:
 		for ui_card in children:
-			if "card" in ui_card and ui_card.card != null:
-				if ui_card.card.color == card.color and ui_card.card.value == card.value:
+			# Kollar om noden har vår post-it-lapp
+			if ui_card.has_meta("logical_card"):
+				var logical = ui_card.get_meta("logical_card")
+				
+				# Matchar färg och siffra med det som hjärnan just spelade?
+				if logical.color == card.color and logical.value == card.value:
 					chosen_ui_card = ui_card
 					break
 					
 		if chosen_ui_card == null:
 			chosen_ui_card = children[randi() % children.size()]
 
-	# NYTT: Skicka in hela UI-noden istället för koordinaterna!
-	_spawn_discard_card(card, chosen_ui_card, start_rotation)
+	if chosen_ui_card != null:
+		_spawn_discard_card(card, chosen_ui_card, start_rotation)
+		chosen_ui_card.hide()
 	
+	# Vänta exakt tills kortet har landat innan vi uppdaterar och stänger "hålet" i handen!
+	await get_tree().create_timer(0.4).timeout
 	update_all_visuals()
 
 # --- VISUELLA HJÄLPARE ---
 func _spawn_discard_card(card_data: Card, source_ui_card: Control = null, start_rot: float = 0.0):
 	var visual_card = card_ui_scene.instantiate()
 	discard_pile_node.add_child(visual_card)
+	
+	visual_card.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	
 	visual_card.set_interactable(false)
 	visual_card.set_card_data(card_data)
