@@ -12,6 +12,13 @@ extends Control
 
 @onready var turn_arrow = $TurnArrow
 
+@onready var bottom_name_label = $BottomNameLabel
+@onready var top_name_label = $TopNameLabel
+@onready var left_name_label = $LeftNameLabel
+@onready var right_name_label = $RightNameLabel
+
+var name_labels: Array[Label] = []
+
 # En ordbok som översätter spelets färger till riktiga färgkoder!
 const UNO_COLORS = {
 	Card.CardColor.RED: Color(0.9, 0.2, 0.2),
@@ -36,6 +43,7 @@ func _ready():
 	
 	# Lägg in händerna i en lista så plats 0 = bottom, plats 1 = left, osv.
 	player_uis = [bottom_hand, left_hand, top_hand, right_hand]
+	name_labels = [bottom_name_label, left_name_label, top_name_label, right_name_label]
 	
 	_update_layout()
 	
@@ -149,16 +157,21 @@ func _test_piles():
 		card.position = center_offset + messy_offset
 
 func start_real_game():
-	# 1. Skapa fyra AI-spelare 
-	# (Eftersom vi inte har en HumanPlayer än, låter vi 4 bottar slåss!)
+	# 1. Skapa hjärnorna först
+	var bot1 = AISimple.new()
+	var bot2 = AISimple.new()
+	var bot3 = AISimple.new()
+	var bot4 = AISimple.new()
+	
+	# 2. Skapa spelarna och ge dem AI-skriptens egna namn!
+	# (Nu kommer alltså players[0].name automatiskt att bli "AISimple")
 	var players: Array[Player] = [
-		Player.new(0, "AI_Botten", false, AISimple.new()), 
-		Player.new(1, "AI_Vänster", false, AISimple.new()),
-		Player.new(2, "AI_Toppen", false, AISimple.new()),
-		Player.new(3, "AI_Höger", false, AISimple.new())
+		Player.new(0, bot1.ai_name, false, bot1), 
+		Player.new(1, bot2.ai_name, false, bot2),
+		Player.new(2, bot3.ai_name, false, bot3),
+		Player.new(3, bot4.ai_name, false, bot4)
 	]
 	
-	# 2. Skapa hjärnan och lägg till den i trädet (VIKTIGT för att timers ska funka!)
 	game_manager = GameManager.new(players)
 	add_child(game_manager)
 	
@@ -178,6 +191,10 @@ func start_real_game():
 	await get_tree().create_timer(1.5).timeout
 	for hand in player_uis:
 		hand._adjust_card_spacing()
+	
+	# Skriv ut namnen på skärmen i ditt snygga format!
+	for i in range(players.size()):
+		name_labels[i].text = players[i].name
 	
 	# 6. STARTA MATCHEN! 
 	game_manager.run_full_game()

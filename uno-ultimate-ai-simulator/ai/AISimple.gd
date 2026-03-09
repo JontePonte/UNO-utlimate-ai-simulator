@@ -1,6 +1,10 @@
 extends AIPlayer #
 class_name AISimple
 
+func _init():
+	# Här bestämmer skriptet sitt eget namn!
+	ai_name = "AISimple"
+
 func choose_action(view: PlayerView) -> PlayerAction:
 	for card in view.own_hand:
 		# Här skickar vi nu med view.current_color!

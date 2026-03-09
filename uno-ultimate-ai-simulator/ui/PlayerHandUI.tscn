@@ -1,10 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://dhuo4vga4p62u"]
+[gd_scene format=3 uid="uid://dhuo4vga4p62u"]
 
 [ext_resource type="Script" uid="uid://ci0n3urj0n7gj" path="res://ui/player_hand_ui.gd" id="1_sha0n"]
 [ext_resource type="PackedScene" uid="uid://ukfpjno5na0i" path="res://ui/CardUI.tscn" id="2_ln5nq"]
-[ext_resource type="Texture2D" uid="uid://bx5h0circft7w" path="res://ui/unoSkipWhite.svg" id="3_eonab"]
+[ext_resource type="Texture2D" uid="uid://bs1dx8tp27atv" path="res://ui/unoSkipWhite.svg" id="3_eonab"]
 
-[node name="PlayerHandUi" type="Control"]
+[node name="PlayerHandUi" type="Control" unique_id=1190902431]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -18,7 +18,7 @@ grow_vertical = 2
 script = ExtResource("1_sha0n")
 card_ui_scene = ExtResource("2_ln5nq")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1810324070]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -32,7 +32,7 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = -60
 
-[node name="SkipSymbol" type="Control" parent="."]
+[node name="SkipSymbol" type="Control" parent="." unique_id=1958420070]
 visible = false
 layout_mode = 1
 anchors_preset = 5
@@ -44,7 +44,7 @@ offset_bottom = 40.0
 grow_horizontal = 2
 scale = Vector2(0.7, 0.7)
 
-[node name="Background" type="TextureRect" parent="SkipSymbol"]
+[node name="Background" type="TextureRect" parent="SkipSymbol" unique_id=1422612442]
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(0, 0, 0, 1)
 layout_mode = 0
@@ -55,7 +55,7 @@ offset_bottom = 283.0
 scale = Vector2(1.06, 1.06)
 texture = ExtResource("3_eonab")
 
-[node name="TextureRect2" type="TextureRect" parent="SkipSymbol"]
+[node name="TextureRect2" type="TextureRect" parent="SkipSymbol" unique_id=578448974]
 modulate = Color(0, 0, 0, 1)
 layout_mode = 0
 offset_left = -464.28568
@@ -65,7 +65,7 @@ offset_bottom = 304.4286
 scale = Vector2(1.04, 1.04)
 texture = ExtResource("3_eonab")
 
-[node name="Color" type="TextureRect" parent="SkipSymbol"]
+[node name="Color" type="TextureRect" parent="SkipSymbol" unique_id=1254153661]
 layout_mode = 0
 offset_left = -430.00003
 offset_top = -804.2857
@@ -73,7 +73,7 @@ offset_right = 363.99997
 offset_bottom = 318.7143
 texture = ExtResource("3_eonab")
 
-[node name="AnchorCW" type="Control" parent="."]
+[node name="AnchorCW" type="Control" parent="." unique_id=564635450]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -84,7 +84,7 @@ offset_right = -220.0
 offset_bottom = -80.0
 grow_horizontal = 2
 
-[node name="AnchorCCW" type="Control" parent="."]
+[node name="AnchorCCW" type="Control" parent="." unique_id=49696775]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
