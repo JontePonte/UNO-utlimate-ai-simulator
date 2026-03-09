@@ -26,6 +26,9 @@ extends Control
 
 @onready var pause_overlay = $PauseOverlay
 @onready var resume_button = $PauseOverlay/VBoxContainer/ResumeButton
+@onready var pause_back_button = $PauseOverlay/VBoxContainer/BackToArena
+@onready var pause_main_menu_button = $PauseOverlay/VBoxContainer/MainMenu
+@onready var pause_exit_button = $PauseOverlay/VBoxContainer/ExitGame
 
 var name_labels: Array[Label] = []
 
@@ -194,10 +197,16 @@ func start_real_game():
 	game_manager.card_drawn.connect(_on_card_drawn)
 	game_manager.turn_started.connect(_on_turn_started)
 	game_manager.game_over.connect(_on_game_ended)
-
+	
+	# Game Over menu
 	restart_button.pressed.connect(_on_restart_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
+	main_menu_button.pressed.connect(_on_main_menu_pressed)
+	
+	# Pause menue
 	resume_button.pressed.connect(_toggle_pause)
+	pause_exit_button.pressed.connect(_on_exit_pressed) 
+	pause_main_menu_button.pressed.connect(_on_main_menu_pressed)
 	
 	# 5. Rita upp startläget! (Dela ut kort och visa första kortet i kasthögen)
 	update_all_visuals()
@@ -237,7 +246,10 @@ func _on_card_drawn(player_index: int, _card: Card):
 	_update_draw_pile_visual()
 	
 	var flying_card = card_ui_scene.instantiate()
-	add_child(flying_card) 
+	add_child(flying_card)
+	
+	flying_card.z_index = 20 
+	flying_card.z_as_relative = false
 	
 	flying_card.set_interactable(false)
 	flying_card.set_face_up(false) 
@@ -364,15 +376,16 @@ func _spawn_discard_card(card_data: Card, source_ui_card: Control = null, start_
 	var visual_card = card_ui_scene.instantiate()
 	discard_pile_node.add_child(visual_card)
 	
-	visual_card.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	# 1. Lyft ALLTID upp kortet när det skapas (även första kortet behöver ligga överst initialt)
+	visual_card.z_index = 20
+	visual_card.z_as_relative = false
 	
+	visual_card.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	visual_card.set_interactable(false)
 	visual_card.set_card_data(card_data)
 	visual_card.set_face_up(true)
 	
-	# Vi sparar kortets "riktiga" storlek för att veta vad det ska landa som
 	var normal_size = visual_card.size
-	
 	var center_offset = -normal_size / 2.0
 	var randomness_translate = 5.0
 	var randomness_rotate = 7.0
@@ -382,17 +395,10 @@ func _spawn_discard_card(card_data: Card, source_ui_card: Control = null, start_
 	var final_rotation = randf_range(-randomness_rotate, randomness_rotate)
 	
 	if source_ui_card != null:
-		# --- DEN MATEMATISKA KLONEN ---
-		# 1. Klistra på exakt samma storlek som kortet har i handen (även om det är ihoptryckt)
+		# --- ANIMERAT KORT (Från handen) ---
 		visual_card.size = source_ui_card.size
-		
-		# 2. Sätt pivot i mitten på den NYA, ihoptryckta storleken
 		visual_card.pivot_offset = visual_card.size / 2.0
-		
-		# 3. Räkna ut den absolut exakta globala mittpunkten
 		var exact_center = source_ui_card.get_global_transform() * (source_ui_card.size / 2.0)
-		
-		# 4. Placera klonen pixelperfekt!
 		visual_card.global_position = exact_center - visual_card.pivot_offset
 		visual_card.rotation_degrees = start_rot
 		
@@ -401,15 +407,31 @@ func _spawn_discard_card(card_data: Card, source_ui_card: Control = null, start_
 		
 		tween.tween_property(visual_card, "position", final_position, 0.4)
 		tween.tween_property(visual_card, "rotation_degrees", final_rotation, 0.4)
-		
-		# MAGIN: Animationen låter kortet svälla tillbaka till normal storlek medan det flyger!
 		tween.tween_property(visual_card, "size", normal_size, 0.4)
-		# Eftersom storleken ändras, måste gångjärnet flytta med så det inte snurrar snett!
 		tween.tween_property(visual_card, "pivot_offset", normal_size / 2.0, 0.4)
+		
+		# När animationen är klar - tvinga ner det i trädet
+		tween.finished.connect(func(): _finalize_card_landing(visual_card, final_position))
 	else:
+		# --- STATISKT KORT (Första kortet vid start) ---
 		visual_card.pivot_offset = normal_size / 2.0
 		visual_card.position = final_position
 		visual_card.rotation_degrees = final_rotation
+		# Även här måste vi "landa" kortet logiskt så det tappar sin Z-index fusk
+		_finalize_card_landing(visual_card, final_position)
+
+# Ny hjälpfunktion för att garantera ordningen
+func _finalize_card_landing(card_node: Control, final_pos: Vector2):
+	if is_instance_valid(card_node):
+		card_node.z_index = 0
+		card_node.z_as_relative = true
+		
+		# Tvinga kortet att bli sista barnet (ritat överst)
+		var pile = card_node.get_parent()
+		pile.move_child(card_node, pile.get_child_count() - 1)
+		
+		# Säkerställ positionen
+		card_node.position = final_pos
 
 func _update_draw_pile_visual():
 	# 1. Rensa bort den gamla grafiska högen
@@ -570,6 +592,7 @@ func _on_game_ended(winner_index: int):
 func _on_restart_pressed():
 	# Godots absolut bästa funktion för snabba omstarter!
 	# Detta laddar om hela scenen från noll, blandar om leken och nollställer AI:n.
+	get_tree().paused = false
 	get_tree().reload_current_scene()
 
 func _on_exit_pressed():
@@ -577,6 +600,9 @@ func _on_exit_pressed():
 	get_tree().quit()
 
 func _toggle_pause():
+	if game_over_overlay.visible:
+		return
+
 	# Vänd på steken! Är det pausat, spela. Spelar det, pausa.
 	var new_pause_state = not get_tree().paused
 	get_tree().paused = new_pause_state
@@ -586,6 +612,15 @@ func _toggle_pause():
 		pause_overlay.show()
 	else:
 		pause_overlay.hide()
+
+func _on_main_menu_pressed():
+	# VIKTIGT: Släpp pausen innan vi byter scen!
+	get_tree().paused = false 
+	
+	# Just nu har vi ingen Main Menu-scen, så vi printar bara. 
+	# När du har byggt en, tar du bort #-tecknet på raden under!
+	print("Laddar Main Menu... (Behöver en scen!)")
+	# get_tree().change_scene_to_file("res://din_main_menu_scen.tscn")
 
 
 func _unhandled_input(event):
