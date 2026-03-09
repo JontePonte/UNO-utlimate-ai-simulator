@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://ukfpjno5na0i" path="res://ui/CardUI.tscn" id="2_x83vr"]
 [ext_resource type="Texture2D" uid="uid://c8lva1kt21l64" path="res://ui/white-arrow.png" id="4_ym86b"]
 [ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="5_etxm3"]
+[ext_resource type="Script" uid="uid://cymebu5l46fa1" path="res://game/pause_overlay.gd" id="6_y1ric"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_y1ric"]
 font = ExtResource("5_etxm3")
@@ -91,6 +92,7 @@ offset_bottom = 0.0
 rotation = -1.5707964
 
 [node name="TurnArrow" type="Sprite2D" parent="." unique_id=696430616]
+process_mode = 1
 position = Vector2(-300, 0)
 
 [node name="Outline" type="TextureRect" parent="TurnArrow" unique_id=441344018]
@@ -165,6 +167,7 @@ vertical_alignment = 1
 
 [node name="GameOverOverlay" type="ColorRect" parent="." unique_id=1844327304]
 visible = false
+z_index = 50
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -225,6 +228,77 @@ text = "Main Menu"
 flat = true
 
 [node name="ExitGame" type="Button" parent="GameOverOverlay/VBoxContainer" unique_id=948537723]
+layout_mode = 2
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("5_etxm3")
+theme_override_font_sizes/font_size = 55
+text = "ExitGame"
+flat = true
+
+[node name="PauseOverlay" type="ColorRect" parent="." unique_id=1303493605]
+process_mode = 3
+visible = false
+z_index = 50
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.78431374)
+script = ExtResource("6_y1ric")
+
+[node name="WinnerLabel" type="Label" parent="PauseOverlay" unique_id=1128328372]
+layout_mode = 0
+offset_left = 346.0
+offset_top = 75.0
+offset_right = 1598.0
+offset_bottom = 460.0
+text = "Game Paused"
+label_settings = SubResource("LabelSettings_etxm3")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PauseOverlay" unique_id=700002086]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -234.5
+offset_top = -62.0
+offset_right = 234.5
+offset_bottom = 415.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 13
+
+[node name="ResumeButton" type="Button" parent="PauseOverlay/VBoxContainer" unique_id=1643608115]
+layout_mode = 2
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("5_etxm3")
+theme_override_font_sizes/font_size = 55
+text = "Resume Game"
+flat = true
+
+[node name="BackToArena" type="Button" parent="PauseOverlay/VBoxContainer" unique_id=1317157520]
+layout_mode = 2
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("5_etxm3")
+theme_override_font_sizes/font_size = 55
+text = "Back to Arena"
+flat = true
+
+[node name="MainMenu" type="Button" parent="PauseOverlay/VBoxContainer" unique_id=709955109]
+layout_mode = 2
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("5_etxm3")
+theme_override_font_sizes/font_size = 55
+text = "Main Menu"
+flat = true
+
+[node name="ExitGame" type="Button" parent="PauseOverlay/VBoxContainer" unique_id=313204470]
 layout_mode = 2
 theme_override_constants/outline_size = 14
 theme_override_fonts/font = ExtResource("5_etxm3")

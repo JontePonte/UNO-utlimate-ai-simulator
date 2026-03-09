@@ -24,6 +24,9 @@ extends Control
 @onready var main_menu_button = $GameOverOverlay/VBoxContainer/MainMenu
 @onready var exit_button = $GameOverOverlay/VBoxContainer/ExitGame
 
+@onready var pause_overlay = $PauseOverlay
+@onready var resume_button = $PauseOverlay/VBoxContainer/ResumeButton
+
 var name_labels: Array[Label] = []
 
 # En ordbok som översätter spelets färger till riktiga färgkoder!
@@ -194,6 +197,7 @@ func start_real_game():
 
 	restart_button.pressed.connect(_on_restart_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
+	resume_button.pressed.connect(_toggle_pause)
 	
 	# 5. Rita upp startläget! (Dela ut kort och visa första kortet i kasthögen)
 	update_all_visuals()
@@ -572,12 +576,21 @@ func _on_exit_pressed():
 	# Säger åt hela Godot-motorn att stänga ner fönstret och avsluta spelet
 	get_tree().quit()
 
-## --- DEBUG ---
-#func _unhandled_input(event):
-	## Kolla om vi trycker ner en tangent, och att det inte är ett "auto-repeat" (håller inne)
-	#if event is InputEventKey and event.pressed and not event.echo:
-		## Om vi trycker på U-tangenten
-		#if event.keycode == KEY_U:
-			## Tvinga fram animationen för alla 4 spelare samtidigt!
-			#for i in range(4):
+func _toggle_pause():
+	# Vänd på steken! Är det pausat, spela. Spelar det, pausa.
+	var new_pause_state = not get_tree().paused
+	get_tree().paused = new_pause_state
+	
+	# Visa eller dölj menyn
+	if new_pause_state:
+		pause_overlay.show()
+	else:
+		pause_overlay.hide()
+
+
+func _unhandled_input(event):
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_U:
+			for i in range(4):
+				pass
 				#_show_uno_animation(i)
