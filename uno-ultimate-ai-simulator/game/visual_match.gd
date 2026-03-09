@@ -297,9 +297,19 @@ func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardCo
 		_spawn_discard_card(card, chosen_ui_card, start_rotation)
 		chosen_ui_card.hide()
 	
-	# Vänta exakt tills kortet har landat innan vi uppdaterar och stänger "hålet" i handen!
+	# Vänta exakt tills kortet har landat
 	await get_tree().create_timer(0.4).timeout
-	update_all_visuals()
+	
+	# --- FIXEN: Uppdatera BARA den som kastade kortet! ---
+	# Vi rensar kasthögen och stänger hålet i handen för den som precis spelade.
+	hand_ui.update_hand(game_manager.state.players[player_index].hand)
+	_cleanup_discard_pile_visual()
+	
+	# Om ingen draw-animation håller på att köras, kan vi tryggt uppdatera allt.
+	# Om någon drar kort just nu, väntar vi. `_on_card_drawn` kommer själv att
+	# anropa update_all_visuals() när sista kortet har landat!
+	if _active_draws == 0:
+		update_all_visuals()
 
 # --- VISUELLA HJÄLPARE ---
 func _spawn_discard_card(card_data: Card, source_ui_card: Control = null, start_rot: float = 0.0):
