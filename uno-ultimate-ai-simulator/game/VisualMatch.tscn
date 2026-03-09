@@ -173,7 +173,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.78431374)
 
-[node name="Label" type="Label" parent="GameOverOverlay" unique_id=1305888887]
+[node name="WinnerLabel" type="Label" parent="GameOverOverlay" unique_id=1305888887]
 layout_mode = 0
 offset_left = 346.0
 offset_top = 21.0

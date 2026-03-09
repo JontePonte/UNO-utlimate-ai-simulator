@@ -17,6 +17,13 @@ extends Control
 @onready var left_name_label = $LeftNameLabel
 @onready var right_name_label = $RightNameLabel
 
+@onready var game_over_overlay = $GameOverOverlay
+@onready var winner_label = $GameOverOverlay/WinnerLabel
+@onready var restart_button = $GameOverOverlay/VBoxContainer/PlayAgain
+@onready var back_button = $GameOverOverlay/VBoxContainer/BackToArena
+@onready var main_menu_button = $GameOverOverlay/VBoxContainer/MainMenu
+@onready var exit_button = $GameOverOverlay/VBoxContainer/ExitGame
+
 var name_labels: Array[Label] = []
 
 # En ordbok som översätter spelets färger till riktiga färgkoder!
@@ -183,6 +190,10 @@ func start_real_game():
 	game_manager.card_played.connect(_on_card_played)
 	game_manager.card_drawn.connect(_on_card_drawn)
 	game_manager.turn_started.connect(_on_turn_started)
+	game_manager.game_over.connect(_on_game_ended)
+
+	restart_button.pressed.connect(_on_restart_pressed)
+	exit_button.pressed.connect(_on_exit_pressed)
 	
 	# 5. Rita upp startläget! (Dela ut kort och visa första kortet i kasthögen)
 	update_all_visuals()
@@ -540,6 +551,26 @@ func _show_uno_animation(player_index: int):
 	fade_tween.tween_interval(1.5) # Vänta 1.5 sekunder
 	fade_tween.tween_property(uno_label, "modulate:a", 0.0, 0.5) # Tona ut på 0.5s
 	fade_tween.tween_callback(uno_label.queue_free) # Städa bort!
+
+func _on_game_ended(winner_index: int):
+	var winner_name = game_manager.state.players[winner_index].name
+	winner_label.text = "The Winner is:\n" + winner_name
+	
+	# En snygg inflygning/intoning av skärmen
+	game_over_overlay.modulate.a = 0.0
+	game_over_overlay.show()
+	
+	var tween = create_tween()
+	tween.tween_property(game_over_overlay, "modulate:a", 1.0, 0.5)
+
+func _on_restart_pressed():
+	# Godots absolut bästa funktion för snabba omstarter!
+	# Detta laddar om hela scenen från noll, blandar om leken och nollställer AI:n.
+	get_tree().reload_current_scene()
+
+func _on_exit_pressed():
+	# Säger åt hela Godot-motorn att stänga ner fönstret och avsluta spelet
+	get_tree().quit()
 
 ## --- DEBUG ---
 #func _unhandled_input(event):
