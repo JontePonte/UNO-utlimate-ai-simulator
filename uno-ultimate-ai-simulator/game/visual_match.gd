@@ -30,7 +30,10 @@ extends Control
 @onready var pause_main_menu_button = $PauseOverlay/VBoxContainer/MainMenu
 @onready var pause_exit_button = $PauseOverlay/VBoxContainer/ExitGame
 
+@onready var draw_choice_menu = $DrawChoiceMenu
+
 signal human_draw_requested
+signal draw_choice_made(should_play: bool)
 
 var name_labels: Array[Label] = []
 
@@ -653,6 +656,19 @@ func _on_main_menu_pressed():
 	# När du har byggt en, tar du bort #-tecknet på raden under!
 	print("Laddar Main Menu... (Behöver en scen!)")
 	# get_tree().change_scene_to_file("res://din_main_menu_scen.tscn")
+
+func show_draw_choice(_card: Card):
+	# Visa knappar
+	draw_choice_menu.show()
+	# Här kan du också uppdatera texten på knapparna om du vill
+	
+func _on_play_button_pressed():
+	draw_choice_menu.hide()
+	draw_choice_made.emit(true)
+
+func _on_keep_button_pressed():
+	draw_choice_menu.hide()
+	draw_choice_made.emit(false)
 
 func _unhandled_input(event):
 	if event is InputEventKey and event.pressed and not event.echo:

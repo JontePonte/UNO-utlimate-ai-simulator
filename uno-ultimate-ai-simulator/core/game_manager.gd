@@ -73,68 +73,87 @@ func process_turn():
 	
 	var player = state.players[state.current_player_index]
 	var player_view = create_player_view(state.current_player_index)
+	var visual_match = get_parent()
 	
-	# Vid allra första draget i matchen (tur 0) måste vi tända startspelaren
 	if state.turn_number == 0:
 		turn_started.emit(state.current_player_index)
 	
-	# --- STEG 1: HÄMTA DRAGET (Människa eller AI) ---
 	var action: PlayerAction = null
 	
+	# --- STEG 1: HÄMTA DRAGET ---
 	if player.is_human:
-		var visual_match = get_parent()
 		visual_match.human_can_play = true
-		
-		# Vänta på att du antingen väljer ett kort eller klickar på högen
 		var result = await any_signal([visual_match.human_card_selected, visual_match.human_draw_requested])
 		
 		if result is Card:
 			action = PlayerAction.new()
 			action.card = result
-			#print("DEBUG: Människan spelade kortet: ", result.value)
 		else:
-			action = null # Betyder 'dra kort'
-			#print("DEBUG: Människan valde att dra kort")
+			action = null # Spelaren valde att klicka på högen (Dra kort)
 	else:
-		# AI:n tänker och bestämmer sig precis som förut
 		action = await player.take_turn(player_view)
 	
-	# --- STEG 2: UTFÖR DRAGET (Samma logik för båda) ---
+	# --- STEG 2: UTFÖR DRAGET ELLER DRA KORT ---
 	if action != null and action.card != null:
 		play_card(state.current_player_index, action.card, action.declared_color)
 	else:
-		# Här hamnar vi om det är en AI som inte har kort, 
-		# eller om vi senare lägger till en "Dra kort"-knapp för människan.
+		# Här hamnar vi om man klickat på högen (Människa) eller inte har kort (AI)
 		draw_cards(state.current_player_index, 1)
+		
 		if visual_mode:
-			await get_tree().create_timer(0.4, false).timeout
+			await get_tree().create_timer(0.6, false).timeout
 			
 		var drawn_card = player.hand[-1]
 		var top_card = state.discard_pile[-1]
 		
+		# KAN DET DRAGNA KORTET SPELAS?
 		if drawn_card.is_playable_on(top_card, state.current_color):
-			var declared_color = drawn_card.color
-			if declared_color == Card.CardColor.WILD:
-				var colors = [Card.CardColor.RED, Card.CardColor.BLUE, Card.CardColor.GREEN, Card.CardColor.YELLOW]
-				declared_color = colors.pick_random()
+			if player.is_human:
+				# 1. Visa knapparna
+				visual_match.show_draw_choice(drawn_card)
 				
-			play_card(state.current_player_index, drawn_card, declared_color)
+				# 2. Aktivera klick på handen så man kan klicka på det nya kortet
+				visual_match.human_can_play = true
+				
+				# 3. Vänta på knappar ELLER klick på kortet
+				var result = await any_signal([visual_match.draw_choice_made, visual_match.human_card_selected])
+				
+				# Stäng av klick och göm menyn direkt efter valet
+				visual_match.human_can_play = false
+				visual_match.draw_choice_menu.hide()
+				
+				# --- FIXEN: Vi kollar VAD resultatet är istället för dess värde direkt ---
+				var chose_to_play = false
+				
+				if result is Card:
+					# Spelaren klickade på kortet i handen
+					chose_to_play = true
+				elif typeof(result) == TYPE_BOOL and result == true:
+					# Spelaren tryckte på "Spela"-knappen
+					chose_to_play = true
+				
+				if chose_to_play:
+					# Spela kortet (vi använder rött som standard för Wild tills vidare)
+					var color_to_use = drawn_card.color
+					if color_to_use == Card.CardColor.WILD:
+						color_to_use = Card.CardColor.RED
+					play_card(state.current_player_index, drawn_card, color_to_use)
+				else:
+					print("Spelaren valde att behålla kortet (tryckte på Behåll-knappen)")
+			else:
+				# AI:n spelar alltid om den kan
+				play_card(state.current_player_index, drawn_card, drawn_card.color)
 	
-	# 3. PYTTEPAUS: Vi ger kortet ynka 0.1 sekunder att lämna handen...
+	# --- STEG 3: GÅ VIDARE TILL NÄSTA ---
 	if visual_mode:
 		await get_tree().create_timer(0.1, false).timeout
 		
-	# 4. Räkna ut vem som är nästa spelare DIREKT
 	await next_player()
 	state.turn_number += 1
-	
-	# 5. SKICKA SIGNALEN NU! 
 	turn_started.emit(state.current_player_index)
 	
-	# 6. NU pausar vi GameManager! 
 	if visual_mode:
 		await get_tree().create_timer(turn_delay, false).timeout
-
 
 func next_player():
 	# Om ett SKIP-kort spelades, hoppar vi ett extra steg
