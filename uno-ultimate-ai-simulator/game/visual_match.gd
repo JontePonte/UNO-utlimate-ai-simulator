@@ -281,11 +281,8 @@ func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardCo
 	
 	if children.size() > 0:
 		for ui_card in children:
-			# Kollar om noden har vår post-it-lapp
 			if ui_card.has_meta("logical_card"):
 				var logical = ui_card.get_meta("logical_card")
-				
-				# Matchar färg och siffra med det som hjärnan just spelade?
 				if logical.color == card.color and logical.value == card.value:
 					chosen_ui_card = ui_card
 					break
@@ -295,21 +292,54 @@ func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardCo
 
 	if chosen_ui_card != null:
 		_spawn_discard_card(card, chosen_ui_card, start_rotation)
+		
+		# --- MAGIN BÖRJAR HÄR ---
+		var card_index = chosen_ui_card.get_index()
+		var hole_size = chosen_ui_card.size
+		
+		# 1. Göm och ta bort det riktiga UI-kortet ur handen
 		chosen_ui_card.hide()
+		chosen_ui_card.queue_free()
+		
+		# 2. Skapa ett "spökhål" som håller uppe platsen i HBoxContainern
+		var dummy_hole = Control.new()
+		dummy_hole.custom_minimum_size = hole_size
+		hand_ui.container.add_child(dummy_hole)
+		hand_ui.container.move_child(dummy_hole, card_index)
+		
+		# 3. Låt klonen flyga klart i luften (0.4 sekunder)
+		await get_tree().create_timer(0.4).timeout
+		
+		# --- FIXEN: Kolla så hålet överlevde pausen! ---
+		if is_instance_valid(dummy_hole):
+			
+			# 4. Mjuk ihopdragning med matematisk perfektion!
+			# Hämta handens nuvarande separation (t.ex. -60)
+			var current_sep = hand_ui.container.get_theme_constant("separation")
+			
+			# Om separationen är negativ, måste vi stanna när hålet är lika stort 
+			# som separationen (fast positivt). Om separationen är 0, går vi till 0.
+			var target_hole_size = max(0.0, -current_sep)
+			
+			var tween = create_tween()
+			tween.tween_property(dummy_hole, "custom_minimum_size:x", target_hole_size, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			
+			await tween.finished
+			
+			if is_instance_valid(dummy_hole):
+				dummy_hole.queue_free()
+	else:
+		# Fallback ifall något gått väldigt snett och handen var tom
+		await get_tree().create_timer(0.4).timeout
 	
-	# Vänta exakt tills kortet har landat
-	await get_tree().create_timer(0.4).timeout
-	
-	# --- FIXEN: Uppdatera BARA den som kastade kortet! ---
-	# Vi rensar kasthögen och stänger hålet i handen för den som precis spelade.
+	# När hålet är helt stängt och animationen är klar, ritar vi om den
+	# underliggande logiken för spelaren. Det kommer ske helt sömlöst!
 	hand_ui.update_hand(game_manager.state.players[player_index].hand)
 	_cleanup_discard_pile_visual()
 	
-	# Om ingen draw-animation håller på att köras, kan vi tryggt uppdatera allt.
-	# Om någon drar kort just nu, väntar vi. `_on_card_drawn` kommer själv att
-	# anropa update_all_visuals() när sista kortet har landat!
 	if _active_draws == 0:
 		update_all_visuals()
+
 
 # --- VISUELLA HJÄLPARE ---
 func _spawn_discard_card(card_data: Card, source_ui_card: Control = null, start_rot: float = 0.0):
