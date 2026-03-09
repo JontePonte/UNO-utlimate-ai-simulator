@@ -336,6 +336,10 @@ func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardCo
 	# underliggande logiken för spelaren. Det kommer ske helt sömlöst!
 	hand_ui.update_hand(game_manager.state.players[player_index].hand)
 	
+	var cards_left = game_manager.state.players[player_index].hand.size()
+	if cards_left == 1:
+		_show_uno_animation(player_index)
+	
 	if _active_draws == 0:
 		update_all_visuals()
 
@@ -468,3 +472,71 @@ func _on_turn_started(current_player_index: int):
 	
 	# Spara vem som fick turen till nästa gång
 	last_player_index = current_player_index
+
+
+func _show_uno_animation(player_index: int):
+	# 1. Skapa en ny textnod i farten
+	var uno_label = Label.new()
+	uno_label.text = "UNO!"
+	
+	# 2. Skapa snygga textinställningar (Guldgul med svart kant)
+	var settings = LabelSettings.new()
+	
+	# --- NYTT: Ladda din UNO-font! ---
+	# Högerklicka på din font-fil i FileSystem och välj "Copy Path", klistra in här:
+	var uno_font = load("res://ui/fonts/Helvetica Bold.ttf") 
+	settings.font = uno_font
+	
+	settings.font_size = 64
+	settings.font_color = Color(1.0, 0.898, 0.686, 1.0) # Guld/Gul
+	settings.outline_color = Color(0, 0, 0, 1)
+	settings.outline_size = 8
+	uno_label.label_settings = settings
+	
+	add_child(uno_label)
+	
+	# 3. Räkna ut startpositionen (vid spelarens namnskylt är en bra plats!)
+	var start_pos = name_labels[player_index].global_position
+	uno_label.global_position = start_pos
+	
+	# 4. Räkna ut riktningen in mot skärmens mitt
+	var target_pos = start_pos
+	
+	# Vi flyttar texten 150 pixlar rakt in mot bordet istället för diagonalt
+	match player_index:
+		0: # Botten
+			target_pos += Vector2(150, 50) # Rakt upp
+		1: # Vänster
+			target_pos += Vector2(-100, 250)  # Rakt åt höger
+		2: # Toppen
+			target_pos += Vector2(150, 70)  # Rakt ner
+		3: # Höger
+			target_pos += Vector2(-50, -250) # Rakt åt vänster
+
+	# (Valfritt) Om du vill att ALLA texter ska "lätta" lite uppåt i luften 
+	# precis på slutet, kan vi lägga till en liten knuff här:
+	target_pos += Vector2(0, -20)
+		
+	# 5. Sätt startvärden för animationen (liten och genomskinlig)
+	uno_label.scale = Vector2(0.1, 0.1)
+	uno_label.modulate.a = 0.0
+	
+	# Eftersom pivot_offset normalt är i övre vänstra hörnet på kod-skapade Labels,
+	# sätter vi den i mitten så att den växer ("scale") snyggt inifrån och ut.
+	uno_label.pivot_offset = Vector2(60, 30) # Ungefärlig mittpunkt för texten
+	
+	# 6. Animera! (Använder parallel för att göra flera saker samtidigt)
+	var tween = create_tween().set_parallel(true)
+	
+	# Flyg inåt med en svag "studs" (EASE_OUT + TRANS_BACK)
+	tween.tween_property(uno_label, "global_position", target_pos, 0.6).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	# Sväll upp till full storlek
+	tween.tween_property(uno_label, "scale", Vector2(1.0, 1.0), 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	# Tona in
+	tween.tween_property(uno_label, "modulate:a", 1.0, 0.2)
+	
+	# 7. Efter att den flugit in, tona bort den långsamt och ta bort den
+	var fade_tween = create_tween()
+	fade_tween.tween_interval(1.5) # Vänta 1.5 sekunder
+	fade_tween.tween_property(uno_label, "modulate:a", 0.0, 0.5) # Tona ut på 0.5s
+	fade_tween.tween_callback(uno_label.queue_free) # Städa bort!
