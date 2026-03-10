@@ -65,7 +65,6 @@ func start_discard_pile():
 
 # --- TURN MANAGEMENT ---
 func process_turn():
-	# Vänta om spelet är pausat
 	while get_tree().paused:
 		await get_tree().process_frame
 	
@@ -86,86 +85,82 @@ func process_turn():
 		if result is Card:
 			action = PlayerAction.new()
 			action.card = result
-			# Om det är ett Wild-kort, be om färg
-			if result.color == Card.CardColor.WILD:
-				var chosen_color = await visual_match.show_color_picker()
-				action.declared_color = chosen_color
-			else:
-				action.declared_color = result.color
+			# Vi sätter bara kortets färg här tillfälligt, val sker efteråt!
+			action.declared_color = result.color
 		else:
-			action = null # Spelaren valde att klicka på högen (Dra kort)
+			action = null 
 	else:
 		action = await player.take_turn(player_view)
 	
 	# --- STEG 2: UTFÖR DRAGET ELLER DRA KORT ---
 	if action != null and action.card != null:
+		# 1. Spela kortet direkt (animationen börjar)
 		play_card(state.current_player_index, action.card, action.declared_color)
-	else:
-		# Här hamnar vi om man klickat på högen (Människa) eller inte har kort (AI)
-		draw_cards(state.current_player_index, 1)
 		
+		# 2. Om det är en människa och ett WILD-kort, vänta tills det landat och visa färgval
+		if player.is_human and action.card.color == Card.CardColor.WILD:
+			await get_tree().create_timer(0.5).timeout # Vänta på animationen
+			var chosen_color = await visual_match.show_color_picker()
+			state.current_color = chosen_color
+			visual_match.update_ui_color(chosen_color)
+			
+	else:
+		draw_cards(state.current_player_index, 1)
 		if visual_mode:
 			await get_tree().create_timer(0.6, false).timeout
 			
 		var drawn_card = player.hand[-1]
 		var top_card = state.discard_pile[-1]
 		
-		# KAN DET DRAGNA KORTET SPELAS?
 		if drawn_card.is_playable_on(top_card, state.current_color):
 			if player.is_human:
-				# 1. Visa knapparna
 				visual_match.show_draw_choice(drawn_card)
-				
-				# 2. Aktivera klick på handen så man kan klicka på det nya kortet
 				visual_match.human_can_play = true
-				
-				# 3. Vänta på knappar ELLER klick på kortet
 				var result = await any_signal([visual_match.draw_choice_made, visual_match.human_card_selected])
 				
-				# Stäng av klick och göm menyn direkt efter valet
 				visual_match.human_can_play = false
 				visual_match.draw_choice_menu.hide()
 				
-				# --- FIXEN: Vi kollar VAD resultatet är istället för dess värde direkt ---
-				var chose_to_play = false
-				
-				if result is Card:
-					# Spelaren klickade på kortet i handen
-					chose_to_play = true
-				elif typeof(result) == TYPE_BOOL and result == true:
-					# Spelaren tryckte på "Spela"-knappen
-					chose_to_play = true
+				var chose_to_play = (result is Card or (typeof(result) == TYPE_BOOL and result == true))
 				
 				if chose_to_play:
-					# Spela kortet (vi använder rött som standard för Wild tills vidare)
-					var color_to_use = drawn_card.color
-					if color_to_use == Card.CardColor.WILD:
-						color_to_use = Card.CardColor.RED
-					play_card(state.current_player_index, drawn_card, color_to_use)
+					# Spela kortet
+					play_card(state.current_player_index, drawn_card, drawn_card.color)
+					
+					# OM det var ett Wild, vänta och be om färg NU
+					if drawn_card.color == Card.CardColor.WILD:
+						await get_tree().create_timer(0.5).timeout
+						var chosen_color = await visual_match.show_color_picker()
+						state.current_color = chosen_color
+						visual_match.update_ui_color(chosen_color)
 				else:
-					print("Spelaren valde att behålla kortet (tryckte på Behåll-knappen)")
+					print("Spelaren behöll kortet.")
 			else:
-				# AI:n spelar alltid om den kan
-				play_card(state.current_player_index, drawn_card, drawn_card.color)
+				# AI:n väljer färg direkt (eftersom den inte har animationstajming)
+				var color_to_use = drawn_card.color
+				if color_to_use == Card.CardColor.WILD:
+					color_to_use = [Card.CardColor.RED, Card.CardColor.BLUE, Card.CardColor.GREEN, Card.CardColor.YELLOW].pick_random()
+				play_card(state.current_player_index, drawn_card, color_to_use)
 	
-	# --- STEG 3: GÅ VIDARE TILL NÄSTA ---
+	# --- STEG 3: GÅ VIDARE ---
 	if visual_mode:
 		await get_tree().create_timer(0.1, false).timeout
 		
+	# 1. Byt till nästa spelare (KÖR BARA DETTA EN GÅNG!)
 	await next_player()
 	state.turn_number += 1
+	
+	# 2. Hämta den nya spelaren som nu ska börja sin tur
+	var upcoming_player = state.players[state.current_player_index]
 	turn_started.emit(state.current_player_index)
 	
-	# Kolla vem som ska spela HÄRNÄST
-	var next_up = state.players[state.current_player_index]
-	
+	# 3. Hantera pausen för spelkänsla
 	if visual_mode:
-		# Om nästa spelare är en AI, pausa så vi hinner se vem det blev
-		# Om nästa spelare är MÄNNISKA, hoppa över pausen helt!
-		if not next_up.is_human:
+		if not upcoming_player.is_human:
+			# Pausa om det är en AI, så vi hinner se vems tur det blev
 			await get_tree().create_timer(turn_delay, false).timeout
 		else:
-			# Man kan lägga till en pytteliten frame-wait bara för att UI ska hinna med
+			# Om det är människan, kör på direkt för maximal responsivitet
 			await get_tree().process_frame
 
 func next_player():
