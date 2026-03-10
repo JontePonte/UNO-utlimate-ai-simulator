@@ -306,39 +306,42 @@ label_settings = SubResource("LabelSettings_b8pxk")
 [node name="CenterStkip" type="Control" parent="Base/InnerColor" unique_id=1075280532]
 visible = false
 anchors_preset = 0
-offset_left = -137.0
+offset_left = -14.999998
 offset_top = -6.0
-offset_right = 379.0
+offset_right = 238.33333
 offset_bottom = 330.0
 scale = Vector2(0.6, 0.6)
-mouse_filter = 1
+mouse_filter = 2
 
 [node name="TextureRect2" type="TextureRect" parent="Base/InnerColor/CenterStkip" unique_id=644203493]
 modulate = Color(0, 0, 0, 1)
 layout_mode = 0
-offset_left = 146.15384
-offset_top = -134.61539
-offset_right = 507.69232
-offset_bottom = 358.97437
+offset_left = -50.51283
+offset_top = -143.33333
+offset_right = 311.0257
+offset_bottom = 350.2564
+mouse_filter = 2
 texture = ExtResource("3_ey4q1")
 expand_mode = 1
 
 [node name="TextureRect3" type="TextureRect" parent="Base/InnerColor/CenterStkip" unique_id=1868563298]
 modulate = Color(0, 0, 0, 1)
 layout_mode = 0
-offset_left = 145.0
-offset_top = -126.0
-offset_right = 501.28207
-offset_bottom = 357.69232
+offset_left = -51.666668
+offset_top = -134.71794
+offset_right = 304.6154
+offset_bottom = 348.97437
+mouse_filter = 2
 texture = ExtResource("3_ey4q1")
 expand_mode = 1
 
 [node name="TextureRect" type="TextureRect" parent="Base/InnerColor/CenterStkip" unique_id=663142336]
 layout_mode = 0
-offset_left = 162.0
-offset_top = -118.0
-offset_right = 499.0
-offset_bottom = 350.0
+offset_left = -34.666668
+offset_top = -126.71794
+offset_right = 302.33334
+offset_bottom = 341.28204
+mouse_filter = 2
 texture = ExtResource("3_ey4q1")
 expand_mode = 1
 
