@@ -47,23 +47,21 @@ func deal_initial_hands(cards_per_player: int):
 func start_discard_pile():
 	var card = state.draw_pile.draw()
 	
-	# If first card is WILD_DRAW_FOUR take another
-	while card.value == Card.CardValue.WILD_DRAW_FOUR:
+	while card.color == Card.CardColor.WILD:
+		print("Startkortet var ett Wild-kort. Buntar om...")
 		state.draw_pile.cards.append(card)
 		state.draw_pile.shuffle()
 		card = state.draw_pile.draw()
 
 	state.discard_pile.append(card)
+	state.current_color = card.color
 	
-	if card.color == Card.CardColor.WILD:
-		# Om första kortet är ett vanligt Wild-kort, säger officiella UNO-regler 
-		# att första spelaren får bestämma färg, men för AI:ns skull kan vi 
-		# bara slumpa en färg som gäller från start!
-		var colors = [Card.CardColor.RED, Card.CardColor.BLUE, Card.CardColor.GREEN, Card.CardColor.YELLOW]
-		state.current_color = colors.pick_random()
+	# --- SÄKER FIX HÄR ---
+	var parent = get_parent()
+	if parent != null and parent.has_method("update_ui_color"):
+		parent.update_ui_color(state.current_color)
 	else:
-		state.current_color = card.color
-
+		print("DEBUG: GameManager hittade ingen förälder än, pilen uppdateras senare.")
 
 # --- TURN MANAGEMENT ---
 func process_turn():
