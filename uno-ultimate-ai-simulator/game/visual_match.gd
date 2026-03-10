@@ -31,9 +31,11 @@ extends Control
 @onready var pause_exit_button = $PauseOverlay/VBoxContainer/ExitGame
 
 @onready var draw_choice_menu = $DrawChoiceMenu
+@onready var color_picker_menu = $ColorChoice
 
 signal human_draw_requested
 signal draw_choice_made(should_play: bool)
+signal color_selected(color: Card.CardColor)
 
 var name_labels: Array[Label] = []
 
@@ -692,3 +694,22 @@ func _unhandled_input(event):
 			for i in range(4):
 				pass
 				#_show_uno_animation(i)
+
+func show_color_picker():
+	color_picker_menu.show()
+	# Här väntar vi på att spelaren klickar på en av färgknapparna
+	var selected_color = await color_selected
+	color_picker_menu.hide()
+	return selected_color
+
+func _on_red_button_pressed():
+	color_selected.emit(Card.CardColor.RED)
+
+func _on_blue_button_pressed():
+	color_selected.emit(Card.CardColor.BLUE)
+
+func _on_green_button_pressed():
+	color_selected.emit(Card.CardColor.GREEN)
+
+func _on_yellow_button_pressed():
+	color_selected.emit(Card.CardColor.YELLOW)

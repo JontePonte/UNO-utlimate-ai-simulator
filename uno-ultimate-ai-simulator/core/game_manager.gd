@@ -86,6 +86,12 @@ func process_turn():
 		if result is Card:
 			action = PlayerAction.new()
 			action.card = result
+			# Om det är ett Wild-kort, be om färg
+			if result.color == Card.CardColor.WILD:
+				var chosen_color = await visual_match.show_color_picker()
+				action.declared_color = chosen_color
+			else:
+				action.declared_color = result.color
 		else:
 			action = null # Spelaren valde att klicka på högen (Dra kort)
 	else:
