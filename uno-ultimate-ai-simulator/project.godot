@@ -18,6 +18,10 @@ config/name="UNO-ultimate-ai-simulator"
 run/main_scene="uid://dfl4w1ugrnwbg"
 config/features=PackedStringArray("4.6", "Forward Plus")
 
+[autoload]
+
+GameSettings="*uid://chyqagnkn7c20"
+
 [display]
 
 window/size/viewport_width=1920
