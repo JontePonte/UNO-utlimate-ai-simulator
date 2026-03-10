@@ -15,7 +15,7 @@ func _ready() -> void:
 	if skip_symbol:
 		skip_symbol.hide()
 
-func update_hand(hand_cards: Array):
+func update_hand(hand_cards: Array, show_face: bool = true):
 	# 1. Rensa bort alla gamla visuella kort först
 	for child in container.get_children():
 		child.queue_free()
@@ -25,15 +25,20 @@ func update_hand(hand_cards: Array):
 		var visual_card = card_ui_scene.instantiate()
 		container.add_child(visual_card)
 		
+		# Sätt kortdatan (färg/värde)
 		visual_card.set_card_data(card)
-		visual_card.set_face_up(true)
+		
+		# --- NYTT: Styr om kortet visas eller är dolt ---
+		visual_card.set_face_up(show_face)
+		
 		visual_card.set_meta("logical_card", card)
+		
+		# Koppla klick-signalen (vi vill nog bara att människan ska kunna klicka, 
+		# men vi låter signalen finnas kvar för enkelhetens skull)
 		visual_card.card_clicked.connect(get_tree().current_scene._on_card_ui_clicked)
 		
-	# 3. Kalla på vår nya beräkning, men vänta en "frame" så Godot 
-	# hinner rita upp korten och vi vet deras faktiska bredd!
+	# 3. Kalla på vår nya beräkning efter en frame
 	call_deferred("_adjust_card_spacing")
-
 
 func _adjust_card_spacing():
 	var card_count = container.get_child_count()

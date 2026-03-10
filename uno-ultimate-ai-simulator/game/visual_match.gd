@@ -177,142 +177,191 @@ func _test_piles():
 		card.position = center_offset + messy_offset
 
 func start_real_game():
-	# 1. Skapa hjärnorna först
-	#var bot1 = AISimple.new()
-	var bot2 = AISimple.new()
-	var bot3 = AISimple.new()
-	var bot4 = AISimple.new()
+	var players: Array[Player] = []
+	var order = ["bottom", "left", "top", "right"]
 	
-	# 2. Skapa spelarna och ge dem AI-skriptens egna namn!
-	# (Nu kommer alltså players[0].name automatiskt att bli "AISimple")
-	var players: Array[Player] = [
-		Player.new(0, "Human", true, null), 
-		Player.new(1, bot2.ai_name, false, bot2),
-		Player.new(2, bot3.ai_name, false, bot3),
-		Player.new(3, bot4.ai_name, false, bot4)
-	]
+	# 1. Skapa spelarna dynamiskt baserat på GameSettings
+	for i in range(order.size()):
+		var pos_name = order[i]
+		var cfg = GameSettings.slots[pos_name]
+		
+		if cfg.active:
+			var p: Player
+			if cfg.is_human:
+				# Index blir players.size() så de får 0, 1, 2... i ordning
+				p = Player.new(players.size(), cfg.ai_name, true, null)
+			else:
+				# Skapa AI (här kan vi senare välja olika AI-filer)
+				var bot = AISimple.new()
+				p = Player.new(players.size(), cfg.ai_name, false, bot)
+			
+			# VIKTIGT: Spara vilket UI-index (0-3) denna spelare hör till
+			p.set_meta("ui_index", i)
+			players.append(p)
 	
+	# 2. Starta GameManager med de aktiva spelarna
 	game_manager = GameManager.new(players)
 	add_child(game_manager)
 	
-	# 3. Slå på spelets "TV-läge"
+	# 3. Inställningar från GameSettings
 	game_manager.visual_mode = true
-	game_manager.turn_delay = 1.0 # 1 sekund per drag
+	# Justera hastigheten (t.ex. 1.0 / 2.0 om vi kör dubbel fart)
+	game_manager.turn_delay = 1.0 / GameSettings.game_speed
 	
-	# 4. Koppla hjärnans signaler till våra ögon (UI)
+	# 4. Koppla alla dina befintliga signaler
 	game_manager.card_played.connect(_on_card_played)
 	game_manager.card_drawn.connect(_on_card_drawn)
 	game_manager.turn_started.connect(_on_turn_started)
 	game_manager.game_over.connect(_on_game_ended)
 	
-	# Game Over menu
+	# Game Over & Pause menyer (dina originalkopplingar)
 	restart_button.pressed.connect(_on_restart_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
 	main_menu_button.pressed.connect(_on_main_menu_pressed)
-	
-	# Pause menue
 	resume_button.pressed.connect(_toggle_pause)
 	pause_exit_button.pressed.connect(_on_exit_pressed) 
 	pause_main_menu_button.pressed.connect(_on_main_menu_pressed)
 	
-	# 5. Rita upp startläget! (Dela ut kort och visa första kortet i kasthögen)
+	# 5. Rita upp startläget
+	# Nu har alla i 'players' hunnit få sin 'ui_index' metadata!
 	update_all_visuals()
-	_spawn_discard_card(game_manager.state.discard_pile[-1]) # Det allra första kortet
+	_spawn_discard_card(game_manager.state.discard_pile[-1])
 	
-	await get_tree().create_timer(1.5).timeout
-	for hand in player_uis:
-		hand._adjust_card_spacing()
+	# Vänta in utdelningen (anpassat efter hastighet)
+	await get_tree().create_timer(1.5 / GameSettings.game_speed).timeout
 	
-	# Skriv ut namnen på skärmen i ditt snygga format!
-	for i in range(players.size()):
-		name_labels[i].text = players[i].name
+	# Hantera labels och spacing för de som är med
+	# Först: Göm ALLA labels och UI-händer som default
+	for i in range(4):
+		name_labels[i].hide()
+		# Om du vill dölja tomma händer helt:
+		# player_uis[i].hide()
+
+	# Sen: Visa och uppdatera bara de som faktiskt spelar
+	for p in players:
+		var ui_idx = p.get_meta("ui_index")
+		name_labels[ui_idx].text = p.name
+		name_labels[ui_idx].show()
+		player_uis[ui_idx].show()
+		player_uis[ui_idx]._adjust_card_spacing()
 	
 	# 6. STARTA MATCHEN! 
 	game_manager.run_full_game()
 
 
 func update_all_visuals():
-	# Synka de fysiska händerna
+	# 1. Synka de fysiska händerna
 	for i in range(game_manager.state.players.size()):
 		var logical_player = game_manager.state.players[i]
-		player_uis[i].update_hand(logical_player.hand)
 		
-	# Synka plockhögen i mitten
+		# Hämta UI-indexet som vi sparade i start_real_game
+		var ui_idx = logical_player.get_meta("ui_index")
+		var hand_ui = player_uis[ui_idx]
+		
+		# Hämta rätt inställning för visa/dölj kort från GameSettings
+		var pos_name = ["bottom", "left", "top", "right"][ui_idx]
+		var show_face = GameSettings.slots[pos_name].show_cards
+		
+		# Uppdatera handen med rätt kort och rätt visningsläge
+		hand_ui.update_hand(logical_player.hand, show_face)
+		
+	# 2. Synka plockhögen i mitten
 	_update_draw_pile_visual()
 	
-	# Kolla om hjärnan precis har blandat om kasthögen!
+	# 3. Kolla om hjärnan precis har blandat om kasthögen!
 	if discard_pile_node.get_child_count() > game_manager.state.discard_pile.size():
 		_cleanup_discard_pile_visual()
 
 
 # --- SIGNAL MOTTAGARE ---
-func _on_card_drawn(player_index: int, _card: Card):
-	var delay_time = _active_draws * 0.25 
+func _on_card_drawn(player_index: int, card: Card):
+	# 1. Hämta rätt UI-plats via metadata
+	var p = game_manager.state.players[player_index]
+	var ui_idx = p.get_meta("ui_index")
+	var target_hand = player_uis[ui_idx]
+	
+	# Bestäm om vi ska visa framsidan (baserat på GameSettings)
+	var pos_name = ["bottom", "left", "top", "right"][ui_idx]
+	var show_face = GameSettings.slots[pos_name].show_cards
+	
+	# 2. Hantera delay för flera kort (anpassat efter game_speed)
+	var base_delay = 0.25 / GameSettings.game_speed
+	var delay_time = _active_draws * base_delay
 	_active_draws += 1 
 	
 	_update_draw_pile_visual()
 	
+	# 3. Skapa det flygande kortet
 	var flying_card = card_ui_scene.instantiate()
 	add_child(flying_card)
 	
 	flying_card.z_index = 20 
 	flying_card.z_as_relative = false
-	
 	flying_card.set_interactable(false)
-	flying_card.set_face_up(false) 
+	
+	# Sätt rätt data och visa/dölj baksidan
+	flying_card.set_card_data(card)
+	flying_card.set_face_up(show_face) 
+	
 	flying_card.pivot_offset = flying_card.size / 2.0
 	
+	# Startposition vid talongen
 	var start_pos = draw_pile_node.global_position - (flying_card.size / 2.0)
-	flying_card.position = start_pos
+	flying_card.global_position = start_pos
 	
-	var target_hand = player_uis[player_index]
+	# 4. Beräkna målet (Din magiska fix för runda händer/rotation)
 	var target_rot = target_hand.rotation_degrees
-	
 	var target_center = target_hand.get_global_transform() * (target_hand.size / 2.0)
 	
 	var child_count = target_hand.container.get_child_count()
 	if child_count > 0:
-		var rightmost_card = target_hand.container.get_child(child_count - 1)
-		var current_center = rightmost_card.get_global_transform() * (rightmost_card.size / 2.0)
-		
-		# --- DEN MAGISKA FIXEN ---
-		# Hitta handens "höger" oavsett om den är roterad 0, 90 eller 180 grader.
-		var right_direction = target_hand.get_global_transform().x.normalized()		
-		# Flytta måltavlan ett halvt kort till höger så den träffar "hålet" 
-		# där det NYA kortet håller på att skapas!
-		target_center = current_center + (right_direction * (flying_card.size.x / 2.0))
+		var last_card = target_hand.container.get_child(child_count - 1)
+		var last_card_center = last_card.get_global_transform() * (last_card.size / 2.0)
+		var right_direction = target_hand.get_global_transform().x.normalized()        
+		target_center = last_card_center + (right_direction * (flying_card.size.x / 2.0))
 		
 	var target_pos = target_center - (flying_card.size / 2.0)
 	
-	# ... (Härifrån och ner är koden exakt samma som förut, med hide, tween och flex) ...
+	# 5. Animera (Anpassat efter game_speed)
 	if delay_time > 0:
 		flying_card.hide()
 		
 	var tween = create_tween()
+	var anim_time = 0.5 / GameSettings.game_speed
 	
 	if delay_time > 0:
 		tween.tween_interval(delay_time)
 		tween.tween_callback(flying_card.show)
 	
-	tween.tween_property(flying_card, "position", target_pos, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.parallel().tween_property(flying_card, "rotation_degrees", target_rot, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	# Använd global_position för att vara säker i det roterade utrymmet
+	tween.tween_property(flying_card, "global_position", target_pos, anim_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(flying_card, "rotation_degrees", target_rot, anim_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	
 	await tween.finished
 	flying_card.queue_free()
 	
 	_active_draws -= 1
 	
+	# 6. Slutligen: Uppdatera den riktiga handen
 	if _active_draws == 0:
+		# Här skickar vi med show_face till update_hand
+		target_hand.update_hand(p.hand, show_face)
 		update_all_visuals()
 		target_hand.play_flex_animation()
 
 func _on_card_played(player_index: int, card: Card, declared_color: Card.CardColor):
-	var hand_ui = player_uis[player_index]
+	# --- NYTT: Hämta rätt UI-index via metadata ---
+	var p = game_manager.state.players[player_index]
+	var ui_idx = p.get_meta("ui_index")
+	
+	# Använd ui_idx istället för player_index för ALLT som rör grafiken
+	var hand_ui = player_uis[ui_idx] 
 	var start_rotation = hand_ui.rotation_degrees
 	
 	var children = hand_ui.container.get_children()
 	var chosen_ui_card = null
 	
+	# ... (Samma logik som förut för att hitta chosen_ui_card) ...
 	if children.size() > 0:
 		for ui_card in children:
 			if ui_card.has_meta("logical_card"):
@@ -320,63 +369,53 @@ func _on_card_played(player_index: int, card: Card, declared_color: Card.CardCol
 				if logical.color == card.color and logical.value == card.value:
 					chosen_ui_card = ui_card
 					break
-					
 		if chosen_ui_card == null:
 			chosen_ui_card = children[randi() % children.size()]
 
 	if chosen_ui_card != null:
 		_spawn_discard_card(card, chosen_ui_card, start_rotation)
 		
-		# --- MAGIN BÖRJAR HÄR ---
 		var card_index = chosen_ui_card.get_index()
 		var hole_size = chosen_ui_card.size
 		
-		# 1. Göm och ta bort det riktiga UI-kortet ur handen
 		chosen_ui_card.hide()
 		chosen_ui_card.queue_free()
 		
-		# 2. Skapa ett "spökhål" som håller uppe platsen i HBoxContainern
 		var dummy_hole = Control.new()
 		dummy_hole.custom_minimum_size = hole_size
 		hand_ui.container.add_child(dummy_hole)
 		hand_ui.container.move_child(dummy_hole, card_index)
 		
-		# 3. Låt klonen flyga klart i luften (0.4 sekunder)
-		await get_tree().create_timer(0.4).timeout
+		# NYTT: Justera timer med GameSettings-hastighet!
+		await get_tree().create_timer(0.4 / GameSettings.game_speed).timeout
 		
-		# --- FIXEN: Kolla så hålet överlevde pausen! ---
 		if is_instance_valid(dummy_hole):
-			
-			# 4. Mjuk ihopdragning med matematisk perfektion!
-			# Hämta handens nuvarande separation (t.ex. -60)
 			var current_sep = hand_ui.container.get_theme_constant("separation")
-			
-			# Om separationen är negativ, måste vi stanna när hålet är lika stort 
-			# som separationen (fast positivt). Om separationen är 0, går vi till 0.
 			var target_hole_size = max(0.0, -current_sep)
 			
 			var tween = create_tween()
-			tween.tween_property(dummy_hole, "custom_minimum_size:x", target_hole_size, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			# NYTT: Även tween-hastigheten påverkas
+			var tween_time = 0.25 / GameSettings.game_speed
+			tween.tween_property(dummy_hole, "custom_minimum_size:x", target_hole_size, tween_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 			
 			await tween.finished
-			
 			if is_instance_valid(dummy_hole):
 				dummy_hole.queue_free()
 	else:
-		# Fallback ifall något gått väldigt snett och handen var tom
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4 / GameSettings.game_speed).timeout
 	
-	# Vi använder 'declared_color' om det är ett Wild-kort, annars kortets egen färg
 	var final_color = declared_color if card.color == Card.CardColor.WILD else card.color
 	update_ui_color(final_color)
 	
-	# När hålet är helt stängt och animationen är klar, ritar vi om den
-	# underliggande logiken för spelaren. Det kommer ske helt sömlöst!
-	hand_ui.update_hand(game_manager.state.players[player_index].hand)
+	# --- NYTT: Skicka med show_cards-inställningen ---
+	var pos_name = ["bottom", "left", "top", "right"][ui_idx]
+	var show_cards = GameSettings.slots[pos_name].show_cards
+	hand_ui.update_hand(p.hand, show_cards)
 	
-	var cards_left = game_manager.state.players[player_index].hand.size()
+	var cards_left = p.hand.size()
 	if cards_left == 1:
-		_show_uno_animation(player_index)
+		# UNO-animationen behöver också veta vilken UI-plats det gäller
+		_show_uno_animation(ui_idx) 
 	
 	if _active_draws == 0:
 		update_all_visuals()
