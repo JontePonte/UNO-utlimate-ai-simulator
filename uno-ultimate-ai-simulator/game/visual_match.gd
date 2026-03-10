@@ -304,7 +304,7 @@ func _on_card_drawn(player_index: int, _card: Card):
 		update_all_visuals()
 		target_hand.play_flex_animation()
 
-func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardColor):
+func _on_card_played(player_index: int, card: Card, declared_color: Card.CardColor):
 	var hand_ui = player_uis[player_index]
 	var start_rotation = hand_ui.rotation_degrees
 	
@@ -363,6 +363,10 @@ func _on_card_played(player_index: int, card: Card, _declared_color: Card.CardCo
 	else:
 		# Fallback ifall något gått väldigt snett och handen var tom
 		await get_tree().create_timer(0.4).timeout
+	
+	# Vi använder 'declared_color' om det är ett Wild-kort, annars kortets egen färg
+	var final_color = declared_color if card.color == Card.CardColor.WILD else card.color
+	update_ui_color(final_color)
 	
 	# När hålet är helt stängt och animationen är klar, ritar vi om den
 	# underliggande logiken för spelaren. Det kommer ske helt sömlöst!
@@ -515,6 +519,18 @@ func _on_turn_started(current_player_index: int):
 	# Spara vem som fick turen till nästa gång
 	last_player_index = current_player_index
 
+func update_ui_color(new_color: Card.CardColor):
+	var color_value: Color
+	match new_color:
+		Card.CardColor.RED: color_value = Color.RED
+		Card.CardColor.BLUE: color_value = Color.BLUE
+		Card.CardColor.GREEN: color_value = Color.GREEN
+		Card.CardColor.YELLOW: color_value = Color.YELLOW
+		_: color_value = Color.WHITE # Wild/Vit
+		
+	# Byt ut 'CurrentColorArrow' mot namnet på din pil-nod i trädet!
+	# Om den ligger direkt i VisualMatch skriver du bara $PilenEllerVadDenHeter
+	$TurnArrow.self_modulate = color_value
 
 func _show_uno_animation(player_index: int):
 	# 1. Skapa en ny textnod i farten
