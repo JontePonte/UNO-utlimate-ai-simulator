@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ci0n3urj0n7gj" path="res://ui/player_hand_ui.gd" id="1_sha0n"]
 [ext_resource type="PackedScene" uid="uid://ukfpjno5na0i" path="res://ui/CardUI.tscn" id="2_ln5nq"]
-[ext_resource type="Texture2D" uid="uid://bs1dx8tp27atv" path="res://ui/unoSkipWhite.svg" id="3_eonab"]
+[ext_resource type="Texture2D" uid="uid://bs1dx8tp27atv" path="res://ui/assets/unoSkipWhite.svg" id="3_eonab"]
 
 [node name="PlayerHandUi" type="Control" unique_id=1190902431]
 layout_mode = 3
