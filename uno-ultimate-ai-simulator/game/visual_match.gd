@@ -39,10 +39,10 @@ var name_labels: Array[Label] = []
 
 # En ordbok som översätter spelets färger till riktiga färgkoder!
 const UNO_COLORS = {
-	Card.CardColor.RED: Color(0.9, 0.2, 0.2),
-	Card.CardColor.BLUE: Color(0.2, 0.4, 0.9),
-	Card.CardColor.GREEN: Color(0.2, 0.8, 0.2),
-	Card.CardColor.YELLOW: Color(0.9, 0.8, 0.2),
+	Card.CardColor.RED: Color(0.9, 0.2, 0.2), # 230, 51,51
+	Card.CardColor.BLUE: Color(0.2, 0.4, 0.9), # 51, 102, 230
+	Card.CardColor.GREEN: Color(0.2, 0.8, 0.2), # 51, 204, 51
+	Card.CardColor.YELLOW: Color(0.9, 0.8, 0.2), # 230, 204, 51
 	Card.CardColor.WILD: Color(1.0, 1.0, 1.0)
 }
 

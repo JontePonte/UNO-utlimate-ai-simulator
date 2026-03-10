@@ -150,8 +150,17 @@ func process_turn():
 	state.turn_number += 1
 	turn_started.emit(state.current_player_index)
 	
+	# Kolla vem som ska spela HÄRNÄST
+	var next_up = state.players[state.current_player_index]
+	
 	if visual_mode:
-		await get_tree().create_timer(turn_delay, false).timeout
+		# Om nästa spelare är en AI, pausa så vi hinner se vem det blev
+		# Om nästa spelare är MÄNNISKA, hoppa över pausen helt!
+		if not next_up.is_human:
+			await get_tree().create_timer(turn_delay, false).timeout
+		else:
+			# Man kan lägga till en pytteliten frame-wait bara för att UI ska hinna med
+			await get_tree().process_frame
 
 func next_player():
 	# Om ett SKIP-kort spelades, hoppar vi ett extra steg
