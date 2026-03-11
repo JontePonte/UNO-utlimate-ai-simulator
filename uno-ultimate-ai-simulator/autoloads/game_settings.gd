@@ -5,7 +5,7 @@ enum AIType { SIMPLE, AGGRESSIVE, CUSTOM_FILE }
 # Vi förenklar slotsen. Namnet används nu bara om det är en människa,
 # annars hämtas det från AI-hjärnan.
 var slots = {
-	"bottom": {"active": true, "is_human": false,  "show_cards": true,  "ai_name": "Spelare 1", "ai_type": AIType.SIMPLE},
+	"bottom": {"active": true, "is_human": true,  "show_cards": true,  "ai_name": "Spelare 1", "ai_type": AIType.SIMPLE},
 	"left":   {"active": true, "is_human": false, "show_cards": false, "ai_type": AIType.SIMPLE},
 	"top":    {"active": true, "is_human": false, "show_cards": false, "ai_type": AIType.SIMPLE},
 	"right":  {"active": true, "is_human": false, "show_cards": false, "ai_type": AIType.SIMPLE}
