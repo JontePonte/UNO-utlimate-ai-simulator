@@ -684,25 +684,24 @@ func _on_draw_pile_gui_input(event):
 			human_draw_requested.emit()
 
 func _on_game_ended(winner_index: int):
-	# Om winner_index är -1 betyder det att max_turns nåddes (Oavgjort)
 	if winner_index == -1:
-		winner_label.text = "GAME OVER\nIt's a Draw!"
+		# Visa att max antal turer uppnåddes
+		winner_label.text = "GAME OVER\nMax turns reached (" + str(GameSettings.max_turns) + ")"
 	else:
+		# Hämta vinnaren och dess UI-position
 		var p = game_manager.state.players[winner_index]
 		var ui_idx = p.get_meta("ui_index")
 		
-		# Vi mappar ui_idx till rätt text istället för winner_index
 		var position_names = [" (Bottom)", " (Left)", " (Top)", " (Right)"]
 		var pos_text = position_names[ui_idx]
 		
 		winner_label.text = "The Winner is:\n" + p.name + pos_text
 	
-	# En snygg inflygning av skärmen
+	# Visa overlayn
 	game_over_overlay.modulate.a = 0.0
 	game_over_overlay.show()
 	
 	var tween = create_tween()
-	# Vi delar även här med game_speed om vi vill att Game Over ska poppa snabbare!
 	var fade_time = 0.5 / GameSettings.game_speed
 	tween.tween_property(game_over_overlay, "modulate:a", 1.0, fade_time)
 
