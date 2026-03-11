@@ -329,7 +329,7 @@ func _on_card_drawn(player_index: int, card: Card):
 	var start_pos = draw_pile_node.global_position - (flying_card.size / 2.0)
 	flying_card.global_position = start_pos
 	
-	# 4. Beräkna målet (Din magiska fix för runda händer/rotation)
+	# 4. Beräkna målet (Nu med rotations-säker matte för Control-noder!)
 	var target_rot = target_hand.rotation_degrees
 	var target_center = target_hand.get_global_transform() * (target_hand.size / 2.0)
 	
@@ -337,10 +337,15 @@ func _on_card_drawn(player_index: int, card: Card):
 	if child_count > 0:
 		var last_card = target_hand.container.get_child(child_count - 1)
 		var last_card_center = last_card.get_global_transform() * (last_card.size / 2.0)
+		# Handens "höger" i globala koordinater
 		var right_direction = target_hand.get_global_transform().x.normalized()        
 		target_center = last_card_center + (right_direction * (flying_card.size.x / 2.0))
 		
-	var target_pos = target_center - (flying_card.size / 2.0)
+	# FIXEN: Rotera offset-vektorn innan vi subtraherar den
+	var center_offset = flying_card.size / 2.0
+	var rotated_offset = center_offset.rotated(deg_to_rad(target_rot))
+	
+	var target_pos = target_center - rotated_offset
 	
 	# 5. Animera
 	if delay_time > 0:
