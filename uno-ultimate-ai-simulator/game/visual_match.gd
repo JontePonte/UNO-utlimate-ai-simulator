@@ -188,14 +188,23 @@ func start_real_game():
 		if cfg.active:
 			var p: Player
 			if cfg.is_human:
-				# Index blir players.size() så de får 0, 1, 2... i ordning
+				# För människan använder vi namnet från settings (t.ex. "Spelare 1")
 				p = Player.new(players.size(), cfg.ai_name, true, null)
 			else:
-				# Skapa AI (här kan vi senare välja olika AI-filer)
-				var bot = AISimple.new()
-				p = Player.new(players.size(), cfg.ai_name, false, bot)
+				# 1. Skapa hjärnan baserat på typ
+				var brain: AIPlayer = null
+				match cfg.ai_type:
+					GameSettings.AIType.SIMPLE:
+						brain = AISimple.new()
+					# Här lägger du till fler typer allt eftersom
+					_:
+						brain = AISimple.new()
+				
+				# 2. Hämta namnet direkt från AI-hjärnan!
+				var final_name = brain.ai_name if brain.ai_name != "" else cfg.ai_name
+				
+				p = Player.new(players.size(), final_name, false, brain)
 			
-			# VIKTIGT: Spara vilket UI-index (0-3) denna spelare hör till
 			p.set_meta("ui_index", i)
 			players.append(p)
 	
