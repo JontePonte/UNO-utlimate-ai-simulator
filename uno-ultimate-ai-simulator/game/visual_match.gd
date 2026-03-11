@@ -33,6 +33,10 @@ extends Control
 @onready var draw_choice_menu = $DrawChoiceMenu
 @onready var color_picker_menu = $ColorChoice
 
+@onready var speed_slider = $SpeedControl/HBox/SpeedSlider
+@onready var speed_reset = $SpeedControl/HBox/ResetButton
+@onready var speed_label = $SpeedControl/Label
+
 signal human_draw_requested
 signal draw_choice_made(should_play: bool)
 signal color_selected(color: Card.CardColor)
@@ -62,6 +66,12 @@ func _ready():
 	await get_tree().process_frame
 	
 	Engine.time_scale = GameSettings.game_speed
+	
+	speed_slider.value_changed.connect(_on_speed_slider_changed)
+	speed_reset.pressed.connect(_on_reset_button_pressed)
+
+	speed_slider.value = GameSettings.game_speed
+	_update_speed(GameSettings.game_speed)
 	
 	# Lägg in händerna i en lista så plats 0 = bottom, plats 1 = left, osv.
 	player_uis = [bottom_hand, left_hand, top_hand, right_hand]
@@ -780,3 +790,19 @@ func _on_yellow_button_pressed():
 func _on_speed_selected(new_speed: float):
 	GameSettings.game_speed = new_speed
 	Engine.time_scale = new_speed
+
+func _on_speed_slider_changed(value_changed: float) -> void:
+	_update_speed(value_changed)
+
+func _on_reset_button_pressed() -> void:
+	speed_slider.value = 1.0
+	# Eftersom vi ändrar sliderns .value här, kommer signalen 
+	# 'value_changed' triggas automatiskt och köra _update_speed åt oss!
+
+func _update_speed(value: float):
+	# 1. Ändra motorns klocka. Detta snabbar upp ALLT (Tweens, Timers, process)
+	Engine.time_scale = value
+	# 2. Uppdatera texten i UI
+	speed_label.text = "Hastighet: " + str(value).pad_decimals(1) + "x"
+	# 3. Spara för framtida matcher
+	GameSettings.game_speed = value
