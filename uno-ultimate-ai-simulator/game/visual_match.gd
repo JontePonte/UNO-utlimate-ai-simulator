@@ -255,7 +255,7 @@ func start_real_game():
 		player_uis[ui_idx]._adjust_card_spacing()
 	
 	# 6. STARTA MATCHEN! 
-	game_manager.run_full_game()
+	game_manager.run_full_game(GameSettings.max_turns)
 
 
 func update_all_visuals():
