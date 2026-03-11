@@ -61,6 +61,8 @@ var player_uis: Array[PlayerHandUI] = []
 func _ready():
 	await get_tree().process_frame
 	
+	Engine.time_scale = GameSettings.game_speed
+	
 	# Lägg in händerna i en lista så plats 0 = bottom, plats 1 = left, osv.
 	player_uis = [bottom_hand, left_hand, top_hand, right_hand]
 	name_labels = [bottom_name_label, left_name_label, top_name_label, right_name_label]
@@ -214,8 +216,7 @@ func start_real_game():
 	
 	# 3. Inställningar från GameSettings
 	game_manager.visual_mode = true
-	# Justera hastigheten (t.ex. 1.0 / 2.0 om vi kör dubbel fart)
-	game_manager.turn_delay = 1.0 / GameSettings.game_speed
+	game_manager.turn_delay = 1.0
 	
 	# 4. Koppla alla dina befintliga signaler
 	game_manager.card_played.connect(_on_card_played)
@@ -236,8 +237,8 @@ func start_real_game():
 	update_all_visuals()
 	_spawn_discard_card(game_manager.state.discard_pile[-1])
 	
-	# Vänta in utdelningen (anpassat efter hastighet)
-	await get_tree().create_timer(1.5 / GameSettings.game_speed).timeout
+	# Vänta in utdelningen
+	await get_tree().create_timer(1.5).timeout
 	
 	# Hantera labels och spacing för de som är med
 	# Först: Göm ALLA labels och UI-händer som default
@@ -293,8 +294,8 @@ func _on_card_drawn(player_index: int, card: Card):
 	var pos_name = ["bottom", "left", "top", "right"][ui_idx]
 	var show_face = GameSettings.slots[pos_name].show_cards
 	
-	# 2. Hantera delay för flera kort (anpassat efter game_speed)
-	var base_delay = 0.25 / GameSettings.game_speed
+	# 2. Hantera delay för flera kort
+	var base_delay = 0.25
 	var delay_time = _active_draws * base_delay
 	_active_draws += 1 
 	
@@ -331,12 +332,12 @@ func _on_card_drawn(player_index: int, card: Card):
 		
 	var target_pos = target_center - (flying_card.size / 2.0)
 	
-	# 5. Animera (Anpassat efter game_speed)
+	# 5. Animera
 	if delay_time > 0:
 		flying_card.hide()
 		
 	var tween = create_tween()
-	var anim_time = 0.5 / GameSettings.game_speed
+	var anim_time = 0.5
 	
 	if delay_time > 0:
 		tween.tween_interval(delay_time)
@@ -395,8 +396,7 @@ func _on_card_played(player_index: int, card: Card, declared_color: Card.CardCol
 		hand_ui.container.add_child(dummy_hole)
 		hand_ui.container.move_child(dummy_hole, card_index)
 		
-		# NYTT: Justera timer med GameSettings-hastighet!
-		await get_tree().create_timer(0.4 / GameSettings.game_speed).timeout
+		await get_tree().create_timer(0.4).timeout
 		
 		if is_instance_valid(dummy_hole):
 			var current_sep = hand_ui.container.get_theme_constant("separation")
@@ -404,14 +404,14 @@ func _on_card_played(player_index: int, card: Card, declared_color: Card.CardCol
 			
 			var tween = create_tween()
 			# NYTT: Även tween-hastigheten påverkas
-			var tween_time = 0.25 / GameSettings.game_speed
+			var tween_time = 0.25
 			tween.tween_property(dummy_hole, "custom_minimum_size:x", target_hole_size, tween_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 			
 			await tween.finished
 			if is_instance_valid(dummy_hole):
 				dummy_hole.queue_free()
 	else:
-		await get_tree().create_timer(0.4 / GameSettings.game_speed).timeout
+		await get_tree().create_timer(0.4).timeout
 	
 	var final_color = declared_color if card.color == Card.CardColor.WILD else card.color
 	update_ui_color(final_color)
@@ -702,7 +702,7 @@ func _on_game_ended(winner_index: int):
 	game_over_overlay.show()
 	
 	var tween = create_tween()
-	var fade_time = 0.5 / GameSettings.game_speed
+	var fade_time = 0.5
 	tween.tween_property(game_over_overlay, "modulate:a", 1.0, fade_time)
 
 func _on_restart_pressed():
@@ -776,3 +776,7 @@ func _on_green_button_pressed():
 
 func _on_yellow_button_pressed():
 	color_selected.emit(Card.CardColor.YELLOW)
+
+func _on_speed_selected(new_speed: float):
+	GameSettings.game_speed = new_speed
+	Engine.time_scale = new_speed
