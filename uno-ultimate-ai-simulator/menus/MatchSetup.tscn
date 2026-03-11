@@ -20,6 +20,18 @@ shadow_size = 8
 shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(-2.5, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1nt5m"]
+bg_color = Color(0.0627451, 0.1254902, 0.09411765, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [sub_resource type="LabelSettings" id="LabelSettings_1nt5m"]
 font = ExtResource("1_1nt5m")
 font_size = 20
@@ -95,7 +107,9 @@ vertical_alignment = 1
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 32
-flat = true
+theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
+theme_override_styles/hover = SubResource("StyleBoxFlat_1nt5m")
 alignment = 1
 item_count = 2
 popup/item_0/text = "test"
