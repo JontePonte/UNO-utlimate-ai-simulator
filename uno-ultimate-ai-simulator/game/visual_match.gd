@@ -808,6 +808,6 @@ func _update_speed(value: float):
 	# 1. Ändra motorns klocka. Detta snabbar upp ALLT (Tweens, Timers, process)
 	Engine.time_scale = value
 	# 2. Uppdatera texten i UI
-	speed_label.text = "Hastighet: " + str(value).pad_decimals(1) + "x"
+	speed_label.text = "Game Speed: " + str(value).pad_decimals(1) + "x"
 	# 3. Spara för framtida matcher
 	GameSettings.game_speed = value
