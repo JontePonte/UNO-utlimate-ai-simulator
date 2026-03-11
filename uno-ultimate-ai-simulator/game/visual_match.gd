@@ -529,38 +529,43 @@ func _on_turn_started(current_player_index: int):
 	var direction = game_manager.state.play_direction
 	var num_players = game_manager.state.players.size()
 	
-	# 1. Tänd den aktiva spelaren, släck de andra
+	# --- NYTT: Mappa om logiska index till UI-index ---
+	var current_p = game_manager.state.players[current_player_index]
+	var current_ui_idx = current_p.get_meta("ui_index")
+	
+	# Vi behöver också veta var den FÖRRA spelaren fanns i UI:t
+	var last_ui_idx = -1
+	if last_player_index != -1:
+		last_ui_idx = game_manager.state.players[last_player_index].get_meta("ui_index")
+	
+	# 1. Tänd den aktiva spelaren, släck de andra (använd i som UI-index)
 	for i in range(player_uis.size()):
-		player_uis[i].set_active(i == current_player_index)
+		player_uis[i].set_active(i == current_ui_idx)
 		
-	# 2. Om det är allra första draget sätter vi bara startspelaren och avbryter
+	# 2. Om det är allra första draget
 	if last_player_index == -1:
 		last_player_index = current_player_index
-		turn_arrow.hide() # Göm pilen tills det faktiskt sker ett drag
+		turn_arrow.hide()
 		return
 		
 	turn_arrow.show()
 	
-	# 3. Kalkylera om någon blev överhoppad (Den matematiska magin!)
+	# 3. Kalkylera om någon blev överhoppad
 	var expected_next = (last_player_index + direction + num_players) % num_players
 	if expected_next != current_player_index:
-		# Någon blev överhoppad! Peka på dem och visa skip-symbolen
-		player_uis[expected_next].show_skip_animation(UNO_COLORS[current_color])
+		var skip_p = game_manager.state.players[expected_next]
+		var skip_ui_idx = skip_p.get_meta("ui_index")
+		player_uis[skip_ui_idx].show_skip_animation(UNO_COLORS[current_color])
 		
-	# 4. Flytta och rotera pilen (NY LOGIK: Ankare till Ankare)
-	
-	# Om vi spelar medsols (1) startar vi på CW, och siktar på nästa spelares CCW. 
-	# Om vi spelar moturs (-1) gör vi tvärtom!
+	# 4. Flytta och rotera pilen (Använd UI-indexen här!)
 	var start_anchor_name = "AnchorCW" if direction == 1 else "AnchorCCW"
 	var target_anchor_name = "AnchorCCW" if direction == 1 else "AnchorCW"
 	
-	var start_node = player_uis[last_player_index].get_node(start_anchor_name)
-	var target_node = player_uis[current_player_index].get_node(target_anchor_name)
+	# Hämta noder baserat på de FYSISKA platserna
+	var start_node = player_uis[last_ui_idx].get_node(start_anchor_name)
+	var target_node = player_uis[current_ui_idx].get_node(target_anchor_name)
 	
-	# Pilen utgår från förra spelarens start-ankare
 	turn_arrow.global_position = start_node.global_position
-	
-	# Pilen tittar nu exakt på den nya spelarens mål-ankare istället för mitten av handen!
 	turn_arrow.look_at(target_node.global_position)
 	
 	# Färga pilen
