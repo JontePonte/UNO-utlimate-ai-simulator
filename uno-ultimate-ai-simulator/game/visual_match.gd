@@ -684,16 +684,27 @@ func _on_draw_pile_gui_input(event):
 			human_draw_requested.emit()
 
 func _on_game_ended(winner_index: int):
-	var winner_name = game_manager.state.players[winner_index].name
-	var position_list = [" (Bottom)", " (Left)", " (Top)", " (Right)"]
-	winner_label.text = "The Winner is:\n" + winner_name + position_list[winner_index] 
+	# Om winner_index är -1 betyder det att max_turns nåddes (Oavgjort)
+	if winner_index == -1:
+		winner_label.text = "GAME OVER\nIt's a Draw!"
+	else:
+		var p = game_manager.state.players[winner_index]
+		var ui_idx = p.get_meta("ui_index")
+		
+		# Vi mappar ui_idx till rätt text istället för winner_index
+		var position_names = [" (Bottom)", " (Left)", " (Top)", " (Right)"]
+		var pos_text = position_names[ui_idx]
+		
+		winner_label.text = "The Winner is:\n" + p.name + pos_text
 	
-	# En snygg inflygning/intoning av skärmen
+	# En snygg inflygning av skärmen
 	game_over_overlay.modulate.a = 0.0
 	game_over_overlay.show()
 	
 	var tween = create_tween()
-	tween.tween_property(game_over_overlay, "modulate:a", 1.0, 0.5)
+	# Vi delar även här med game_speed om vi vill att Game Over ska poppa snabbare!
+	var fade_time = 0.5 / GameSettings.game_speed
+	tween.tween_property(game_over_overlay, "modulate:a", 1.0, fade_time)
 
 func _on_restart_pressed():
 	# Godots absolut bästa funktion för snabba omstarter!

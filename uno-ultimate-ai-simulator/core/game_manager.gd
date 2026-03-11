@@ -190,7 +190,7 @@ func run_full_game(max_turns: int = 100):
 				
 		turn_count += 1
 	print("Max turns nådda (", max_turns, "). Spelet slutade oavgjort.")
-
+	game_over.emit(-1)
 
 # --- PLAYER ACTIONS ---
 func play_card(player_index: int, card: Card, declared_color: Card.CardColor = Card.CardColor.RED) -> bool:
