@@ -273,6 +273,9 @@ func start_real_game():
 		player_uis[ui_idx].show()
 		player_uis[ui_idx]._adjust_card_spacing()
 	
+	# Vänta in utdelningen
+	await get_tree().create_timer(1.0).timeout
+	
 	# 6. STARTA MATCHEN! 
 	game_manager.run_full_game(GameSettings.max_turns)
 
