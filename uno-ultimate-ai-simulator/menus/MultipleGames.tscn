@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://71n7axrpl5e2"]
 
+[ext_resource type="Script" uid="uid://c67uugiivch2m" path="res://menus/multiple_games.gd" id="1_bhea4"]
 [ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="2_atn1r"]
 [ext_resource type="Theme" uid="uid://cd5glqoall5lu" path="res://ui/test_theme.tres" id="3_3hh3q"]
 
@@ -12,35 +13,9 @@ shadow_size = 21
 shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(-4, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_nqpsq"]
+[sub_resource type="LabelSettings" id="LabelSettings_4jroq"]
 font = ExtResource("2_atn1r")
-font_size = 40
-outline_size = 8
-outline_color = Color(0, 0, 0, 1)
-shadow_size = 8
-shadow_color = Color(0, 0, 0, 1)
-shadow_offset = Vector2(-2.5, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1nt5m"]
-bg_color = Color(0.0627451, 0.1254902, 0.09411765, 1)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 4
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-
-[sub_resource type="LabelSettings" id="LabelSettings_1nt5m"]
-font = ExtResource("2_atn1r")
-font_size = 20
-outline_size = 5
-outline_color = Color(0, 0, 0, 1)
-shadow_size = 5
-shadow_color = Color(0, 0, 0, 1)
-shadow_offset = Vector2(-2.5, 1)
+font_size = 28
 
 [node name="MatchSetup" type="Control" unique_id=1779067515]
 layout_mode = 3
@@ -49,6 +24,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_bhea4")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1416727137]
 layout_mode = 1
@@ -85,219 +61,6 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
-[node name="BoardGrid" type="GridContainer" parent="MarginContainer/MainVBox" unique_id=664135996]
-layout_mode = 2
-columns = 3
-
-[node name="SpacerTL" type="Control" parent="MarginContainer/MainVBox/BoardGrid" unique_id=1999311841]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="SlotTop" type="VBoxContainer" parent="MarginContainer/MainVBox/BoardGrid" unique_id=2014920644]
-custom_minimum_size = Vector2(0, 150)
-layout_mode = 2
-
-[node name="Active" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotTop" unique_id=260179966]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("2_atn1r")
-theme_override_font_sizes/font_size = 20
-text = "Active
-"
-
-[node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotTop" unique_id=489297501]
-layout_mode = 2
-text = "Placeholder"
-label_settings = SubResource("LabelSettings_nqpsq")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/BoardGrid/SlotTop" unique_id=1220848605]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-theme = ExtResource("3_3hh3q")
-theme_override_fonts/font = ExtResource("2_atn1r")
-theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
-theme_override_styles/hover = SubResource("StyleBoxFlat_1nt5m")
-alignment = 1
-selected = 1
-item_count = 2
-popup/item_0/text = "test"
-popup/item_0/id = 0
-popup/item_1/text = "test"
-popup/item_1/id = 1
-
-[node name="VisableCards" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotTop" unique_id=1970412406]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("2_atn1r")
-theme_override_font_sizes/font_size = 20
-text = "Visable Cards"
-
-[node name="SpacerTR" type="Control" parent="MarginContainer/MainVBox/BoardGrid" unique_id=1408190402]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="SlotLeft" type="VBoxContainer" parent="MarginContainer/MainVBox/BoardGrid" unique_id=1144105600]
-custom_minimum_size = Vector2(0, 150)
-layout_mode = 2
-
-[node name="Active" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotLeft" unique_id=119377110]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("2_atn1r")
-theme_override_font_sizes/font_size = 20
-text = "Active
-"
-
-[node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotLeft" unique_id=792413300]
-layout_mode = 2
-text = "Placeholder"
-label_settings = SubResource("LabelSettings_nqpsq")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/BoardGrid/SlotLeft" unique_id=2024161808]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-theme = ExtResource("3_3hh3q")
-theme_override_fonts/font = ExtResource("2_atn1r")
-theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
-theme_override_styles/hover = SubResource("StyleBoxFlat_1nt5m")
-alignment = 1
-selected = 1
-item_count = 2
-popup/item_0/text = "test"
-popup/item_0/id = 0
-popup/item_1/text = "test"
-popup/item_1/id = 1
-
-[node name="VisableCards" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotLeft" unique_id=1485842165]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("2_atn1r")
-theme_override_font_sizes/font_size = 20
-text = "Visable Cards"
-
-[node name="SpacerC" type="Control" parent="MarginContainer/MainVBox/BoardGrid" unique_id=529181607]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="SlotRight" type="VBoxContainer" parent="MarginContainer/MainVBox/BoardGrid" unique_id=1387498766]
-custom_minimum_size = Vector2(0, 150)
-layout_mode = 2
-
-[node name="Active" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotRight" unique_id=2116373163]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("2_atn1r")
-theme_override_font_sizes/font_size = 20
-text = "Active
-"
-
-[node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotRight" unique_id=101861203]
-layout_mode = 2
-text = "Placeholder"
-label_settings = SubResource("LabelSettings_nqpsq")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/BoardGrid/SlotRight" unique_id=2099442219]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-theme = ExtResource("3_3hh3q")
-theme_override_fonts/font = ExtResource("2_atn1r")
-theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
-theme_override_styles/hover = SubResource("StyleBoxFlat_1nt5m")
-alignment = 1
-selected = 1
-item_count = 2
-popup/item_0/text = "test"
-popup/item_0/id = 0
-popup/item_1/text = "test"
-popup/item_1/id = 1
-
-[node name="VisableCards" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotRight" unique_id=1328074162]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("2_atn1r")
-theme_override_font_sizes/font_size = 20
-text = "Visable Cards"
-
-[node name="SpacerBL" type="Control" parent="MarginContainer/MainVBox/BoardGrid" unique_id=1168050740]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="SlotBottom" type="VBoxContainer" parent="MarginContainer/MainVBox/BoardGrid" unique_id=770610188]
-layout_mode = 2
-
-[node name="Human" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotBottom" unique_id=2090311813]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("2_atn1r")
-theme_override_font_sizes/font_size = 20
-text = "Human
-
-"
-
-[node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotBottom" unique_id=605450993]
-layout_mode = 2
-text = "Placeholder"
-label_settings = SubResource("LabelSettings_nqpsq")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/BoardGrid/SlotBottom" unique_id=2123302856]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-theme = ExtResource("3_3hh3q")
-theme_override_fonts/font = ExtResource("2_atn1r")
-theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
-theme_override_styles/hover = SubResource("StyleBoxFlat_1nt5m")
-alignment = 1
-selected = 1
-item_count = 2
-popup/item_0/text = "test"
-popup/item_0/id = 0
-popup/item_1/text = "test"
-popup/item_1/id = 1
-
-[node name="VisableCards" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotBottom" unique_id=683011156]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("2_atn1r")
-theme_override_font_sizes/font_size = 20
-text = "Visable Cards"
-
-[node name="SpacerBR" type="Control" parent="MarginContainer/MainVBox/BoardGrid" unique_id=385601265]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
 [node name="SmallOptions" type="VBoxContainer" parent="MarginContainer/MainVBox" unique_id=512943688]
 layout_mode = 2
 size_flags_horizontal = 8
@@ -306,35 +69,30 @@ size_flags_horizontal = 8
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
-[node name="SpeedSlider" type="HBoxContainer" parent="MarginContainer/MainVBox/SmallOptions" unique_id=532253640]
+[node name="MaxRounds2" type="HBoxContainer" parent="MarginContainer/MainVBox/SmallOptions" unique_id=1397256098]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/MainVBox/SmallOptions/SpeedSlider" unique_id=1151617034]
+[node name="LabelInput" type="HBoxContainer" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds2" unique_id=1892636126]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds2/LabelInput" unique_id=57400133]
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
-text = "Game Speed: 1.0x "
-label_settings = SubResource("LabelSettings_1nt5m")
+text = "Max Game Rounds:"
+label_settings = SubResource("LabelSettings_4jroq")
 
-[node name="HSlider" type="HSlider" parent="MarginContainer/MainVBox/SmallOptions/SpeedSlider" unique_id=481460702]
+[node name="SpinBox" type="SpinBox" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds2/LabelInput" unique_id=1305760473]
+layout_mode = 2
+theme = ExtResource("3_3hh3q")
+min_value = 1.0
+max_value = 1000.0
+value = 500.0
+alignment = 1
+
+[node name="HSlider" type="HSlider" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds2" unique_id=1770977708]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-min_value = 0.1
-max_value = 5.0
-step = 0.1
-value = 1.0
-
-[node name="MaxRounds" type="HBoxContainer" parent="MarginContainer/MainVBox/SmallOptions" unique_id=491591806]
-layout_mode = 2
-
-[node name="Label2" type="Label" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds" unique_id=740320921]
-custom_minimum_size = Vector2(220, 0)
-layout_mode = 2
-text = "Max Rounds: 500"
-label_settings = SubResource("LabelSettings_1nt5m")
-
-[node name="HSlider" type="HSlider" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds" unique_id=1412277821]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
+size_flags_vertical = 1
 min_value = 1.0
 max_value = 1000.0
 value = 500.0

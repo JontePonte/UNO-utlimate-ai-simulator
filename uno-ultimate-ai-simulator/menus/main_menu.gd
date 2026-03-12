@@ -16,7 +16,7 @@ func _on_single_game_burron_pressed():
 	get_tree().change_scene_to_file("res://menus/MatchSetup.tscn")
 
 func _on_multiple_ai_games_button_pressed():
-	pass
+	get_tree().change_scene_to_file("res://menus/MultipleGames.tscn")
 
 func _on_create_new_ai_button_pressed():
 	pass

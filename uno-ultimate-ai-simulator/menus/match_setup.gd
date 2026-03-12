@@ -235,7 +235,6 @@ func _set_option_by_id(opt_btn: OptionButton, id: int):
 	if idx != -1:
 		opt_btn.selected = idx
 
-# --- START & EXIT ---
 func _on_start_button_pressed():
 	_save_settings_to_autoload()
 	

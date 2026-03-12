@@ -36,7 +36,7 @@ corner_radius_bottom_left = 10
 
 [sub_resource type="LabelSettings" id="LabelSettings_1nt5m"]
 font = ExtResource("1_1nt5m")
-font_size = 20
+font_size = 22
 outline_size = 5
 outline_color = Color(0, 0, 0, 1)
 shadow_size = 5
@@ -312,14 +312,15 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/MainVBox/SmallOptions/SpeedSlider" unique_id=1151617034]
-custom_minimum_size = Vector2(220, 0)
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 text = "Game Speed: 1.0x "
 label_settings = SubResource("LabelSettings_1nt5m")
 
 [node name="HSlider" type="HSlider" parent="MarginContainer/MainVBox/SmallOptions/SpeedSlider" unique_id=481460702]
-custom_minimum_size = Vector2(200, 0)
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
+size_flags_vertical = 1
 min_value = 0.1
 max_value = 5.0
 step = 0.1
@@ -329,14 +330,15 @@ value = 1.0
 layout_mode = 2
 
 [node name="Label2" type="Label" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds" unique_id=740320921]
-custom_minimum_size = Vector2(220, 0)
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 text = "Max Rounds: 500"
 label_settings = SubResource("LabelSettings_1nt5m")
 
 [node name="HSlider" type="HSlider" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds" unique_id=1412277821]
-custom_minimum_size = Vector2(200, 0)
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
+size_flags_vertical = 1
 min_value = 1.0
 max_value = 1000.0
 value = 500.0
