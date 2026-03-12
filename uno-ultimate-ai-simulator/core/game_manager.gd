@@ -65,8 +65,10 @@ func start_discard_pile():
 
 # --- TURN MANAGEMENT ---
 func process_turn():
+	if not is_inside_tree(): return
 	while get_tree().paused:
 		await get_tree().process_frame
+		if not is_inside_tree(): return
 	
 	var player = state.players[state.current_player_index]
 	var player_view = create_player_view(state.current_player_index)
@@ -81,6 +83,7 @@ func process_turn():
 	if player.is_human:
 		visual_match.human_can_play = true
 		var result = await any_signal([visual_match.human_card_selected, visual_match.human_draw_requested])
+		if not is_inside_tree(): return
 		
 		if result is Card:
 			action = PlayerAction.new()
@@ -91,6 +94,7 @@ func process_turn():
 			action = null 
 	else:
 		action = await player.take_turn(player_view)
+		if not is_inside_tree(): return
 	
 	# --- STEG 2: UTFÖR DRAGET ELLER DRA KORT ---
 	if action != null and action.card != null:
@@ -100,6 +104,7 @@ func process_turn():
 		# 2. Om det är en människa och ett WILD-kort, vänta tills det landat och visa färgval
 		if player.is_human and action.card.color == Card.CardColor.WILD:
 			await get_tree().create_timer(0.5).timeout # Vänta på animationen
+			if not is_inside_tree(): return
 			var chosen_color = await visual_match.show_color_picker()
 			state.current_color = chosen_color
 			visual_match.update_ui_color(chosen_color)
@@ -108,6 +113,7 @@ func process_turn():
 		draw_cards(state.current_player_index, 1)
 		if visual_mode:
 			await get_tree().create_timer(0.6, false).timeout
+			if not is_inside_tree(): return
 			
 		var drawn_card = player.hand[-1]
 		var top_card = state.discard_pile[-1]
@@ -117,6 +123,7 @@ func process_turn():
 				visual_match.show_draw_choice(drawn_card)
 				visual_match.human_can_play = true
 				var result = await any_signal([visual_match.draw_choice_made, visual_match.human_card_selected])
+				if not is_inside_tree(): return
 				
 				visual_match.human_can_play = false
 				visual_match.draw_choice_menu.hide()
@@ -130,7 +137,9 @@ func process_turn():
 					# OM det var ett Wild, vänta och be om färg NU
 					if drawn_card.color == Card.CardColor.WILD:
 						await get_tree().create_timer(0.5).timeout
+						if not is_inside_tree(): return
 						var chosen_color = await visual_match.show_color_picker()
+						if not is_inside_tree(): return
 						state.current_color = chosen_color
 						visual_match.update_ui_color(chosen_color)
 				else:
@@ -310,5 +319,6 @@ func any_signal(signals: Array):
 	
 	while signal_received[0] == null:
 		await get_tree().process_frame
+		if not is_inside_tree(): return
 	
 	return signal_received[0]

@@ -20,15 +20,17 @@ extends Control
 @onready var game_over_overlay = $GameOverOverlay
 @onready var winner_label = $GameOverOverlay/WinnerLabel
 @onready var restart_button = $GameOverOverlay/VBoxContainer/PlayAgain
-@onready var back_button = $GameOverOverlay/VBoxContainer/BackToArena
-@onready var main_menu_button = $GameOverOverlay/VBoxContainer/MainMenu
+@onready var game_over_back_button = $GameOverOverlay/VBoxContainer/BackToSetupButton
+@onready var game_over_main_menu_btn = $GameOverOverlay/VBoxContainer/MainMenu
 @onready var exit_button = $GameOverOverlay/VBoxContainer/ExitGame
 
 @onready var pause_overlay = $PauseOverlay
 @onready var resume_button = $PauseOverlay/VBoxContainer/ResumeButton
-@onready var pause_back_button = $PauseOverlay/VBoxContainer/BackToArena
-@onready var pause_main_menu_button = $PauseOverlay/VBoxContainer/MainMenu
+@onready var pause_main_menu_btn = $PauseOverlay/VBoxContainer/MainMenu
+@onready var pause_back_button = $PauseOverlay/VBoxContainer/BackToSetupButton
 @onready var pause_exit_button = $PauseOverlay/VBoxContainer/ExitGame
+@onready var quit_confirm_dialog = $PauseOverlay/VBoxContainer/BackToSetupButton/QuitConfirmationDialog
+@onready var main_menu_confirm_dialog = $PauseOverlay/VBoxContainer/MainMenu/MainMenuConfirmationDialog2
 
 @onready var draw_choice_menu = $DrawChoiceMenu
 @onready var color_picker_menu = $ColorChoice
@@ -77,10 +79,16 @@ func _ready():
 	player_uis = [bottom_hand, left_hand, top_hand, right_hand]
 	name_labels = [bottom_name_label, left_name_label, top_name_label, right_name_label]
 	
+	# Koppla pausmenyns tillbaka-knapp
+	pause_back_button.pressed.connect(_on_pause_back_pressed)
+	
+	# Koppla Game Over-menyns tillbaka-knapp
+	game_over_back_button.pressed.connect(_on_game_over_back_pressed)
+	
+	# Koppla popupens "OK"-knapp (den inbyggda signalen heter 'confirmed')
+	quit_confirm_dialog.confirmed.connect(_on_quit_confirmed)
+	
 	_update_layout()
-	
-	# _test_piles() 
-	
 	start_real_game()
 
 func _update_layout():
@@ -237,10 +245,13 @@ func start_real_game():
 	# Game Over & Pause menyer (dina originalkopplingar)
 	restart_button.pressed.connect(_on_restart_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
-	main_menu_button.pressed.connect(_on_main_menu_pressed)
 	resume_button.pressed.connect(_toggle_pause)
 	pause_exit_button.pressed.connect(_on_exit_pressed) 
-	pause_main_menu_button.pressed.connect(_on_main_menu_pressed)
+	
+	# Koppla Huvudmeny-knapparna
+	pause_main_menu_btn.pressed.connect(_on_pause_main_menu_pressed)
+	game_over_main_menu_btn.pressed.connect(_on_game_over_main_menu_pressed)
+	main_menu_confirm_dialog.confirmed.connect(_on_main_menu_confirmed)
 	
 	# 5. Rita upp startläget
 	# Nu har alla i 'players' hunnit få sin 'ui_index' metadata!
@@ -744,14 +755,28 @@ func _toggle_pause():
 	else:
 		pause_overlay.hide()
 
-func _on_main_menu_pressed():
-	# VIKTIGT: Släpp pausen innan vi byter scen!
+# När man klickar "Huvudmeny" i PAUS-menyn
+func _on_pause_main_menu_pressed():
+	main_menu_confirm_dialog.popup_centered()
+
+# När man klickar "Huvudmeny" i GAME OVER-menyn
+func _on_game_over_main_menu_pressed():
+	_go_to_main_menu()
+
+# När man klickar "OK" i den nya varningsrutan
+func _on_main_menu_confirmed():
+	_go_to_main_menu()
+
+# Funktionen som byter scen
+func _go_to_main_menu():
+	print("Återvänder till Huvudmenyn...")
+	
+	# Fixen: Avpausa trädet precis som förut!
 	get_tree().paused = false 
 	
-	# Just nu har vi ingen Main Menu-scen, så vi printar bara. 
-	# När du har byggt en, tar du bort #-tecknet på raden under!
-	print("Laddar Main Menu... (Behöver en scen!)")
-	# get_tree().change_scene_to_file("res://din_main_menu_scen.tscn")
+	# Ändra sökvägen till din riktiga MainMenu-scen (om du skapat den)
+	# Har du ingen än kan du bara låta den gå till MatchSetup så länge!
+	get_tree().change_scene_to_file("res://menus/MainMenu.tscn")
 
 func show_draw_choice(_card: Card):
 	# Visa knappar
@@ -811,3 +836,25 @@ func _update_speed(value: float):
 	speed_label.text = "Game Speed: " + str(value).pad_decimals(1) + "x"
 	# 3. Spara för framtida matcher
 	GameSettings.game_speed = value
+
+# När man klickar "Tillbaka" i PAUS-menyn
+func _on_pause_back_pressed():
+	# Istället för att byta scen direkt, visa varningsrutan
+	quit_confirm_dialog.popup_centered()
+
+# När man klickar "Tillbaka" i GAME OVER-menyn
+func _on_game_over_back_pressed():
+	# Här behövs ingen varning, matchen är ju redan slut!
+	_go_back_to_setup()
+
+# När man klickar "OK" i varningsrutan
+func _on_quit_confirmed():
+	# Återställ tidsskalan ifall vi pausat spelet (om din pausmeny sätter Engine.time_scale = 0)
+	Engine.time_scale = GameSettings.game_speed
+	_go_back_to_setup()
+
+# Själva funktionen som byter scen
+func _go_back_to_setup():
+	print("Återvänder till Match Setup...")
+	get_tree().paused = false 
+	get_tree().change_scene_to_file("res://menus/MatchSetup.tscn")
