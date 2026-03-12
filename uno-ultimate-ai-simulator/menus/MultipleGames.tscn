@@ -1,11 +1,10 @@
-[gd_scene format=3 uid="uid://kneo6uskn1cq"]
+[gd_scene format=3 uid="uid://71n7axrpl5e2"]
 
-[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="1_1nt5m"]
-[ext_resource type="Script" uid="uid://dxv1h51fadg5b" path="res://menus/match_setup.gd" id="1_nqpsq"]
-[ext_resource type="Theme" uid="uid://cd5glqoall5lu" path="res://ui/test_theme.tres" id="2_ouq10"]
+[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="2_atn1r"]
+[ext_resource type="Theme" uid="uid://cd5glqoall5lu" path="res://ui/test_theme.tres" id="3_3hh3q"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
-font = ExtResource("1_1nt5m")
+font = ExtResource("2_atn1r")
 font_size = 140
 outline_size = 13
 outline_color = Color(0, 0, 0, 1)
@@ -14,7 +13,7 @@ shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(-4, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_nqpsq"]
-font = ExtResource("1_1nt5m")
+font = ExtResource("2_atn1r")
 font_size = 40
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
@@ -35,7 +34,7 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
 [sub_resource type="LabelSettings" id="LabelSettings_1nt5m"]
-font = ExtResource("1_1nt5m")
+font = ExtResource("2_atn1r")
 font_size = 20
 outline_size = 5
 outline_color = Color(0, 0, 0, 1)
@@ -50,7 +49,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_nqpsq")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1416727137]
 layout_mode = 1
@@ -78,7 +76,7 @@ layout_mode = 2
 
 [node name="TitleLabel" type="Label" parent="MarginContainer/MainVBox" unique_id=220229396]
 layout_mode = 2
-text = "Game Setup"
+text = "Run Multiple Games"
 label_settings = SubResource("LabelSettings_ouq10")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -104,7 +102,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 20
 text = "Active
 "
@@ -120,8 +118,8 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme = ExtResource("2_ouq10")
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme = ExtResource("3_3hh3q")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
@@ -138,7 +136,7 @@ popup/item_1/id = 1
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 20
 text = "Visable Cards"
 
@@ -155,7 +153,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 20
 text = "Active
 "
@@ -171,8 +169,8 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme = ExtResource("2_ouq10")
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme = ExtResource("3_3hh3q")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
@@ -189,7 +187,7 @@ popup/item_1/id = 1
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 20
 text = "Visable Cards"
 
@@ -206,7 +204,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 20
 text = "Active
 "
@@ -222,8 +220,8 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme = ExtResource("2_ouq10")
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme = ExtResource("3_3hh3q")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
@@ -240,7 +238,7 @@ popup/item_1/id = 1
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 20
 text = "Visable Cards"
 
@@ -256,7 +254,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 20
 text = "Human
 
@@ -273,8 +271,8 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme = ExtResource("2_ouq10")
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme = ExtResource("3_3hh3q")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
@@ -291,7 +289,7 @@ popup/item_1/id = 1
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 20
 text = "Visable Cards"
 
@@ -353,7 +351,7 @@ size_flags_horizontal = 4
 custom_minimum_size = Vector2(600, 0)
 layout_mode = 2
 theme_override_constants/outline_size = 19
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 60
 text = "Back to Menu
 "
@@ -362,7 +360,7 @@ flat = true
 [node name="Start" type="Button" parent="MarginContainer/MainVBox/ButtonHBox" unique_id=1482418785]
 layout_mode = 2
 theme_override_constants/outline_size = 23
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 100
 text = "Start Game"
 flat = true
@@ -371,7 +369,7 @@ flat = true
 custom_minimum_size = Vector2(600, 0)
 layout_mode = 2
 theme_override_constants/outline_size = 19
-theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 60
 text = "Exit Game
 "
