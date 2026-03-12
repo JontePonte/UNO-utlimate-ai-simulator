@@ -68,11 +68,9 @@ func _ready():
 	# Sliders
 	speed_slider.value = GameSettings.game_speed
 	speed_label.text = "Game Speed: " + str(GameSettings.game_speed).pad_decimals(1) + "x"
-	speed_slider.value_changed.connect(_on_speed_slider_changed)
 	
 	max_turns_slider.value = GameSettings.max_turns
 	max_turns_label.text = "Max Rounds: " + str(GameSettings.max_turns)
-	max_turns_slider.value_changed.connect(_on_max_turns_slider_changed)
 	
 	# Koppla slider-signaler (men sätt inte värdet här längre)
 	speed_slider.value_changed.connect(_on_speed_slider_changed)
