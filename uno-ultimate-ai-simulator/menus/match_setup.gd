@@ -29,11 +29,13 @@ extends Control
 
 @onready var start_button = $MarginContainer/MainVBox/ButtonHBox/Start
 @onready var exit_button = $MarginContainer/MainVBox/ButtonHBox/ExitGame
+@onready var main_menu_button = $MarginContainer/MainVBox/ButtonHBox/Back
 
 func _ready():
 	# Koppla knappar
 	start_button.pressed.connect(_on_start_button_pressed)
 	exit_button.pressed.connect(_on_exit_button_pressed)
+	main_menu_button.pressed.connect(_on_main_menu_button_pressed)
 	
 	# 1. Fyll Botten-dropdown (Siffran på slutet är ID, som matchar AIType)
 	bottom_type_opt.add_item("AI: Simple", 1)
@@ -244,3 +246,6 @@ func _on_start_button_pressed():
 
 func _on_exit_button_pressed():
 	get_tree().quit()
+
+func _on_main_menu_button_pressed():
+	get_tree().change_scene_to_file("res://menus/MainMenu.tscn")
