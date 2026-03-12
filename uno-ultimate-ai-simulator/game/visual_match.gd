@@ -1,5 +1,7 @@
 extends Control
 
+const AISimple = preload("res://ai/AISimple.gd")
+
 @onready var bottom_hand = $BottomHand
 @onready var top_hand = $TopHand
 @onready var left_hand = $LeftHand
