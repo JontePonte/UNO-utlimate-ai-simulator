@@ -166,3 +166,47 @@ func create_player_view(player_index: int) -> PlayerView:
 		card_counts.duplicate(), state.current_player_index, state.play_direction, 
 		state.turn_number, state.move_history.duplicate()
 	)
+
+func save_debug_log(filename: String = "res://debug_match_log.txt"):
+	var file = FileAccess.open(filename, FileAccess.WRITE)
+	if file == null:
+		print("Kunde inte skapa loggfil!")
+		return
+		
+	file.store_line("=== DEBUG LOGG FÖR MATCH ===")
+	file.store_line("Antal spelare: " + str(state.players.size()))
+	
+	# Gör om färg-ID till text (t.ex. "RED" eller "BLUE")
+	var start_color_name = Card.CardColor.keys()[state.current_color]
+	file.store_line("Startfärg: " + start_color_name)
+	file.store_line("----------------------------\n")
+	
+	for move in state.move_history:
+		var p_name = state.players[move.player_index].name
+		var action_text = ""
+		
+		if move.move_type == Move.MoveType.PLAY_CARD:
+			# Här använder vi din grymma inbyggda funktion!
+			action_text = "spelade " + move.card.card_to_string()
+			
+			if move.card.color == Card.CardColor.WILD:
+				var chosen_color_name = Card.CardColor.keys()[move.declared_color]
+				action_text += " (Valde ny färg: " + chosen_color_name + ")"
+		
+		elif move.move_type == Move.MoveType.DRAW_CARD:
+			if move.card != null:
+				# Nu kan vi till och med se exakt vilket kort de drog!
+				action_text = "drog " + move.card.card_to_string()
+			else:
+				action_text = "försökte dra ett kort, men leken var tom"
+			
+		elif move.move_type == Move.MoveType.PASS:
+			action_text = "passade"
+			
+		var line = "Tur " + str(move.turn_number) + " | " + p_name + " " + action_text
+		file.store_line(line)
+		
+	file.store_line("\n=== SLUT PÅ MATCH ===")
+	file.close()
+	
+	print("Logg sparad till: ", ProjectSettings.globalize_path(filename))

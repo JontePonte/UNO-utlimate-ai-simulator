@@ -1,0 +1,22 @@
+=== DEBUG LOGG FÖR MATCH ===
+Antal spelare: 2
+Startfärg: BLUE
+----------------------------
+
+Tur 0 | Player 1 spelade BLUE THREE
+Tur 1 | Player 2 spelade BLUE SKIP
+Tur 2 | Player 2 spelade BLUE SKIP
+Tur 3 | Player 2 spelade WILD WILD_DRAW_FOUR (Valde ny färg: RED)
+Tur 3 | Player 1 drog RED FOUR
+Tur 3 | Player 1 drog YELLOW THREE
+Tur 3 | Player 1 drog YELLOW FOUR
+Tur 3 | Player 1 drog WILD WILD
+Tur 4 | Player 2 spelade RED NINE
+Tur 5 | Player 1 spelade YELLOW NINE
+Tur 6 | Player 2 spelade YELLOW SEVEN
+Tur 7 | Player 1 spelade WILD WILD (Valde ny färg: YELLOW)
+Tur 8 | Player 2 spelade WILD WILD (Valde ny färg: BLUE)
+Tur 9 | Player 1 spelade BLUE TWO
+Tur 10 | Player 2 spelade BLUE FIVE
+
+=== SLUT PÅ MATCH ===

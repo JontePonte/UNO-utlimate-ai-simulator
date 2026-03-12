@@ -112,8 +112,10 @@ func _on_start_button_pressed():
 		var players = _create_players_for_sim(num_players)
 		var sim_manager = SimulationManager.new(players)
 		
-		# NYTT: Skicka in max_turns-variabeln istället för den hårdkodade 1000
 		var result = await sim_manager.run_match(max_turns) 
+		
+		if i == 0:
+			sim_manager.save_debug_log("res://debug_match_log.txt")
 		
 		# Registrera vinsten
 		var winner = result["winner_name"]
