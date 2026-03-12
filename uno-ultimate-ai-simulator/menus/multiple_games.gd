@@ -12,6 +12,8 @@ const AISimple = preload("res://ai/AISimple.gd")
 @onready var slot3_opt = $MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot3/OptionButton
 @onready var slot4_opt = $MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot4/OptionButton
 
+@onready var max_turns_spinbox = $MarginContainer/MainVBox/HBoxCenter/VBoxL/MaxRounds2/SpinBox
+
 @onready var progress_bar = $MarginContainer/MainVBox/BottomHBox/HBoxSim/ProgressBar
 @onready var results_label = $MarginContainer/MainVBox/BottomHBox/ResultsLabel
 
@@ -87,11 +89,14 @@ func _on_start_button_pressed():
 	var num_matches = int(match_count_spinbox.value)
 	var num_players = num_players_opt.get_item_id(num_players_opt.selected)
 	
+	# NYTT: Hämta värdet från max_turns_spinbox
+	var max_turns = int(max_turns_spinbox.value) 
+	
 	# Gör i ordning UI:t för laddningen
 	progress_bar.max_value = num_matches
 	progress_bar.value = 0
 	progress_bar.show()
-	results_label.text = "Simulerar " + str(num_matches) + " matcher...\nVänligen vänta."
+	results_label.text = "Simulating " + str(num_matches) + " matches...\nPlease Wait!"
 	
 	# Dictionary för att hålla koll på resultatet
 	var scoreboard = {
@@ -107,8 +112,8 @@ func _on_start_button_pressed():
 		var players = _create_players_for_sim(num_players)
 		var sim_manager = SimulationManager.new(players)
 		
-		# Vänta på att matchen ska bli klar
-		var result = await sim_manager.run_match(1000) 
+		# NYTT: Skicka in max_turns-variabeln istället för den hårdkodade 1000
+		var result = await sim_manager.run_match(max_turns) 
 		
 		# Registrera vinsten
 		var winner = result["winner_name"]
@@ -120,8 +125,6 @@ func _on_start_button_pressed():
 		# --- UI UPPDATERING OCH BATCHING ---
 		progress_bar.value = i + 1
 		
-		# Uppdatera UI:t var 50:e match (ändra till 100 om du vill att det ska gå ännu snabbare, 
-		# men 50 brukar ge en väldigt mjuk och fin animation på mätaren)
 		if i % 50 == 0:
 			await get_tree().process_frame
 			
@@ -130,15 +133,20 @@ func _on_start_button_pressed():
 	var time_taken = (end_time - start_time) / 1000.0
 	
 	# --- BYGG RESULTAT-TEXTEN ---
-	var final_text = "--- SIMULERING KLAR ---\n"
-	final_text += "Totalt antal matcher: " + str(num_matches) + "\n"
-	final_text += "Tid: " + str(time_taken).pad_decimals(2) + " sekunder\n\n"
+	var final_text = "--- SIMULATION COMPLETE ---\n" # Ändrade till engelska för att matcha ditt UI
+	final_text += "Total number of Matches: " + str(num_matches) + "\n"
+	final_text += "Time: " + str(time_taken).pad_decimals(2) + " seconds\n\n"
 	
 	# Räkna ut vinstprocent och lägg till i texten
 	for player_name in scoreboard.keys():
 		var wins = scoreboard[player_name]
 		var win_rate = (float(wins) / float(num_matches)) * 100.0
-		final_text += player_name + ": " + str(wins) + " vinster (" + str(win_rate).pad_decimals(1) + "%)\n"
+		
+		# Snyggare utskrift ifall det är "Draw"
+		if player_name == "Draw":
+			final_text += "Draws (Reached Max Turns): " + str(wins) + " (" + str(win_rate).pad_decimals(1) + "%)\n"
+		else:
+			final_text += player_name + ": " + str(wins) + " wins (" + str(win_rate).pad_decimals(1) + "%)\n"
 		
 	# Visa det snygga resultatet på skärmen!
 	results_label.text = final_text
