@@ -312,7 +312,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/MainVBox/SmallOptions/SpeedSlider" unique_id=1151617034]
-custom_minimum_size = Vector2(240, 0)
+custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 text = "Game Speed: 1.0x "
 label_settings = SubResource("LabelSettings_1nt5m")
@@ -329,11 +329,24 @@ value = 1.0
 [node name="MaxRounds" type="HBoxContainer" parent="MarginContainer/MainVBox/SmallOptions" unique_id=491591806]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds" unique_id=740320921]
-custom_minimum_size = Vector2(240, 0)
+[node name="LabelInput" type="HBoxContainer" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds" unique_id=1948132335]
+custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
-text = "Max Rounds: 500"
+
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds/LabelInput" unique_id=740320921]
+layout_mode = 2
+text = "Max Rounds:"
 label_settings = SubResource("LabelSettings_1nt5m")
+
+[node name="SpinBox" type="SpinBox" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds/LabelInput" unique_id=951221630]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme = ExtResource("2_ouq10")
+min_value = 1.0
+max_value = 1000.0
+value = 500.0
+rounded = true
+alignment = 1
 
 [node name="HSlider" type="HSlider" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds" unique_id=1412277821]
 custom_minimum_size = Vector2(220, 0)

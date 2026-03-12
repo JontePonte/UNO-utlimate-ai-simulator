@@ -25,7 +25,8 @@ extends Control
 @onready var speed_label = $MarginContainer/MainVBox/SmallOptions/SpeedSlider/Label
 
 @onready var max_turns_slider = $MarginContainer/MainVBox/SmallOptions/MaxRounds/HSlider
-@onready var max_turns_label = $MarginContainer/MainVBox/SmallOptions/MaxRounds/Label2
+@onready var max_turns_label = $MarginContainer/MainVBox/SmallOptions/MaxRounds/LabelInput/Label
+@onready var max_turns_spinbox = $MarginContainer/MainVBox/SmallOptions/MaxRounds/LabelInput/SpinBox
 
 @onready var start_button = $MarginContainer/MainVBox/ButtonHBox/Start
 @onready var exit_button = $MarginContainer/MainVBox/ButtonHBox/ExitGame
@@ -72,11 +73,12 @@ func _ready():
 	speed_label.text = "Game Speed: " + str(GameSettings.game_speed).pad_decimals(1) + "x"
 	
 	max_turns_slider.value = GameSettings.max_turns
-	max_turns_label.text = "Max Rounds: " + str(GameSettings.max_turns)
+	max_turns_spinbox.value = GameSettings.max_turns
 	
 	# Koppla slider-signaler (men sätt inte värdet här längre)
 	speed_slider.value_changed.connect(_on_speed_slider_changed)
 	max_turns_slider.value_changed.connect(_on_max_turns_slider_changed)
+	max_turns_spinbox.value_changed.connect(_on_max_turns_spinbox_changed)
 	
 	# 4. Ladda in allt från GameSettings!
 	_load_settings_from_autoload()
@@ -154,7 +156,10 @@ func _on_speed_slider_changed(value: float):
 
 func _on_max_turns_slider_changed(value: float):
 	var turns = int(value) 
-	max_turns_label.text = "Max Rounds: " + str(turns)
+	max_turns_spinbox.value = turns
+func _on_max_turns_spinbox_changed(value: float):
+	var turns = int(value) 
+	max_turns_slider.value = turns
 
 func _load_settings_from_autoload():
 	print("Laddar inställningar från GameSettings...")
@@ -164,7 +169,7 @@ func _load_settings_from_autoload():
 	speed_label.text = "Game Speed: " + str(GameSettings.game_speed).pad_decimals(1) + "x"
 	
 	max_turns_slider.value = GameSettings.max_turns
-	max_turns_label.text = "Max Rounds: " + str(GameSettings.max_turns)
+	max_turns_spinbox.value = GameSettings.max_turns
 	
 	# --- BOTTEN ---
 	bottom_human_check.button_pressed = GameSettings.slots["bottom"]["is_human"]
