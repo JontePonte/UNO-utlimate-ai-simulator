@@ -26,6 +26,15 @@ shadow_offset = Vector2(-2.5, 1)
 font = ExtResource("2_atn1r")
 font_size = 28
 
+[sub_resource type="LabelSettings" id="LabelSettings_atn1r"]
+font = ExtResource("2_atn1r")
+font_size = 30
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 8
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(-2.5, 1)
+
 [node name="MatchSetup" type="Control" unique_id=1779067515]
 layout_mode = 3
 anchors_preset = 15
@@ -240,38 +249,36 @@ popup/item_2/id = 2
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
-[node name="Start" type="Button" parent="MarginContainer/MainVBox" unique_id=1482418785]
+[node name="BottomHBox" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=1408743332]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 0
+
+[node name="HBoxSim" type="VBoxContainer" parent="MarginContainer/MainVBox/BottomHBox" unique_id=225372872]
+layout_mode = 2
+
+[node name="Start" type="Button" parent="MarginContainer/MainVBox/BottomHBox/HBoxSim" unique_id=1482418785]
+layout_mode = 2
+size_flags_horizontal = 0
 theme_override_constants/outline_size = 23
 theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 90
 text = "Start Simulation"
 flat = true
+alignment = 0
 
-[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/MainVBox" unique_id=755868699]
+[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/MainVBox/BottomHBox/HBoxSim" unique_id=755868699]
 custom_minimum_size = Vector2(800, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="Label" type="Label" parent="MarginContainer/MainVBox" unique_id=1166881295]
-custom_minimum_size = Vector2(200, 60)
-layout_mode = 2
-text = "Results"
-label_settings = SubResource("LabelSettings_bhea4")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Spacer3" type="Control" parent="MarginContainer/MainVBox" unique_id=1747304166]
+[node name="Spacer3" type="Control" parent="MarginContainer/MainVBox/BottomHBox/HBoxSim" unique_id=1696965799]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
-[node name="ButtonHBox" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=1408743332]
+[node name="HBoxBackExit" type="VBoxContainer" parent="MarginContainer/MainVBox/BottomHBox/HBoxSim" unique_id=1351352635]
 layout_mode = 2
-size_flags_horizontal = 8
 
-[node name="Back" type="Button" parent="MarginContainer/MainVBox/ButtonHBox" unique_id=1051092805]
-custom_minimum_size = Vector2(600, 0)
+[node name="Back" type="Button" parent="MarginContainer/MainVBox/BottomHBox/HBoxSim/HBoxBackExit" unique_id=1051092805]
 layout_mode = 2
 theme_override_constants/outline_size = 19
 theme_override_fonts/font = ExtResource("2_atn1r")
@@ -279,9 +286,9 @@ theme_override_font_sizes/font_size = 60
 text = "Back to Menu
 "
 flat = true
+alignment = 0
 
-[node name="ExitGame" type="Button" parent="MarginContainer/MainVBox/ButtonHBox" unique_id=103533672]
-custom_minimum_size = Vector2(600, 0)
+[node name="ExitGame" type="Button" parent="MarginContainer/MainVBox/BottomHBox/HBoxSim/HBoxBackExit" unique_id=103533672]
 layout_mode = 2
 theme_override_constants/outline_size = 19
 theme_override_fonts/font = ExtResource("2_atn1r")
@@ -289,3 +296,15 @@ theme_override_font_sizes/font_size = 60
 text = "Exit Game
 "
 flat = true
+alignment = 0
+
+[node name="Spacer4" type="Control" parent="MarginContainer/MainVBox/BottomHBox" unique_id=593074985]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+
+[node name="ResultsLabel" type="Label" parent="MarginContainer/MainVBox/BottomHBox" unique_id=1166881295]
+custom_minimum_size = Vector2(800, 60)
+layout_mode = 2
+label_settings = SubResource("LabelSettings_atn1r")
+horizontal_alignment = 1
+vertical_alignment = 1
