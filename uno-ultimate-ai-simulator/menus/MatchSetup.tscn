@@ -321,16 +321,16 @@ max_value = 5.0
 step = 0.1
 value = 1.0
 
-[node name="SpeedSlider2" type="HBoxContainer" parent="MarginContainer/MainVBox/SmallOptions" unique_id=491591806]
+[node name="MaxRounds" type="HBoxContainer" parent="MarginContainer/MainVBox/SmallOptions" unique_id=491591806]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="MarginContainer/MainVBox/SmallOptions/SpeedSlider2" unique_id=740320921]
+[node name="Label2" type="Label" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds" unique_id=740320921]
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 text = "Max Rounds: 500"
 label_settings = SubResource("LabelSettings_1nt5m")
 
-[node name="HSlider" type="HSlider" parent="MarginContainer/MainVBox/SmallOptions/SpeedSlider2" unique_id=1412277821]
+[node name="HSlider" type="HSlider" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds" unique_id=1412277821]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 min_value = 1.0

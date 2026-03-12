@@ -8,6 +8,12 @@ extends Control
 @onready var left_active_check = $MarginContainer/MainVBox/BoardGrid/SlotLeft/Active
 @onready var left_visible_check = $MarginContainer/MainVBox/BoardGrid/SlotLeft/VisableCards
 
+@onready var speed_slider = $MarginContainer/MainVBox/SmallOptions/SpeedSlider/HSlider
+@onready var speed_label = $MarginContainer/MainVBox/SmallOptions/SpeedSlider/Label
+
+@onready var max_turns_slider = $MarginContainer/MainVBox/SmallOptions/MaxRounds/HSlider
+@onready var max_turns_label = $MarginContainer/MainVBox/SmallOptions/MaxRounds/Label2
+
 @onready var start_button = $MarginContainer/MainVBox/ButtonHBox/Start
 @onready var exit_button = $MarginContainer/MainVBox/ButtonHBox/ExitGame
 
@@ -29,6 +35,16 @@ func _ready():
 	# 3. Koppla signaler för att uppdatera UI:t dynamiskt
 	bottom_human_check.toggled.connect(_on_bottom_human_toggled)
 	left_active_check.toggled.connect(_on_left_active_toggled)
+	
+	# Sätt startvärdet från GameSettings så menyn minns ditt senaste val
+	speed_slider.value = GameSettings.game_speed
+	speed_label.text = "Game Speed: " + str(GameSettings.game_speed).pad_decimals(1) + "x"
+	speed_slider.value_changed.connect(_on_speed_slider_changed)
+	
+	# Max Rounds / Turns
+	max_turns_slider.value = GameSettings.max_turns
+	max_turns_label.text = "Max Rounds: " + str(GameSettings.max_turns)
+	max_turns_slider.value_changed.connect(_on_max_turns_slider_changed)
 	
 	# 4. Kör en första uppdatering så allt ser rätt ut från start
 	_update_ui_states()
@@ -60,6 +76,14 @@ func _update_ui_states():
 		left_type_opt.disabled = true
 		left_visible_check.disabled = true
 
+func _on_speed_slider_changed(value: float):
+	GameSettings.game_speed = value
+	speed_label.text = "Game Speed: " + str(value).pad_decimals(1) + "x"
+
+func _on_max_turns_slider_changed(value: float):
+	var turns = int(value) # Gör om till heltal
+	GameSettings.max_turns = turns
+	max_turns_label.text = "Max Rounds: " + str(turns)
 
 func _on_start_button_pressed():
 	print("Startar match med nuvarande GameSettings...")
