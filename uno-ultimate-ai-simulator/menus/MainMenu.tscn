@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dkmud1ys5kvv6"]
 
-[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="2_218cn"]
+[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="2_218cn"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
 font = ExtResource("2_218cn")
@@ -43,9 +43,53 @@ theme_override_constants/margin_bottom = 40
 [node name="MainVBox" type="VBoxContainer" parent="MarginContainer" unique_id=910263688]
 layout_mode = 2
 
+[node name="Spacer" type="Control" parent="MarginContainer/MainVBox" unique_id=241695272]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+
 [node name="TitleLabel" type="Label" parent="MarginContainer/MainVBox" unique_id=220229396]
 layout_mode = 2
 text = "Main Menu"
 label_settings = SubResource("LabelSettings_ouq10")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Spacer2" type="Control" parent="MarginContainer/MainVBox" unique_id=117904437]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="PlaySingleGameButton" type="Button" parent="MarginContainer/MainVBox" unique_id=8001339]
+custom_minimum_size = Vector2(600, 75)
+layout_mode = 2
+theme_override_constants/outline_size = 19
+theme_override_fonts/font = ExtResource("2_218cn")
+theme_override_font_sizes/font_size = 60
+text = "Play Single Game"
+flat = true
+
+[node name="MultipleAIGamesButton" type="Button" parent="MarginContainer/MainVBox" unique_id=47377755]
+custom_minimum_size = Vector2(600, 75)
+layout_mode = 2
+theme_override_constants/outline_size = 19
+theme_override_fonts/font = ExtResource("2_218cn")
+theme_override_font_sizes/font_size = 60
+text = "Run Multiple AI Games"
+flat = true
+
+[node name="CreateNewAIBurron" type="Button" parent="MarginContainer/MainVBox" unique_id=974463181]
+custom_minimum_size = Vector2(600, 75)
+layout_mode = 2
+theme_override_constants/outline_size = 19
+theme_override_fonts/font = ExtResource("2_218cn")
+theme_override_font_sizes/font_size = 60
+text = "Create New AI"
+flat = true
+
+[node name="ExitGameButton" type="Button" parent="MarginContainer/MainVBox" unique_id=571594854]
+custom_minimum_size = Vector2(600, 75)
+layout_mode = 2
+theme_override_constants/outline_size = 19
+theme_override_fonts/font = ExtResource("2_218cn")
+theme_override_font_sizes/font_size = 60
+text = "Exit Game"
+flat = true
