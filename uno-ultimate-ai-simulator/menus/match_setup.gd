@@ -16,8 +16,7 @@ func _ready():
 	start_button.pressed.connect(_on_start_button_pressed)
 	exit_button.pressed.connect(_on_exit_button_pressed)
 	
-	# 1. Fyll Botten-dropdown (Denna kan vara Human eller AI)
-	bottom_type_opt.add_item("Människa", 0)
+	# 1. Fyll Botten-dropdown
 	bottom_type_opt.add_item("AI: Simple", 1)
 	bottom_type_opt.add_item("AI: Aggressive", 2)
 	bottom_type_opt.add_item("AI: Custom", 3)
@@ -28,26 +27,28 @@ func _ready():
 	left_type_opt.add_item("AI: Custom", 3)
 	
 	# 3. Koppla signaler för att uppdatera UI:t dynamiskt
-	bottom_type_opt.item_selected.connect(_on_bottom_type_changed)
+	bottom_human_check.toggled.connect(_on_bottom_human_toggled)
 	left_active_check.toggled.connect(_on_left_active_toggled)
 	
 	# 4. Kör en första uppdatering så allt ser rätt ut från start
 	_update_ui_states()
 
-func _on_bottom_type_changed(index: int):
+func _on_bottom_human_toggled(button_pressed: bool):
 	_update_ui_states()
 
 func _on_left_active_toggled(button_pressed: bool):
 	_update_ui_states()
 
 func _update_ui_states():
-	# --- BOTTEN (Människa eller AI) ---
-	# Om botten är inställd på Människa (index 0), måste korten vara synliga!
-	if bottom_type_opt.selected == 0:
+	# --- BOTTEN (Människa eller AI via Checkbox) ---
+	if bottom_human_check.button_pressed:
+		# Är en människa: Gråa ut AI-valet och tvinga korten att synas
+		bottom_type_opt.disabled = true
 		bottom_visible_check.button_pressed = true
-		bottom_visible_check.disabled = true # Lås fast den!
+		bottom_visible_check.disabled = true
 	else:
-		# Om det är en AI, låt användaren välja om de vill se korten
+		# Är en AI: Lås upp AI-valet och låt användaren välja om korten ska synas
+		bottom_type_opt.disabled = false
 		bottom_visible_check.disabled = false
 		
 	# --- VÄNSTER (Aktiv eller Inaktiv) ---
