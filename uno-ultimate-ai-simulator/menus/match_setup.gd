@@ -63,7 +63,14 @@ func _ready():
 	max_turns_label.text = "Max Rounds: " + str(GameSettings.max_turns)
 	max_turns_slider.value_changed.connect(_on_max_turns_slider_changed)
 	
-	# 4. Kör en första uppdatering så allt ser rätt ut från start
+	# Koppla slider-signaler (men sätt inte värdet här längre)
+	speed_slider.value_changed.connect(_on_speed_slider_changed)
+	max_turns_slider.value_changed.connect(_on_max_turns_slider_changed)
+	
+	# 4. Ladda in allt från GameSettings!
+	_load_settings_from_autoload()
+	
+	# 5. Kör en första uppdatering så rätt saker gråas ut baserat på det vi just laddade in
 	_update_ui_states()
 
 # --- SIGNAL MOTTAGARE FÖR CHECKBOXAR ---
@@ -121,7 +128,36 @@ func _on_max_turns_slider_changed(value: float):
 	var turns = int(value) 
 	max_turns_label.text = "Max Rounds: " + str(turns)
 
-# --- SPARA TILL AUTOLOAD ---
+func _load_settings_from_autoload():
+	print("Laddar inställningar från GameSettings...")
+	
+	# --- GLOBALA INSTÄLLNINGAR ---
+	speed_slider.value = GameSettings.game_speed
+	speed_label.text = "Game Speed: " + str(GameSettings.game_speed).pad_decimals(1) + "x"
+	
+	max_turns_slider.value = GameSettings.max_turns
+	max_turns_label.text = "Max Rounds: " + str(GameSettings.max_turns)
+	
+	# --- BOTTEN ---
+	bottom_human_check.button_pressed = GameSettings.slots["bottom"]["is_human"]
+	bottom_visible_check.button_pressed = GameSettings.slots["bottom"]["show_cards"]
+	_set_option_by_id(bottom_type_opt, GameSettings.slots["bottom"]["ai_type"])
+	
+	# --- VÄNSTER ---
+	left_active_check.button_pressed = GameSettings.slots["left"]["active"]
+	left_visible_check.button_pressed = GameSettings.slots["left"]["show_cards"]
+	_set_option_by_id(left_type_opt, GameSettings.slots["left"]["ai_type"])
+
+	# --- TOPP ---
+	top_active_check.button_pressed = GameSettings.slots["top"]["active"]
+	top_visible_check.button_pressed = GameSettings.slots["top"]["show_cards"]
+	_set_option_by_id(top_type_opt, GameSettings.slots["top"]["ai_type"])
+
+	# --- HÖGER ---
+	right_active_check.button_pressed = GameSettings.slots["right"]["active"]
+	right_visible_check.button_pressed = GameSettings.slots["right"]["show_cards"]
+	_set_option_by_id(right_type_opt, GameSettings.slots["right"]["ai_type"])
+
 func _save_settings_to_autoload():
 	print("Sparar inställningar till GameSettings...")
 	
@@ -152,6 +188,12 @@ func _save_settings_to_autoload():
 	GameSettings.slots["right"]["is_human"] = false
 	GameSettings.slots["right"]["show_cards"] = right_visible_check.button_pressed
 	GameSettings.slots["right"]["ai_type"] = right_type_opt.get_item_id(right_type_opt.selected)
+
+func _set_option_by_id(opt_btn: OptionButton, id: int):
+	# Hittar vilken rad (index) som har det sparade ID:t och väljer den
+	var idx = opt_btn.get_item_index(id)
+	if idx != -1:
+		opt_btn.selected = idx
 
 # --- START & EXIT ---
 func _on_start_button_pressed():
