@@ -173,20 +173,26 @@ func set_face_up(is_face_up: bool):
 
 func _on_hover_enter():
 	# 1. Tvinga detta kort att ritas OVANPÅ alla andra i handen
-	z_index = 10 
-	
-	# 2. Skapa en mjuk animation (Tween) som flyttar Base-noden uppåt (-40 pixlar)
-	var tween = create_tween()
-	# Sätt animationen till att ta 0.1 sekunder för en snabb, snärtig känsla
-	tween.tween_property(base_node, "position:y", base_start_y - 40, 0.1)
+	if not card_back.visible:
+		z_index = 10 
+		
+		# 2. Skapa en mjuk animation (Tween) som flyttar Base-noden uppåt (-40 pixlar)
+		var tween = create_tween()
+		# Sätt animationen till att ta 0.1 sekunder för en snabb, snärtig känsla
+		tween.tween_property(base_node, "position:y", base_start_y - 40, 0.1)
+	else:
+		pass
 
 func _on_hover_exit():
 	# 1. Återställ Z-index så det smälter in i handen igen
-	z_index = 0
-	
-	# 2. Animera tillbaka Base-noden till sin startposition
-	var tween = create_tween()
-	tween.tween_property(base_node, "position:y", base_start_y, 0.1)
+	if not card_back.visible:
+		z_index = 0
+		
+		# 2. Animera tillbaka Base-noden till sin startposition
+		var tween = create_tween()
+		tween.tween_property(base_node, "position:y", base_start_y, 0.1)
+	else:
+		pass
 
 func _on_gui_input(event: InputEvent):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
