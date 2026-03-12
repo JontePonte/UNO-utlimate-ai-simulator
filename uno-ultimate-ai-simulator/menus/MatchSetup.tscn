@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://kneo6uskn1cq"]
 
-[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="1_1nt5m"]
+[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="1_1nt5m"]
+[ext_resource type="Script" uid="uid://dxv1h51fadg5b" path="res://menus/match_setup.gd" id="1_nqpsq"]
 [ext_resource type="Theme" uid="uid://cd5glqoall5lu" path="res://ui/test_theme.tres" id="2_ouq10"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
@@ -49,6 +50,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_nqpsq")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1416727137]
 layout_mode = 1
@@ -314,6 +316,10 @@ label_settings = SubResource("LabelSettings_1nt5m")
 [node name="HSlider" type="HSlider" parent="MarginContainer/MainVBox/SmallOptions/SpeedSlider" unique_id=481460702]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
+min_value = 0.1
+max_value = 5.0
+step = 0.1
+value = 1.0
 
 [node name="SpeedSlider2" type="HBoxContainer" parent="MarginContainer/MainVBox/SmallOptions" unique_id=491591806]
 layout_mode = 2
@@ -327,6 +333,9 @@ label_settings = SubResource("LabelSettings_1nt5m")
 [node name="HSlider" type="HSlider" parent="MarginContainer/MainVBox/SmallOptions/SpeedSlider2" unique_id=1412277821]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
+min_value = 1.0
+max_value = 1000.0
+value = 500.0
 
 [node name="Spacer2" type="Control" parent="MarginContainer/MainVBox" unique_id=73969272]
 custom_minimum_size = Vector2(0, 50)
@@ -354,6 +363,12 @@ theme_override_font_sizes/font_size = 100
 text = "Start Game"
 flat = true
 
-[node name="Spacer" type="Control" parent="MarginContainer/MainVBox/ButtonHBox" unique_id=1346464587]
+[node name="ExitGame" type="Button" parent="MarginContainer/MainVBox/ButtonHBox" unique_id=1625789102]
 custom_minimum_size = Vector2(600, 0)
 layout_mode = 2
+theme_override_constants/outline_size = 19
+theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_font_sizes/font_size = 60
+text = "Exit Game
+"
+flat = true
