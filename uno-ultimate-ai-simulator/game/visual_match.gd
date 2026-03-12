@@ -258,9 +258,6 @@ func start_real_game():
 	update_all_visuals()
 	_spawn_discard_card(game_manager.state.discard_pile[-1])
 	
-	# Vänta in utdelningen
-	await get_tree().create_timer(1.5).timeout
-	
 	# Hantera labels och spacing för de som är med
 	# Först: Göm ALLA labels och UI-händer som default
 	for i in range(4):
