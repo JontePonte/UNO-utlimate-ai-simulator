@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://dkmud1ys5kvv6"]
 
+[ext_resource type="Script" uid="uid://boa2tcqu417fr" path="res://menus/main_menu.gd" id="1_ot3ob"]
 [ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="2_218cn"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
@@ -18,6 +19,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_ot3ob")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1416727137]
 layout_mode = 1
@@ -76,7 +78,7 @@ theme_override_font_sizes/font_size = 60
 text = "Run Multiple AI Games"
 flat = true
 
-[node name="CreateNewAIBurron" type="Button" parent="MarginContainer/MainVBox" unique_id=974463181]
+[node name="CreateNewAIButton" type="Button" parent="MarginContainer/MainVBox" unique_id=974463181]
 custom_minimum_size = Vector2(600, 75)
 layout_mode = 2
 theme_override_constants/outline_size = 19
