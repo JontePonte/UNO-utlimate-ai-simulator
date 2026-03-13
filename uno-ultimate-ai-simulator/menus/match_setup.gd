@@ -28,8 +28,8 @@ extends Control
 @onready var max_turns_spinbox = $MarginContainer/MainVBox/SmallOptions/MaxRounds/LabelInput/SpinBox
 
 @onready var start_button = $MarginContainer/MainVBox/ButtonHBox/Start
-@onready var exit_button = $MarginContainer/MainVBox/ButtonHBox/ExitGame
-@onready var main_menu_button = $MarginContainer/MainVBox/ButtonHBox/Back
+@onready var exit_button = $MarginContainer/MainVBox/ButtonHBox/BackExit/ExitGame
+@onready var main_menu_button = $MarginContainer/MainVBox/ButtonHBox/BackExit/Back
 
 const AI_PROFILES_DIR = "res://ai_profiles/"
 var available_ais = []

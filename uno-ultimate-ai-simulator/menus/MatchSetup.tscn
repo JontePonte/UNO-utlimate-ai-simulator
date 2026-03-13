@@ -68,9 +68,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 40
+theme_override_constants/margin_left = 100
 theme_override_constants/margin_top = 40
-theme_override_constants/margin_right = 40
+theme_override_constants/margin_right = 100
 theme_override_constants/margin_bottom = 40
 
 [node name="MainVBox" type="VBoxContainer" parent="MarginContainer" unique_id=910263688]
@@ -84,7 +84,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Spacer" type="Control" parent="MarginContainer/MainVBox" unique_id=1722005637]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 90)
 layout_mode = 2
 
 [node name="BoardGrid" type="GridContainer" parent="MarginContainer/MainVBox" unique_id=664135996]
@@ -305,7 +305,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 
 [node name="Spacer" type="Control" parent="MarginContainer/MainVBox/SmallOptions" unique_id=354184969]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="SpeedSlider" type="HBoxContainer" parent="MarginContainer/MainVBox/SmallOptions" unique_id=532253640]
@@ -362,10 +362,14 @@ layout_mode = 2
 
 [node name="ButtonHBox" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=415255029]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 0
 
-[node name="Back" type="Button" parent="MarginContainer/MainVBox/ButtonHBox" unique_id=1051092805]
-custom_minimum_size = Vector2(600, 0)
+[node name="BackExit" type="VBoxContainer" parent="MarginContainer/MainVBox/ButtonHBox" unique_id=486279195]
+custom_minimum_size = Vector2(550, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="Back" type="Button" parent="MarginContainer/MainVBox/ButtonHBox/BackExit" unique_id=1051092805]
 layout_mode = 2
 theme_override_constants/outline_size = 19
 theme_override_fonts/font = ExtResource("1_1nt5m")
@@ -373,6 +377,17 @@ theme_override_font_sizes/font_size = 60
 text = "Back to Menu
 "
 flat = true
+alignment = 0
+
+[node name="ExitGame" type="Button" parent="MarginContainer/MainVBox/ButtonHBox/BackExit" unique_id=1625789102]
+layout_mode = 2
+theme_override_constants/outline_size = 19
+theme_override_fonts/font = ExtResource("1_1nt5m")
+theme_override_font_sizes/font_size = 60
+text = "Exit Game
+"
+flat = true
+alignment = 0
 
 [node name="Start" type="Button" parent="MarginContainer/MainVBox/ButtonHBox" unique_id=1482418785]
 layout_mode = 2
@@ -380,14 +395,4 @@ theme_override_constants/outline_size = 23
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 100
 text = "Start Game"
-flat = true
-
-[node name="ExitGame" type="Button" parent="MarginContainer/MainVBox/ButtonHBox" unique_id=1625789102]
-custom_minimum_size = Vector2(600, 0)
-layout_mode = 2
-theme_override_constants/outline_size = 19
-theme_override_fonts/font = ExtResource("1_1nt5m")
-theme_override_font_sizes/font_size = 60
-text = "Exit Game
-"
 flat = true
