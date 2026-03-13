@@ -5,6 +5,7 @@ class_name AIPlayer
 var ai_name: String = "Okänd AI"
 
 # Base class / interface for all AI strategies
-func choose_action(_view: PlayerView):
+func choose_action(_view: PlayerView) -> PlayerAction:
 	push_error("choose_action() not implemented in AIPlayer")
-	return null
+	# Returnera ett tomt drag (istället för bara null) för att matcha typen
+	return PlayerAction.new(null)

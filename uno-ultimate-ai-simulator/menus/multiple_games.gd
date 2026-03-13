@@ -1,7 +1,5 @@
 extends Control
 
-const AISimple = preload("res://ai/AISimple.gd")
-
 @onready var num_players_opt = $MarginContainer/MainVBox/HBoxCenter/VBoxL/NumberOfPlayers/OptionButton
 @onready var slot3 = $MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot3
 @onready var slot4 = $MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot4
@@ -64,19 +62,25 @@ func _create_players_for_sim(num_players: int) -> Array[Player]:
 	var slots = [slot1_opt, slot2_opt, slot3_opt, slot4_opt]
 	
 	for i in range(num_players):
-		# 1. Ta reda på vilken AI som valts
+		# 1. Hämta valet från dropdownen
 		var ai_id = slots[i].get_item_id(slots[i].selected)
-		var ai_strategy
 		
-		# Använd vår preloadade SimpleAI
+		# Vi skapar ALLTID en AIInterpreter nu
+		var ai_strategy = AIInterpreter.new()
+		
+		# 2. Ladda rätt "hjärna" baserat på ID
+		# (Vi antar att ID 1 = Test/Simple och ID 2 = Aggressive)
 		match ai_id:
-			1: ai_strategy = AISimple.new()
-			# 2: ai_strategy = AggressiveAI.new()
-			_: ai_strategy = AISimple.new() # Fallback
+			1: 
+				ai_strategy.load_profile("res://ai_profiles/test_ai.json")
+			2: 
+				ai_strategy.load_profile("res://ai_profiles/aggressive_ai.json")
+			_: 
+				ai_strategy.load_profile("res://ai_profiles/test_ai.json")
 			
-		# 2. HÄR ÄR FIXEN FÖR FEL 1:
-		# Vi skickar in (index, namn, is_human, ai_controller) direkt!
+		# 3. Skapa spelaren med den tolken
 		var player_name = "Player " + str(i + 1)
+		# Vi skickar med ai_strategy (som nu är en AIInterpreter med laddad JSON)
 		var player = Player.new(i, player_name, false, ai_strategy)
 		
 		players.append(player)
