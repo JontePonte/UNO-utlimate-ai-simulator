@@ -31,6 +31,7 @@ extends Control
 @onready var pause_exit_button = $PauseOverlay/VBoxContainer/ExitGame
 @onready var quit_confirm_dialog = $PauseOverlay/VBoxContainer/BackToSetupButton/QuitConfirmationDialog
 @onready var main_menu_confirm_dialog = $PauseOverlay/VBoxContainer/MainMenu/MainMenuConfirmationDialog2
+@onready var pause_exit_confirm_dialog = $PauseOverlay/VBoxContainer/ExitGame/PauseExitGameConfirmationDialog
 
 @onready var draw_choice_menu = $DrawChoiceMenu
 @onready var color_picker_menu = $ColorChoice
@@ -84,7 +85,8 @@ func _ready():
 	quit_confirm_dialog.confirmed.connect(_on_quit_confirmed)
 	pause_main_menu_btn.pressed.connect(_on_pause_main_menu_pressed)
 	main_menu_confirm_dialog.confirmed.connect(_go_to_main_menu)
-	pause_exit_button.pressed.connect(_on_exit_pressed)
+	pause_exit_button.pressed.connect(_on_pause_exit_button_pressed)
+	pause_exit_confirm_dialog.confirmed.connect(_on_exit_pressed)
 	
 	# Koppla Game Over-menyns knappar
 	game_over_back_button.pressed.connect(_on_game_over_back_pressed)
@@ -832,6 +834,9 @@ func _update_speed(value: float):
 func _on_pause_back_pressed():
 	# Istället för att byta scen direkt, visa varningsrutan
 	quit_confirm_dialog.popup_centered()
+
+func _on_pause_exit_button_pressed():
+	pause_exit_confirm_dialog.popup_centered()	
 
 # När man klickar "Tillbaka" i GAME OVER-menyn
 func _on_game_over_back_pressed():
