@@ -300,41 +300,27 @@ func update_all_visuals():
 
 # --- SIGNAL MOTTAGARE ---
 func _on_card_drawn(player_index: int, card: Card):
-	# 1. Hämta rätt UI-plats via metadata
 	var p = game_manager.state.players[player_index]
 	var ui_idx = p.get_meta("ui_index")
 	var target_hand = player_uis[ui_idx]
+	var show_face = GameSettings.slots[["bottom", "left", "top", "right"][ui_idx]].show_cards
 	
-	# Bestäm om vi ska visa framsidan (baserat på GameSettings)
-	var pos_name = ["bottom", "left", "top", "right"][ui_idx]
-	var show_face = GameSettings.slots[pos_name].show_cards
-	
-	# 2. Hantera delay för flera kort
-	var base_delay = 0.25
-	var delay_time = _active_draws * base_delay
 	_active_draws += 1 
+	var delay_time = (_active_draws - 1) * 0.15 
 	
 	_update_draw_pile_visual()
 	
-	# 3. Skapa det flygande kortet
 	var flying_card = card_ui_scene.instantiate()
 	add_child(flying_card)
-	
-	flying_card.z_index = 20 
-	flying_card.z_as_relative = false
+	flying_card.z_index = 30
+	flying_card.set_card_data(card)
+	flying_card.set_face_up(show_face)
 	flying_card.set_interactable(false)
 	
-	# Sätt rätt data och visa/dölj baksidan
-	flying_card.set_card_data(card)
-	flying_card.set_face_up(show_face) 
-	
-	flying_card.pivot_offset = flying_card.size / 2.0
-	
-	# Startposition vid talongen
 	var start_pos = draw_pile_node.global_position - (flying_card.size / 2.0)
 	flying_card.global_position = start_pos
 	
-	# 4. Beräkna målet (Nu med rotations-säker matte för Control-noder!)
+	# --- TILLBAKA TILL DIN GAMLA LOGIK (Sikta på högerkanten) ---
 	var target_rot = target_hand.rotation_degrees
 	var target_center = target_hand.get_global_transform() * (target_hand.size / 2.0)
 	
@@ -342,39 +328,32 @@ func _on_card_drawn(player_index: int, card: Card):
 	if child_count > 0:
 		var last_card = target_hand.container.get_child(child_count - 1)
 		var last_card_center = last_card.get_global_transform() * (last_card.size / 2.0)
-		# Handens "höger" i globala koordinater
-		var right_direction = target_hand.get_global_transform().x.normalized()        
+		var right_direction = target_hand.get_global_transform().x.normalized()
 		target_center = last_card_center + (right_direction * (flying_card.size.x / 2.0))
 		
-	# FIXEN: Rotera offset-vektorn innan vi subtraherar den
-	var center_offset = flying_card.size / 2.0
-	var rotated_offset = center_offset.rotated(deg_to_rad(target_rot))
+	var target_pos = target_center - (flying_card.size / 2.0).rotated(deg_to_rad(target_rot))
+	# ---------------------------------------------------------
 	
-	var target_pos = target_center - rotated_offset
-	
-	# 5. Animera
 	if delay_time > 0:
 		flying_card.hide()
-		
-	var tween = create_tween()
-	var anim_time = 0.5
 	
+	var tween = create_tween()
 	if delay_time > 0:
 		tween.tween_interval(delay_time)
 		tween.tween_callback(flying_card.show)
 	
-	# Använd global_position för att vara säker i det roterade utrymmet
-	tween.tween_property(flying_card, "global_position", target_pos, anim_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.parallel().tween_property(flying_card, "rotation_degrees", target_rot, anim_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.set_parallel(true)
+	tween.tween_property(flying_card, "global_position", target_pos, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(flying_card, "rotation_degrees", target_rot, 0.5)
 	
 	await tween.finished
-	flying_card.queue_free()
+	if is_instance_valid(flying_card):
+		flying_card.queue_free()
 	
 	_active_draws -= 1
 	
-	# 6. Slutligen: Uppdatera den riktiga handen
+	# Uppdatera bara den faktiska handen när SISTA kortet landat
 	if _active_draws == 0:
-		# Här skickar vi med show_face till update_hand
 		target_hand.update_hand(p.hand, show_face)
 		update_all_visuals()
 		target_hand.play_flex_animation()
@@ -382,38 +361,28 @@ func _on_card_drawn(player_index: int, card: Card):
 func _on_card_played(player_index: int, card: Card, declared_color: Card.CardColor):
 	var p = game_manager.state.players[player_index]
 	var ui_idx = p.get_meta("ui_index")
-	
 	var hand_ui = player_uis[ui_idx] 
 	var start_rotation = hand_ui.rotation_degrees
 	
+	# ... (Hitta chosen_ui_card logik här, samma som innan) ...
 	var children = hand_ui.container.get_children()
-	var chosen_ui_card = null
-
-	# --- HÄR KOMMER ÄNDRINGEN! ---
-	# Vi kollar först om vi har sparat undan ett klickat kort från människan
+	var chosen_ui_card: Control = null
 	if p.is_human and is_instance_valid(last_human_clicked_card_node):
 		chosen_ui_card = last_human_clicked_card_node
-		last_human_clicked_card_node = null # Rensa den direkt efter användning!
+		last_human_clicked_card_node = null
 	else:
-		# Om det är en AI (eller om klicket saknas), kör vi din gamla sök-logik
-		if children.size() > 0:
-			for ui_card in children:
-				if ui_card.has_meta("logical_card"):
-					var logical = ui_card.get_meta("logical_card")
-					if logical.color == card.color and logical.value == card.value:
-						chosen_ui_card = ui_card
-						break
-			
-			# Fallback: Om vi mot förmodan inte hittade kortet, ta ett slumpmässigt
-			if chosen_ui_card == null:
-				chosen_ui_card = children[randi() % children.size()]
-	
+		for ui_card in children:
+			if ui_card.has_meta("logical_card"):
+				var logical = ui_card.get_meta("logical_card")
+				if logical.color == card.color and logical.value == card.value:
+					chosen_ui_card = ui_card
+					break
+
 	if chosen_ui_card != null:
-		_spawn_discard_card(card, chosen_ui_card, start_rotation)
+		var discard_tween = _spawn_discard_card(card, chosen_ui_card, start_rotation)
 		
 		var card_index = chosen_ui_card.get_index()
 		var hole_size = chosen_ui_card.size
-		
 		chosen_ui_card.hide()
 		chosen_ui_card.queue_free()
 		
@@ -422,46 +391,35 @@ func _on_card_played(player_index: int, card: Card, declared_color: Card.CardCol
 		hand_ui.container.add_child(dummy_hole)
 		hand_ui.container.move_child(dummy_hole, card_index)
 		
-		await get_tree().create_timer(0.4).timeout
+		if discard_tween:
+			await discard_tween.finished
 		
+		# --- FIXEN MOT KRASCH ---
 		if is_instance_valid(dummy_hole):
-			var current_sep = hand_ui.container.get_theme_constant("separation")
-			var target_hole_size = max(0.0, -current_sep)
+			var close_tween = create_tween()
+			# Denna rad stoppar kraschen om dummy_hole försvinner!
+			close_tween.bind_node(dummy_hole) 
 			
-			var tween = create_tween()
-			# NYTT: Även tween-hastigheten påverkas
-			var tween_time = 0.25
-			tween.tween_property(dummy_hole, "custom_minimum_size:x", target_hole_size, tween_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			var target_hole_size = max(0.0, -hand_ui.container.get_theme_constant("separation"))
+			close_tween.tween_property(dummy_hole, "custom_minimum_size:x", target_hole_size, 0.2)
 			
-			await tween.finished
+			await close_tween.finished
 			if is_instance_valid(dummy_hole):
 				dummy_hole.queue_free()
-	else:
-		await get_tree().create_timer(0.4).timeout
 	
-	var final_color = declared_color if card.color == Card.CardColor.WILD else card.color
-	update_ui_color(final_color)
-	
-	# --- NYTT: Skicka med show_cards-inställningen ---
-	var pos_name = ["bottom", "left", "top", "right"][ui_idx]
-	var show_cards = GameSettings.slots[pos_name].show_cards
-	hand_ui.update_hand(p.hand, show_cards)
-	
-	var cards_left = p.hand.size()
-	if cards_left == 1:
-		# UNO-animationen behöver också veta vilken UI-plats det gäller
-		_show_uno_animation(ui_idx) 
+	update_ui_color(declared_color if card.color == Card.CardColor.WILD else card.color)
 	
 	if _active_draws == 0:
+		var pos_name = ["bottom", "left", "top", "right"][ui_idx]
+		var show_cards = GameSettings.slots[pos_name].show_cards
+		hand_ui.update_hand(p.hand, show_cards)
 		update_all_visuals()
 
-
 # --- VISUELLA HJÄLPARE ---
-func _spawn_discard_card(card_data: Card, source_ui_card: Control = null, start_rot: float = 0.0):
+func _spawn_discard_card(card_data: Card, source_ui_card: Control = null, start_rot: float = 0.0) -> Tween:
 	var visual_card = card_ui_scene.instantiate()
 	discard_pile_node.add_child(visual_card)
 	
-	# 1. Lyft ALLTID upp kortet när det skapas (även första kortet behöver ligga överst initialt)
 	visual_card.z_index = 20
 	visual_card.z_as_relative = false
 	
@@ -495,15 +453,16 @@ func _spawn_discard_card(card_data: Card, source_ui_card: Control = null, start_
 		tween.tween_property(visual_card, "size", normal_size, 0.4)
 		tween.tween_property(visual_card, "pivot_offset", normal_size / 2.0, 0.4)
 		
-		# När animationen är klar - tvinga ner det i trädet
+		# FIX: Vi ansluter direkt till tweenens finished-signal
 		tween.finished.connect(func(): _finalize_card_landing(visual_card, final_position))
+		return tween
 	else:
 		# --- STATISKT KORT (Första kortet vid start) ---
 		visual_card.pivot_offset = normal_size / 2.0
 		visual_card.position = final_position
 		visual_card.rotation_degrees = final_rotation
-		# Även här måste vi "landa" kortet logiskt så det tappar sin Z-index fusk
 		_finalize_card_landing(visual_card, final_position)
+		return null
 
 # Ny hjälpfunktion för att garantera ordningen
 func _finalize_card_landing(card_node: Control, final_pos: Vector2):

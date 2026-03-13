@@ -212,6 +212,8 @@ func play_card(player_index: int, card: Card, declared_color: Card.CardColor = C
 	
 	player.hand.erase(card)
 	state.discard_pile.append(card)
+	
+	card_played.emit(player_index, card, declared_color) # Meddela UI!
 
 	if card.color == Card.CardColor.WILD:
 		state.current_color = declared_color
@@ -237,7 +239,7 @@ func play_card(player_index: int, card: Card, declared_color: Card.CardColor = C
 			draw_cards(next_idx, 4)
 			state.pending_skip = true
 
-	card_played.emit(player_index, card, declared_color) # Meddela UI!
+	
 	return true
 
 
