@@ -1,0 +1,16 @@
+{
+  "ai_name": "Test AI",
+  "description": "Spelar första bästa kortet. Om inga kort kan spelas, drar den ett.",
+  "root": {
+	"type": "condition",
+	"name": "has_playable_card",
+	"true_branch": {
+	  "type": "action",
+	  "name": "play_first_playable"
+	},
+	"false_branch": {
+	  "type": "action",
+	  "name": "draw_card"
+	}
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "ai_name": "Aggressive AI",
+  "description": "Spelar alltid attack-kort (+2, +4, Skip, Reverse) om den kan. Annars vanliga kort, eller drar ett kort.",
+  "root": {
+	"type": "condition",
+	"name": "has_playable_attack_card",
+	"true_branch": {
+	  "type": "action",
+	  "name": "play_playable_attack_card"
+	},
+	"false_branch": {
+	  "type": "condition",
+	  "name": "has_playable_card",
+	  "true_branch": {
+		"type": "action",
+		"name": "play_first_playable"
+	  },
+	  "false_branch": {
+		"type": "action",
+		"name": "draw_card"
+	  }
+	}
+  }
+}
