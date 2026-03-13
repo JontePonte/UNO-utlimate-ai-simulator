@@ -243,7 +243,7 @@ func start_real_game():
 	
 	# Koppla UI-knappar (Bara om de inte redan är kopplade)
 	_safe_connect(restart_button.pressed, _on_restart_pressed)
-	_safe_connect(exit_button.pressed, _on_exit_pressed)
+	_safe_connect(exit_button.pressed, _on_pause_exit_button_pressed) #Lånar av paus
 	_safe_connect(resume_button.pressed, _toggle_pause)
 	
 	# 5. Rita upp startläget
