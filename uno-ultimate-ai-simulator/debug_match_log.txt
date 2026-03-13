@@ -1,83 +1,110 @@
 === DEBUG LOGG FÖR MATCH ===
-Antal spelare: 4
-Startfärg: YELLOW
+Antal spelare: 2
+Startfärg: GREEN
 ----------------------------
 
-Tur 0 | Player 1 spelade RED NINE
-Tur 1 | Player 2 spelade RED TWO
-Tur 2 | Player 3 spelade WILD WILD_DRAW_FOUR (Valde ny färg: YELLOW)
-Tur 2 | Player 4 drog GREEN TWO
-Tur 2 | Player 4 drog GREEN SIX
-Tur 2 | Player 4 drog GREEN FOUR
-Tur 2 | Player 4 drog YELLOW TWO
-Tur 3 | Player 1 spelade YELLOW DRAW_TWO
-Tur 3 | Player 2 drog GREEN REVERSE
-Tur 3 | Player 2 drog RED ONE
-Tur 4 | Player 3 spelade WILD WILD_DRAW_FOUR (Valde ny färg: YELLOW)
-Tur 4 | Player 4 drog GREEN FIVE
-Tur 4 | Player 4 drog WILD WILD
-Tur 4 | Player 4 drog BLUE FIVE
-Tur 4 | Player 4 drog RED SIX
-Tur 5 | Player 1 spelade YELLOW FIVE
-Tur 6 | Player 2 spelade YELLOW THREE
-Tur 7 | Player 3 spelade YELLOW SEVEN
-Tur 8 | Player 4 spelade YELLOW SIX
-Tur 9 | Player 1 drog GREEN ONE
-Tur 10 | Player 2 spelade GREEN SIX
-Tur 11 | Player 3 spelade GREEN SKIP
-Tur 12 | Player 1 spelade RED SKIP
-Tur 13 | Player 3 spelade RED THREE
-Tur 14 | Player 4 spelade RED SEVEN
-Tur 15 | Player 1 spelade GREEN SEVEN
-Tur 16 | Player 2 spelade GREEN REVERSE
-Tur 17 | Player 1 spelade GREEN ZERO
-Tur 18 | Player 4 spelade GREEN FOUR
-Tur 19 | Player 3 spelade YELLOW FOUR
-Tur 20 | Player 2 spelade YELLOW FIVE
-Tur 21 | Player 1 drog BLUE EIGHT
-Tur 22 | Player 4 spelade GREEN FIVE
-Tur 23 | Player 3 drog RED SIX
-Tur 24 | Player 2 spelade WILD WILD (Valde ny färg: RED)
-Tur 25 | Player 1 spelade RED ZERO
-Tur 26 | Player 4 spelade WILD WILD (Valde ny färg: RED)
-Tur 27 | Player 3 spelade RED SIX
-Tur 28 | Player 2 spelade RED ONE
-Tur 29 | Player 1 spelade GREEN ONE
-Tur 30 | Player 4 spelade GREEN NINE
-Tur 31 | Player 3 drog RED EIGHT
-Tur 32 | Player 2 drog BLUE SIX
-Tur 33 | Player 1 drog BLUE THREE
-Tur 34 | Player 4 spelade GREEN TWO
-Tur 35 | Player 3 drog GREEN DRAW_TWO
-Tur 35 | Player 3 spelade GREEN DRAW_TWO
-Tur 35 | Player 2 drog BLUE SEVEN
-Tur 35 | Player 2 drog WILD WILD
-Tur 36 | Player 1 drog YELLOW THREE
-Tur 37 | Player 4 spelade GREEN SIX
-Tur 38 | Player 3 drog BLUE SKIP
-Tur 39 | Player 2 spelade BLUE SIX
-Tur 40 | Player 1 spelade BLUE EIGHT
-Tur 41 | Player 4 spelade BLUE FOUR
-Tur 42 | Player 3 spelade BLUE SKIP
-Tur 43 | Player 1 spelade BLUE THREE
-Tur 44 | Player 4 spelade BLUE SEVEN
-Tur 45 | Player 3 spelade BLUE FOUR
-Tur 46 | Player 2 spelade BLUE TWO
-Tur 47 | Player 1 drog YELLOW NINE
-Tur 48 | Player 4 spelade YELLOW TWO
-Tur 49 | Player 3 drog GREEN EIGHT
-Tur 50 | Player 2 spelade WILD WILD (Valde ny färg: RED)
-Tur 51 | Player 1 drog WILD WILD_DRAW_FOUR
-Tur 51 | Player 1 spelade WILD WILD_DRAW_FOUR (Valde ny färg: YELLOW)
-Tur 51 | Player 4 drog YELLOW REVERSE
-Tur 51 | Player 4 drog YELLOW SIX
-Tur 51 | Player 4 drog RED FIVE
-Tur 51 | Player 4 drog YELLOW SEVEN
-Tur 52 | Player 3 drog GREEN THREE
-Tur 53 | Player 2 drog YELLOW NINE
-Tur 53 | Player 2 spelade YELLOW NINE
-Tur 54 | Player 1 spelade YELLOW THREE
-Tur 55 | Player 4 spelade YELLOW REVERSE
-Tur 56 | Player 1 spelade YELLOW NINE
+Tur 0 | Player 1 spelade GREEN DRAW_TWO
+Tur 0 | Player 2 drog RED ZERO
+Tur 0 | Player 2 drog RED FOUR
+Tur 1 | Player 1 spelade BLUE DRAW_TWO
+Tur 1 | Player 2 drog BLUE THREE
+Tur 1 | Player 2 drog RED TWO
+Tur 2 | Player 1 spelade WILD WILD_DRAW_FOUR (Valde ny färg: GREEN)
+Tur 2 | Player 2 drog BLUE NINE
+Tur 2 | Player 2 drog YELLOW THREE
+Tur 2 | Player 2 drog RED REVERSE
+Tur 2 | Player 2 drog WILD WILD_DRAW_FOUR
+Tur 3 | Player 1 spelade GREEN ONE
+Tur 4 | Player 2 spelade GREEN SKIP
+Tur 5 | Player 2 spelade RED SKIP
+Tur 6 | Player 2 spelade RED REVERSE
+Tur 7 | Player 2 spelade BLUE REVERSE
+Tur 8 | Player 2 spelade WILD WILD_DRAW_FOUR (Valde ny färg: RED)
+Tur 8 | Player 1 drog RED THREE
+Tur 8 | Player 1 drog WILD WILD
+Tur 8 | Player 1 drog GREEN NINE
+Tur 8 | Player 1 drog YELLOW FOUR
+Tur 9 | Player 2 spelade RED THREE
+Tur 10 | Player 1 spelade RED SIX
+Tur 11 | Player 2 spelade RED ZERO
+Tur 12 | Player 1 spelade RED THREE
+Tur 13 | Player 2 spelade RED FOUR
+Tur 14 | Player 1 spelade WILD WILD (Valde ny färg: YELLOW)
+Tur 15 | Player 2 spelade YELLOW THREE
+Tur 16 | Player 1 spelade YELLOW NINE
+Tur 17 | Player 2 spelade GREEN NINE
+Tur 18 | Player 1 spelade GREEN NINE
+Tur 19 | Player 2 spelade GREEN TWO
+Tur 20 | Player 1 drog RED FOUR
+Tur 21 | Player 2 spelade RED TWO
+Tur 22 | Player 1 spelade RED FOUR
+Tur 23 | Player 2 drog RED TWO
+Tur 23 | Player 2 spelade RED TWO
+Tur 24 | Player 1 drog WILD WILD
+Tur 24 | Player 1 spelade WILD WILD (Valde ny färg: RED)
+Tur 25 | Player 2 drog GREEN SKIP
+Tur 26 | Player 1 drog YELLOW THREE
+Tur 27 | Player 2 drog YELLOW SEVEN
+Tur 28 | Player 1 drog YELLOW TWO
+Tur 29 | Player 2 drog GREEN ONE
+Tur 30 | Player 1 drog GREEN SEVEN
+Tur 31 | Player 2 drog YELLOW DRAW_TWO
+Tur 32 | Player 1 drog BLUE NINE
+Tur 33 | Player 2 drog YELLOW ZERO
+Tur 34 | Player 1 drog WILD WILD
+Tur 34 | Player 1 spelade WILD WILD (Valde ny färg: BLUE)
+Tur 35 | Player 2 spelade BLUE EIGHT
+Tur 36 | Player 1 spelade BLUE SIX
+Tur 37 | Player 2 spelade BLUE THREE
+Tur 38 | Player 1 spelade YELLOW THREE
+Tur 39 | Player 2 spelade YELLOW DRAW_TWO
+Tur 39 | Player 1 drog WILD WILD
+Tur 39 | Player 1 drog RED REVERSE
+Tur 40 | Player 2 spelade YELLOW SEVEN
+Tur 41 | Player 1 spelade YELLOW FOUR
+Tur 42 | Player 2 spelade YELLOW ZERO
+Tur 43 | Player 1 spelade YELLOW TWO
+Tur 44 | Player 2 drog RED ONE
+Tur 45 | Player 1 spelade WILD WILD (Valde ny färg: BLUE)
+Tur 46 | Player 2 spelade BLUE NINE
+Tur 47 | Player 1 spelade BLUE NINE
+Tur 48 | Player 2 drog BLUE DRAW_TWO
+Tur 48 | Player 2 spelade BLUE DRAW_TWO
+Tur 48 | Player 1 drog BLUE FOUR
+Tur 48 | Player 1 drog YELLOW ONE
+Tur 49 | Player 2 drog GREEN THREE
+Tur 50 | Player 1 spelade BLUE FOUR
+Tur 51 | Player 2 drog GREEN REVERSE
+Tur 52 | Player 1 drog RED EIGHT
+Tur 53 | Player 2 drog RED SKIP
+Tur 54 | Player 1 drog GREEN FIVE
+Tur 55 | Player 2 drog BLUE REVERSE
+Tur 55 | Player 2 spelade BLUE REVERSE
+Tur 56 | Player 2 spelade GREEN REVERSE
+Tur 57 | Player 2 spelade GREEN SKIP
+Tur 58 | Player 2 spelade RED SKIP
+Tur 59 | Player 2 spelade RED ONE
+Tur 60 | Player 1 spelade RED REVERSE
+Tur 61 | Player 1 spelade RED EIGHT
+Tur 62 | Player 2 drog BLUE EIGHT
+Tur 62 | Player 2 spelade BLUE EIGHT
+Tur 63 | Player 1 drog YELLOW SKIP
+Tur 64 | Player 2 drog WILD WILD_DRAW_FOUR
+Tur 64 | Player 2 spelade WILD WILD_DRAW_FOUR (Valde ny färg: BLUE)
+Tur 64 | Player 1 drog GREEN FIVE
+Tur 64 | Player 1 drog GREEN FOUR
+Tur 64 | Player 1 drog YELLOW SKIP
+Tur 64 | Player 1 drog RED FIVE
+Tur 65 | Player 2 drog BLUE SKIP
+Tur 65 | Player 2 spelade BLUE SKIP
+Tur 66 | Player 2 drog GREEN ZERO
+Tur 67 | Player 1 spelade YELLOW SKIP
+Tur 68 | Player 1 spelade YELLOW SKIP
+Tur 69 | Player 1 spelade YELLOW ONE
+Tur 70 | Player 2 spelade GREEN ONE
+Tur 71 | Player 1 spelade GREEN SEVEN
+Tur 72 | Player 2 spelade GREEN THREE
+Tur 73 | Player 1 spelade GREEN FIVE
+Tur 74 | Player 2 spelade GREEN ZERO
 
 === SLUT PÅ MATCH ===
