@@ -19,6 +19,10 @@ extends Control
 @onready var exit_button = $MarginContainer/MainVBox/BottomHBox/HBoxSim/HBoxBackExit/ExitGame
 @onready var main_menu_button = $MarginContainer/MainVBox/BottomHBox/HBoxSim/HBoxBackExit/Back
 
+# En lista som sparar information om de AI:s vi hittar { "name": "Test AI", "path": "res://..." }
+var available_ais = []
+# Sökvägen till mappen där alla AI-profiler ligger
+const AI_PROFILES_DIR = "res://ai_profiles/"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -33,59 +37,75 @@ func _ready() -> void:
 	
 	# Sätt 4 spelare som standard (index 2 är den tredje saken i listan)
 	num_players_opt.selected = 2 
-	
-	# Lyssna på ändringar
 	num_players_opt.item_selected.connect(_on_num_players_changed)
 	
+	_refresh_ai_lists()
 	# Kör en första uppdatering så rätt slots syns
 	_update_player_slots()
 
-func _on_num_players_changed(_index: int):
-	_update_player_slots()
-
-func _update_player_slots():
-	# Hämta ID:t från det valda alternativet (som vi satte till 2, 3 eller 4)
-	var num_players = num_players_opt.get_item_id(num_players_opt.selected)
+func _refresh_ai_lists():
+	available_ais.clear()
+	var dir = DirAccess.open(AI_PROFILES_DIR)
 	
-	if num_players == 2:
-		slot3.hide()
-		slot4.hide()
-	elif num_players == 3:
-		slot3.show()
-		slot4.hide()
-	elif num_players == 4:
-		slot3.show()
-		slot4.show()
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if not dir.current_is_dir() and file_name.ends_with(".json"):
+				var path = AI_PROFILES_DIR + file_name
+				
+				# --- HÄR ÄR OPTIMERINGEN: Läs filen NU istället för i loopen ---
+				var file = FileAccess.open(path, FileAccess.READ)
+				var json_text = file.get_as_text()
+				var json_data = JSON.parse_string(json_text)
+				
+				if json_data:
+					var display_name = file_name.replace(".json", "").capitalize()
+					available_ais.append({
+						"name": display_name,
+						"brain_data": json_data # Vi sparar hela datan här!
+					})
+			file_name = dir.get_next()
+		dir.list_dir_end()
+
+	# Uppdatera menyerna
+	var menus = [slot1_opt, slot2_opt, slot3_opt, slot4_opt]
+	for menu in menus:
+		menu.clear()
+		for i in range(available_ais.size()):
+			menu.add_item(available_ais[i]["name"])
+			# Vi sparar INDEX till till vår lista istället för en filstig
+			menu.set_item_metadata(i, i)
 
 func _create_players_for_sim(num_players: int) -> Array[Player]:
 	var players: Array[Player] = []
 	var slots = [slot1_opt, slot2_opt, slot3_opt, slot4_opt]
 	
 	for i in range(num_players):
-		# 1. Hämta valet från dropdownen
-		var ai_id = slots[i].get_item_id(slots[i].selected)
+		var menu = slots[i]
+		var ai_index = menu.get_item_metadata(menu.selected)
 		
-		# Vi skapar ALLTID en AIInterpreter nu
+		# Hämta den för-laddade datan från vår lista
+		var cached_ai_data = available_ais[ai_index]["brain_data"]
+		
 		var ai_strategy = AIInterpreter.new()
-		
-		# 2. Ladda rätt "hjärna" baserat på ID
-		# (Vi antar att ID 1 = Test/Simple och ID 2 = Aggressive)
-		match ai_id:
-			1: 
-				ai_strategy.load_profile("res://ai_profiles/test_ai.json")
-			2: 
-				ai_strategy.load_profile("res://ai_profiles/aggressive_ai.json")
-			_: 
-				ai_strategy.load_profile("res://ai_profiles/test_ai.json")
+		# Använd den snabba funktionen som inte rör hårddisken!
+		ai_strategy.load_from_data(cached_ai_data)
 			
-		# 3. Skapa spelaren med den tolken
 		var player_name = "Player " + str(i + 1)
-		# Vi skickar med ai_strategy (som nu är en AIInterpreter med laddad JSON)
 		var player = Player.new(i, player_name, false, ai_strategy)
-		
 		players.append(player)
 		
 	return players
+
+func _on_num_players_changed(_index: int):
+	_update_player_slots()
+
+func _update_player_slots():
+	var num_players = num_players_opt.get_item_id(num_players_opt.selected)
+	slot3.visible = num_players >= 3
+	slot4.visible = num_players >= 4
+
 
 func _on_start_button_pressed():
 	print("--- STARTAR SIMULERING ---")

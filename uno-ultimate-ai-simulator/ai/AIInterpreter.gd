@@ -4,23 +4,20 @@ class_name AIInterpreter
 # AI:ns inlästa "hjärna"
 var brain_data: Dictionary = {}
 
-# Laddar in en profil från en JSON-fil
 func load_profile(file_path: String):
-	if not FileAccess.file_exists(file_path):
-		push_error("AI Profile not found: " + file_path)
+	if not FileAccess.file_exists(file_path): 
 		return
 		
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	var json_text = file.get_as_text()
-	var json = JSON.new()
-	var error = json.parse(json_text)
+	var json_data = JSON.parse_string(json_text)
 	
-	if error == OK:
-		brain_data = json.data
-		ai_name = brain_data.get("ai_name", "Unknown AI")
-		print("AI Loaded: ", ai_name)
-	else:
-		push_error("JSON Parse Error in " + file_path + " at line " + str(json.get_error_line()))
+	if json_data:
+		load_from_data(json_data)
+
+func load_from_data(data: Dictionary):
+	brain_data = data
+	ai_name = brain_data.get("ai_name", "Unknown AI")
 
 # Grundfunktionen som anropas av SimulationManager/GameManager
 func choose_action(view: PlayerView) -> PlayerAction:
