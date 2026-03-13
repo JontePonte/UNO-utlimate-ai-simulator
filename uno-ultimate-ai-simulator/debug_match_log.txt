@@ -3,217 +3,55 @@ Antal spelare: 4
 Startfärg: GREEN
 ----------------------------
 
-Tur 0 | Player 1 drog BLUE ZERO
-Tur 1 | Player 2 drog GREEN NINE
-Tur 1 | Player 2 passade
-Tur 2 | Player 3 drog YELLOW SIX
-Tur 2 | Player 3 passade
-Tur 3 | Player 4 drog BLUE SKIP
-Tur 4 | Player 1 drog GREEN SKIP
-Tur 4 | Player 1 passade
-Tur 5 | Player 2 drog GREEN FOUR
-Tur 5 | Player 2 passade
-Tur 6 | Player 3 drog YELLOW REVERSE
-Tur 7 | Player 4 drog WILD WILD_DRAW_FOUR
-Tur 7 | Player 4 passade
-Tur 8 | Player 1 drog RED EIGHT
-Tur 9 | Player 2 drog RED FOUR
-Tur 10 | Player 3 drog BLUE EIGHT
-Tur 11 | Player 4 drog YELLOW THREE
-Tur 12 | Player 1 drog YELLOW FIVE
-Tur 13 | Player 2 drog BLUE FOUR
-Tur 14 | Player 3 drog GREEN REVERSE
-Tur 14 | Player 3 passade
-Tur 15 | Player 4 drog RED SEVEN
-Tur 16 | Player 1 drog GREEN SEVEN
-Tur 16 | Player 1 passade
-Tur 17 | Player 2 drog RED TWO
-Tur 18 | Player 3 drog RED SKIP
-Tur 19 | Player 4 drog RED DRAW_TWO
-Tur 20 | Player 1 drog BLUE SIX
-Tur 20 | Player 1 passade
-Tur 21 | Player 2 drog YELLOW NINE
-Tur 22 | Player 3 drog RED THREE
-Tur 23 | Player 4 drog GREEN SEVEN
-Tur 23 | Player 4 passade
-Tur 24 | Player 1 drog GREEN FIVE
-Tur 24 | Player 1 passade
-Tur 25 | Player 2 drog GREEN DRAW_TWO
-Tur 25 | Player 2 passade
-Tur 26 | Player 3 drog BLUE ONE
-Tur 27 | Player 4 drog GREEN ZERO
-Tur 27 | Player 4 passade
-Tur 28 | Player 1 drog RED REVERSE
-Tur 29 | Player 2 drog BLUE EIGHT
-Tur 30 | Player 3 drog BLUE DRAW_TWO
-Tur 31 | Player 4 drog BLUE FOUR
-Tur 32 | Player 1 drog YELLOW DRAW_TWO
-Tur 33 | Player 2 drog GREEN EIGHT
-Tur 33 | Player 2 passade
-Tur 34 | Player 3 drog WILD WILD_DRAW_FOUR
-Tur 34 | Player 3 passade
-Tur 35 | Player 4 drog RED NINE
-Tur 36 | Player 1 drog YELLOW DRAW_TWO
-Tur 37 | Player 2 drog RED SKIP
-Tur 38 | Player 3 drog RED SIX
-Tur 38 | Player 3 passade
-Tur 39 | Player 4 drog WILD WILD_DRAW_FOUR
-Tur 39 | Player 4 passade
-Tur 40 | Player 1 drog GREEN SKIP
-Tur 40 | Player 1 passade
-Tur 41 | Player 2 drog RED EIGHT
-Tur 42 | Player 3 drog BLUE NINE
-Tur 43 | Player 4 drog BLUE TWO
-Tur 44 | Player 1 drog BLUE TWO
-Tur 45 | Player 2 drog GREEN THREE
-Tur 45 | Player 2 passade
-Tur 46 | Player 3 drog GREEN EIGHT
-Tur 46 | Player 3 passade
-Tur 47 | Player 4 drog BLUE ONE
-Tur 48 | Player 1 drog BLUE SEVEN
-Tur 49 | Player 2 drog YELLOW ONE
-Tur 50 | Player 3 drog WILD WILD
-Tur 50 | Player 3 passade
-Tur 51 | Player 4 drog BLUE SIX
-Tur 51 | Player 4 passade
-Tur 52 | Player 1 drog RED REVERSE
-Tur 53 | Player 2 drog BLUE REVERSE
-Tur 54 | Player 3 drog RED DRAW_TWO
-Tur 55 | Player 4 drog WILD WILD
-Tur 55 | Player 4 passade
-Tur 56 | Player 1 drog GREEN SIX
-Tur 56 | Player 1 passade
-Tur 57 | Player 2 drog GREEN FOUR
-Tur 57 | Player 2 passade
-Tur 58 | Player 3 drog YELLOW SKIP
-Tur 59 | Player 4 drog BLUE REVERSE
-Tur 60 | Player 1 drog YELLOW FOUR
-Tur 61 | Player 2 drog YELLOW SKIP
-Tur 62 | Player 3 drog WILD WILD_DRAW_FOUR
-Tur 62 | Player 3 passade
-Tur 63 | Player 4 drog WILD WILD
-Tur 63 | Player 4 passade
-Tur 64 | Player 1 drog RED THREE
-Tur 65 | Player 2 drog WILD WILD
-Tur 65 | Player 2 passade
-Tur 66 | Player 3 drog RED ZERO
-Tur 67 | Player 4 drog RED NINE
-Tur 68 | Player 1 drog YELLOW SEVEN
-Tur 69 | Player 2 drog YELLOW THREE
-Tur 70 | Player 3 drog YELLOW TWO
-Tur 71 | Player 4 drog YELLOW TWO
-Tur 72 | Player 1 drog RED FIVE
-Tur 73 | Player 2 drog YELLOW ONE
-Tur 74 | Player 3 drog BLUE SKIP
-Tur 75 | Player 4 drog YELLOW NINE
-Tur 76 | Player 1 drog GREEN TWO
-Tur 76 | Player 1 passade
-Tur 77 | Player 2 drog BLUE FIVE
-Tur 78 | Player 3 drog BLUE SEVEN
-Tur 80 | Player 1 passade
-Tur 84 | Player 1 passade
-Tur 88 | Player 1 passade
-Tur 92 | Player 1 passade
-Tur 96 | Player 1 passade
-Tur 100 | Player 1 passade
-Tur 104 | Player 1 passade
-Tur 108 | Player 1 passade
-Tur 112 | Player 1 passade
-Tur 116 | Player 1 passade
-Tur 120 | Player 1 passade
-Tur 124 | Player 1 passade
-Tur 128 | Player 1 passade
-Tur 132 | Player 1 passade
-Tur 136 | Player 1 passade
-Tur 140 | Player 1 passade
-Tur 144 | Player 1 passade
-Tur 148 | Player 1 passade
-Tur 152 | Player 1 passade
-Tur 156 | Player 1 passade
-Tur 160 | Player 1 passade
-Tur 164 | Player 1 passade
-Tur 168 | Player 1 passade
-Tur 172 | Player 1 passade
-Tur 176 | Player 1 passade
-Tur 180 | Player 1 passade
-Tur 184 | Player 1 passade
-Tur 188 | Player 1 passade
-Tur 192 | Player 1 passade
-Tur 196 | Player 1 passade
-Tur 200 | Player 1 passade
-Tur 204 | Player 1 passade
-Tur 208 | Player 1 passade
-Tur 212 | Player 1 passade
-Tur 216 | Player 1 passade
-Tur 220 | Player 1 passade
-Tur 224 | Player 1 passade
-Tur 228 | Player 1 passade
-Tur 232 | Player 1 passade
-Tur 236 | Player 1 passade
-Tur 240 | Player 1 passade
-Tur 244 | Player 1 passade
-Tur 248 | Player 1 passade
-Tur 252 | Player 1 passade
-Tur 256 | Player 1 passade
-Tur 260 | Player 1 passade
-Tur 264 | Player 1 passade
-Tur 268 | Player 1 passade
-Tur 272 | Player 1 passade
-Tur 276 | Player 1 passade
-Tur 280 | Player 1 passade
-Tur 284 | Player 1 passade
-Tur 288 | Player 1 passade
-Tur 292 | Player 1 passade
-Tur 296 | Player 1 passade
-Tur 300 | Player 1 passade
-Tur 304 | Player 1 passade
-Tur 308 | Player 1 passade
-Tur 312 | Player 1 passade
-Tur 316 | Player 1 passade
-Tur 320 | Player 1 passade
-Tur 324 | Player 1 passade
-Tur 328 | Player 1 passade
-Tur 332 | Player 1 passade
-Tur 336 | Player 1 passade
-Tur 340 | Player 1 passade
-Tur 344 | Player 1 passade
-Tur 348 | Player 1 passade
-Tur 352 | Player 1 passade
-Tur 356 | Player 1 passade
-Tur 360 | Player 1 passade
-Tur 364 | Player 1 passade
-Tur 368 | Player 1 passade
-Tur 372 | Player 1 passade
-Tur 376 | Player 1 passade
-Tur 380 | Player 1 passade
-Tur 384 | Player 1 passade
-Tur 388 | Player 1 passade
-Tur 392 | Player 1 passade
-Tur 396 | Player 1 passade
-Tur 400 | Player 1 passade
-Tur 404 | Player 1 passade
-Tur 408 | Player 1 passade
-Tur 412 | Player 1 passade
-Tur 416 | Player 1 passade
-Tur 420 | Player 1 passade
-Tur 424 | Player 1 passade
-Tur 428 | Player 1 passade
-Tur 432 | Player 1 passade
-Tur 436 | Player 1 passade
-Tur 440 | Player 1 passade
-Tur 444 | Player 1 passade
-Tur 448 | Player 1 passade
-Tur 452 | Player 1 passade
-Tur 456 | Player 1 passade
-Tur 460 | Player 1 passade
-Tur 464 | Player 1 passade
-Tur 468 | Player 1 passade
-Tur 472 | Player 1 passade
-Tur 476 | Player 1 passade
-Tur 480 | Player 1 passade
-Tur 484 | Player 1 passade
-Tur 488 | Player 1 passade
-Tur 492 | Player 1 passade
-Tur 496 | Player 1 passade
+Tur 0 | Player 1 spelade WILD WILD_DRAW_FOUR (Valde ny färg: BLUE)
+Tur 0 | Player 2 drog WILD WILD
+Tur 0 | Player 2 drog BLUE NINE
+Tur 0 | Player 2 drog BLUE FOUR
+Tur 0 | Player 2 drog BLUE REVERSE
+Tur 1 | Player 3 drog GREEN NINE
+Tur 2 | Player 4 spelade BLUE SEVEN
+Tur 3 | Player 1 spelade BLUE SKIP
+Tur 4 | Player 3 spelade RED SKIP
+Tur 5 | Player 1 spelade RED ONE
+Tur 6 | Player 2 spelade WILD WILD_DRAW_FOUR (Valde ny färg: YELLOW)
+Tur 6 | Player 3 drog YELLOW NINE
+Tur 6 | Player 3 drog BLUE ONE
+Tur 6 | Player 3 drog BLUE EIGHT
+Tur 6 | Player 3 drog RED SIX
+Tur 7 | Player 4 drog RED THREE
+Tur 8 | Player 1 spelade YELLOW REVERSE
+Tur 9 | Player 4 drog RED FIVE
+Tur 10 | Player 3 spelade YELLOW FIVE
+Tur 11 | Player 2 spelade YELLOW DRAW_TWO
+Tur 11 | Player 1 drog YELLOW SKIP
+Tur 11 | Player 1 drog BLUE FOUR
+Tur 12 | Player 4 drog GREEN THREE
+Tur 13 | Player 3 spelade YELLOW FIVE
+Tur 14 | Player 2 spelade YELLOW EIGHT
+Tur 15 | Player 1 spelade YELLOW SKIP
+Tur 16 | Player 3 spelade YELLOW ONE
+Tur 17 | Player 2 spelade YELLOW TWO
+Tur 18 | Player 1 spelade BLUE TWO
+Tur 19 | Player 4 spelade GREEN TWO
+Tur 20 | Player 3 spelade GREEN SIX
+Tur 21 | Player 2 spelade RED SIX
+Tur 22 | Player 1 spelade WILD WILD (Valde ny färg: RED)
+Tur 23 | Player 4 spelade RED NINE
+Tur 24 | Player 3 spelade GREEN NINE
+Tur 25 | Player 2 spelade WILD WILD (Valde ny färg: BLUE)
+Tur 26 | Player 1 spelade BLUE FOUR
+Tur 27 | Player 4 spelade RED FOUR
+Tur 28 | Player 3 spelade GREEN FOUR
+Tur 29 | Player 2 spelade BLUE FOUR
+Tur 30 | Player 1 drog BLUE SEVEN
+Tur 30 | Player 1 spelade BLUE SEVEN
+Tur 31 | Player 4 drog BLUE DRAW_TWO
+Tur 31 | Player 4 spelade BLUE DRAW_TWO
+Tur 31 | Player 3 drog YELLOW ONE
+Tur 31 | Player 3 drog BLUE ONE
+Tur 32 | Player 2 spelade BLUE REVERSE
+Tur 33 | Player 3 spelade BLUE ONE
+Tur 34 | Player 4 spelade GREEN ONE
+Tur 35 | Player 1 spelade GREEN FIVE
 
 === SLUT PÅ MATCH ===

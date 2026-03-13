@@ -79,14 +79,13 @@ func _ready():
 	player_uis = [bottom_hand, left_hand, top_hand, right_hand]
 	name_labels = [bottom_name_label, left_name_label, top_name_label, right_name_label]
 	
-	# Koppla pausmenyns tillbaka-knapp
+	# Koppla pausmenyns knappar
 	pause_back_button.pressed.connect(_on_pause_back_pressed)
-	
-	# Koppla Game Over-menyns tillbaka-knapp
-	game_over_back_button.pressed.connect(_on_game_over_back_pressed)
-	
-	# Koppla popupens "OK"-knapp (den inbyggda signalen heter 'confirmed')
 	quit_confirm_dialog.confirmed.connect(_on_quit_confirmed)
+	
+	# Koppla Game Over-menyns knappar
+	game_over_back_button.pressed.connect(_on_game_over_back_pressed)
+	game_over_main_menu_btn.pressed.connect(_go_to_main_menu)
 	
 	_update_layout()
 	start_real_game()
