@@ -70,7 +70,7 @@ layout_mode = 2
 
 [node name="TitleLabel" type="Label" parent="MarginContainer/MainVBox" unique_id=220229396]
 layout_mode = 2
-text = "Run Multiple Games"
+text = "Multiple Games Setup"
 label_settings = SubResource("LabelSettings_ouq10")
 horizontal_alignment = 1
 vertical_alignment = 1
