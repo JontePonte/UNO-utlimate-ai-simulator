@@ -39,23 +39,35 @@ func process_turn():
 	var player = state.players[state.current_player_index]
 	var player_view = create_player_view(state.current_player_index)
 	
+	# --- STEG 1: HÄMTA FÖRSTA DRAGET ---
 	var action = await player.take_turn(player_view)
 	
 	if action != null and action.card != null:
+		# Spelaren vill spela ett kort direkt från handen
 		play_card(state.current_player_index, action.card, action.declared_color)
 	else:
+		# --- STEG 2: DRA KORT OCH GE VALET (Keep/Play) ---
 		draw_cards(state.current_player_index, 1)
+		
 		var drawn_card = player.hand[-1]
 		var top_card = state.discard_pile[-1]
 		
-		# Spela det dragna kortet om möjligt
+		# Kan det dragna kortet spelas?
 		if drawn_card.is_playable_on(top_card, state.current_color):
-			var color_to_use = drawn_card.color
-			if color_to_use == Card.CardColor.WILD:
-				color_to_use = [Card.CardColor.RED, Card.CardColor.BLUE, Card.CardColor.GREEN, Card.CardColor.YELLOW].pick_random()
-			play_card(state.current_player_index, drawn_card, color_to_use)
+			# Vi skapar en NY view så AI:n ser att den har fått ett nytt kort på handen
+			var second_view = create_player_view(state.current_player_index)
+			
+			# Vi frågar AI:n igen!
+			var second_action = await player.take_turn(second_view)
+			
+			# Om AI:n väljer att spela det (t.ex. Test AI):
+			if second_action != null and second_action.card != null:
+				play_card(state.current_player_index, second_action.card, second_action.declared_color)
+			else:
+				# Om AI:n väljer att behålla det (Always Draw AI hamnar här!):
+				_log_move(state.current_player_index, Move.MoveType.PASS)
 	
-	# Gå vidare till nästa
+	# Gå vidare till nästa spelare
 	next_player()
 	state.turn_number += 1
 

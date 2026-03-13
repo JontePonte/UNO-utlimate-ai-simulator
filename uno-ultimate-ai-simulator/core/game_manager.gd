@@ -145,11 +145,16 @@ func process_turn():
 				else:
 					print("Spelaren behöll kortet.")
 			else:
-				# AI:n väljer färg direkt (eftersom den inte har animationstajming)
-				var color_to_use = drawn_card.color
-				if color_to_use == Card.CardColor.WILD:
-					color_to_use = [Card.CardColor.RED, Card.CardColor.BLUE, Card.CardColor.GREEN, Card.CardColor.YELLOW].pick_random()
-				play_card(state.current_player_index, drawn_card, color_to_use)
+				# NYTT: Skapa en ny vy och fråga AI:n om den vill spela eller behålla!
+				var second_view = create_player_view(state.current_player_index)
+				var second_action = await player.take_turn(second_view)
+				
+				# Om AI:n returnerar ett kort nu, så spelar vi det. 
+				# Om den returnerar null (som Always Draw gör), så behålls kortet!
+				if second_action != null and second_action.card != null:
+					play_card(state.current_player_index, second_action.card, second_action.declared_color)
+				else:
+					print(player.name + " valde att behålla kortet på handen.")
 	
 	# --- STEG 3: GÅ VIDARE ---
 	if visual_mode:
