@@ -1,7 +1,5 @@
 extends Control
 
-const AISimple = preload("res://ai/AISimple.gd")
-
 @onready var bottom_hand = $BottomHand
 @onready var top_hand = $TopHand
 @onready var left_hand = $LeftHand
@@ -199,6 +197,10 @@ func _test_piles():
 		card.position = center_offset + messy_offset
 
 func start_real_game():
+	# 0. Rensa gammal manager om den finns (viktigt vid omstart)
+	if game_manager:
+		game_manager.queue_free()
+	
 	var players: Array[Player] = []
 	var order = ["bottom", "left", "top", "right"]
 	
@@ -210,64 +212,45 @@ func start_real_game():
 		if cfg.active:
 			var p: Player
 			if cfg.is_human:
-				# För människan använder vi namnet från settings (t.ex. "Spelare 1")
 				p = Player.new(players.size(), cfg.ai_name, true, null)
 			else:
-				# 1. Skapa hjärnan baserat på typ
-				var brain: AIPlayer = null
-				match cfg.ai_type:
-					GameSettings.AIType.SIMPLE:
-						brain = AISimple.new()
-					# Här lägger du till fler typer allt eftersom
-					_:
-						brain = AISimple.new()
-				
-				# 2. Hämta namnet direkt från AI-hjärnan!
-				var final_name = brain.ai_name if brain.ai_name != "" else cfg.ai_name
-				
-				p = Player.new(players.size(), final_name, false, brain)
+				# HÄR ÄR DEN RÄTTADE LOGIKEN (INGEN AI_TYPE)
+				var interpreter = AIInterpreter.new()
+				interpreter.load_profile(cfg.ai_path)
+				p = Player.new(players.size(), cfg.ai_name, false, interpreter)
 			
+			# Vi sparar i vilken STOL (0-3) spelaren sitter
 			p.set_meta("ui_index", i)
 			players.append(p)
 	
-	# 2. Starta GameManager med de aktiva spelarna
+	# 2. Starta GameManager
 	game_manager = GameManager.new(players)
 	add_child(game_manager)
 	
-	# 3. Inställningar från GameSettings
+	# 3. Inställningar
 	game_manager.visual_mode = true
-	game_manager.turn_delay = 1.0
+	game_manager.turn_delay = 1.0 / GameSettings.game_speed
 	
-	# 4. Koppla alla dina befintliga signaler
-	game_manager.card_played.connect(_on_card_played)
-	game_manager.card_drawn.connect(_on_card_drawn)
-	game_manager.turn_started.connect(_on_turn_started)
-	game_manager.game_over.connect(_on_game_ended)
+	# 4. Koppla signaler (Nu med kontroll för att slippa felmeddelanden)
+	_safe_connect(game_manager.card_played, _on_card_played)
+	_safe_connect(game_manager.card_drawn, _on_card_drawn)
+	_safe_connect(game_manager.turn_started, _on_turn_started)
+	_safe_connect(game_manager.game_over, _on_game_ended)
 	
-	# Game Over & Pause menyer (dina originalkopplingar)
-	restart_button.pressed.connect(_on_restart_pressed)
-	exit_button.pressed.connect(_on_exit_pressed)
-	resume_button.pressed.connect(_toggle_pause)
-	pause_exit_button.pressed.connect(_on_exit_pressed) 
-	
-	# Koppla Huvudmeny-knapparna
-	pause_main_menu_btn.pressed.connect(_on_pause_main_menu_pressed)
-	game_over_main_menu_btn.pressed.connect(_on_game_over_main_menu_pressed)
-	main_menu_confirm_dialog.confirmed.connect(_on_main_menu_confirmed)
+	# Koppla UI-knappar (Bara om de inte redan är kopplade)
+	_safe_connect(restart_button.pressed, _on_restart_pressed)
+	_safe_connect(exit_button.pressed, _on_exit_pressed)
+	_safe_connect(resume_button.pressed, _toggle_pause)
 	
 	# 5. Rita upp startläget
-	# Nu har alla i 'players' hunnit få sin 'ui_index' metadata!
 	update_all_visuals()
 	_spawn_discard_card(game_manager.state.discard_pile[-1])
 	
-	# Hantera labels och spacing för de som är med
-	# Först: Göm ALLA labels och UI-händer som default
+	# Återställ labels och UI
 	for i in range(4):
 		name_labels[i].hide()
-		# Om du vill dölja tomma händer helt:
-		# player_uis[i].hide()
+		player_uis[i].hide()
 
-	# Sen: Visa och uppdatera bara de som faktiskt spelar
 	for p in players:
 		var ui_idx = p.get_meta("ui_index")
 		name_labels[ui_idx].text = p.name
@@ -275,11 +258,15 @@ func start_real_game():
 		player_uis[ui_idx].show()
 		player_uis[ui_idx]._adjust_card_spacing()
 	
-	# Vänta in utdelningen
 	await get_tree().create_timer(1.0).timeout
 	
-	# 6. STARTA MATCHEN! 
+	# 6. STARTA!
 	game_manager.run_full_game(GameSettings.max_turns)
+
+# Hjälpfunktion för att slippa "Signal already connected"
+func _safe_connect(sig: Signal, callable: Callable):
+	if not sig.is_connected(callable):
+		sig.connect(callable)
 
 
 func update_all_visuals():

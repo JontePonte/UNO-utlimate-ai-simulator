@@ -1,20 +1,17 @@
 extends Node
 
-enum AIType { SIMPLE, AGGRESSIVE, CUSTOM_FILE }
+var ai_path1 = "res://ai_profiles/test_ai.json"
 
-# Vi förenklar slotsen. Namnet används nu bara om det är en människa,
-# annars hämtas det från AI-hjärnan.
 var slots = {
-	"bottom": {"active": true, "is_human": false,  "show_cards": false,  "ai_name": "Spelare 1", "ai_type": AIType.SIMPLE},
-	"left":   {"active": true, "is_human": false, "show_cards": false, "ai_type": AIType.SIMPLE},
-	"top":    {"active": true, "is_human": false, "show_cards": false, "ai_type": AIType.SIMPLE},
-	"right":  {"active": true, "is_human": false, "show_cards": false, "ai_type": AIType.SIMPLE}
+	"bottom": {"active": true, "is_human": true, "show_cards": true, "ai_name": "You", "ai_path": ai_path1},
+	"left":   {"active": true, "is_human": false, "show_cards": false, "ai_name": "AI: Test", "ai_path": ai_path1},
+	"top":    {"active": true, "is_human": false, "show_cards": false, "ai_name": "AI: Test", "ai_path": ai_path1},
+	"right":  {"active": true, "is_human": false, "show_cards": false, "ai_name": "AI: Test", "ai_path": ai_path1}
 }
 
 var max_turns: int = 500
 var game_speed: float = 1.0
 
-# Hjälpfunktion för att få fram antal aktiva spelare
 func get_active_player_count() -> int:
 	var count = 0
 	for s in slots.values():

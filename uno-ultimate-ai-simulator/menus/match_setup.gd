@@ -5,7 +5,6 @@ extends Control
 @onready var bottom_visible_check = $MarginContainer/MainVBox/BoardGrid/SlotBottom/VisableCards
 @onready var bottom_name_label = $MarginContainer/MainVBox/BoardGrid/SlotBottom/NameLabel
 
-
 @onready var left_type_opt = $MarginContainer/MainVBox/BoardGrid/SlotLeft/OptionButton
 @onready var left_active_check = $MarginContainer/MainVBox/BoardGrid/SlotLeft/Active
 @onready var left_visible_check = $MarginContainer/MainVBox/BoardGrid/SlotLeft/VisableCards
@@ -32,58 +31,49 @@ extends Control
 @onready var exit_button = $MarginContainer/MainVBox/ButtonHBox/ExitGame
 @onready var main_menu_button = $MarginContainer/MainVBox/ButtonHBox/Back
 
+const AI_PROFILES_DIR = "res://ai_profiles/"
+var available_ais = []
+
 func _ready():
 	# Koppla knappar
 	start_button.pressed.connect(_on_start_button_pressed)
 	exit_button.pressed.connect(_on_exit_button_pressed)
 	main_menu_button.pressed.connect(_on_main_menu_button_pressed)
 	
-	# 1. Fyll Botten-dropdown (Siffran på slutet är ID, som matchar AIType)
-	bottom_type_opt.add_item("AI: Simple", 1)
-	bottom_type_opt.add_item("AI: Aggressive", 2)
-	bottom_type_opt.add_item("AI: Custom", 3)
+	# 1. SKANNA FILERNA FÖRST (Viktigt!)
+	_refresh_ai_lists()
 	
-	# 2. Fyll AI-dropdowns för övriga stolar
-	left_type_opt.add_item("AI: Simple", 1)
-	left_type_opt.add_item("AI: Aggressive", 2)
-	left_type_opt.add_item("AI: Custom", 3)
+	# 2. FYLL ALLA DROPDOWNS DYNAMISKT
+	var menus = [bottom_type_opt, left_type_opt, top_type_opt, right_type_opt]
+	for menu in menus:
+		menu.clear() # Rensa bort "Option 0" etc.
+		for i in range(available_ais.size()):
+			var ai_info = available_ais[i]
+			menu.add_item(ai_info["name"])
+			# Här sparar vi filstigen i metadatan så vi slipper ID-nummer!
+			menu.set_item_metadata(i, ai_info["path"])
 	
-	top_type_opt.add_item("AI: Simple", 1)
-	top_type_opt.add_item("AI: Aggressive", 2)
-	top_type_opt.add_item("AI: Custom", 3)
-	
-	right_type_opt.add_item("AI: Simple", 1)
-	right_type_opt.add_item("AI: Aggressive", 2)
-	right_type_opt.add_item("AI: Custom", 3)
-	
-	# 3. Koppla signaler för att uppdatera UI:t dynamiskt
+	# 3. Koppla signaler för checkboxar
 	bottom_human_check.toggled.connect(_on_bottom_human_toggled)
 	left_active_check.toggled.connect(_on_left_active_toggled)
 	top_active_check.toggled.connect(_on_top_active_toggled)
 	right_active_check.toggled.connect(_on_right_active_toggled)
 	
-	# Lyssna på när användaren byter AI-typ
+	# Koppla signaler för dropdowns
 	bottom_type_opt.item_selected.connect(_on_dropdown_changed)
 	left_type_opt.item_selected.connect(_on_dropdown_changed)
 	top_type_opt.item_selected.connect(_on_dropdown_changed)
 	right_type_opt.item_selected.connect(_on_dropdown_changed)
 	
-	# Sliders
-	speed_slider.value = GameSettings.game_speed
-	speed_label.text = "Game Speed: " + str(GameSettings.game_speed).pad_decimals(1) + "x"
-	
-	max_turns_slider.value = GameSettings.max_turns
-	max_turns_spinbox.value = GameSettings.max_turns
-	
-	# Koppla slider-signaler (men sätt inte värdet här längre)
+	# 4. Koppla och sätt värden för Sliders
 	speed_slider.value_changed.connect(_on_speed_slider_changed)
 	max_turns_slider.value_changed.connect(_on_max_turns_slider_changed)
 	max_turns_spinbox.value_changed.connect(_on_max_turns_spinbox_changed)
-	
-	# 4. Ladda in allt från GameSettings!
+
+	# 5. LADDA INSTÄLLNINGAR (Nu när menyerna faktiskt har innehåll)
 	_load_settings_from_autoload()
 	
-	# 5. Kör en första uppdatering så rätt saker gråas ut baserat på det vi just laddade in
+	# 6. Uppdatera UI:t (gråa ut inaktiva slots etc.)
 	_update_ui_states()
 
 # --- SIGNAL MOTTAGARE FÖR CHECKBOXAR ---
@@ -161,6 +151,22 @@ func _on_max_turns_spinbox_changed(value: float):
 	var turns = int(value) 
 	max_turns_slider.value = turns
 
+func _refresh_ai_lists():
+	available_ais.clear()
+	var dir = DirAccess.open(AI_PROFILES_DIR)
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if not dir.current_is_dir() and file_name.ends_with(".json"):
+				var display_name = "AI: " + file_name.replace(".json", "").capitalize()
+				available_ais.append({
+					"name": display_name,
+					"path": AI_PROFILES_DIR + file_name
+				})
+			file_name = dir.get_next()
+		dir.list_dir_end()
+
 func _load_settings_from_autoload():
 	print("Laddar inställningar från GameSettings...")
 	
@@ -171,25 +177,27 @@ func _load_settings_from_autoload():
 	max_turns_slider.value = GameSettings.max_turns
 	max_turns_spinbox.value = GameSettings.max_turns
 	
-	# --- BOTTEN ---
-	bottom_human_check.button_pressed = GameSettings.slots["bottom"]["is_human"]
-	bottom_visible_check.button_pressed = GameSettings.slots["bottom"]["show_cards"]
-	_set_option_by_id(bottom_type_opt, GameSettings.slots["bottom"]["ai_type"])
-	
-	# --- VÄNSTER ---
-	left_active_check.button_pressed = GameSettings.slots["left"]["active"]
-	left_visible_check.button_pressed = GameSettings.slots["left"]["show_cards"]
-	_set_option_by_id(left_type_opt, GameSettings.slots["left"]["ai_type"])
+	# Listor för att kunna loopa (samma ordning som i _save_settings)
+	var slot_keys = ["bottom", "left", "top", "right"]
+	var active_checks = [null, left_active_check, top_active_check, right_active_check]
+	var opts = [bottom_type_opt, left_type_opt, top_type_opt, right_type_opt]
+	var vis_checks = [bottom_visible_check, left_visible_check, top_visible_check, right_visible_check]
 
-	# --- TOPP ---
-	top_active_check.button_pressed = GameSettings.slots["top"]["active"]
-	top_visible_check.button_pressed = GameSettings.slots["top"]["show_cards"]
-	_set_option_by_id(top_type_opt, GameSettings.slots["top"]["ai_type"])
-
-	# --- HÖGER ---
-	right_active_check.button_pressed = GameSettings.slots["right"]["active"]
-	right_visible_check.button_pressed = GameSettings.slots["right"]["show_cards"]
-	_set_option_by_id(right_type_opt, GameSettings.slots["right"]["ai_type"])
+	for i in range(4):
+		var key = slot_keys[i]
+		var slot_data = GameSettings.slots[key]
+		
+		# 1. Ladda aktiv/människa-status
+		if i == 0:
+			bottom_human_check.button_pressed = slot_data["is_human"]
+		else:
+			active_checks[i].button_pressed = slot_data["active"]
+		
+		# 2. Ladda kort-synlighet
+		vis_checks[i].button_pressed = slot_data["show_cards"]
+		
+		# 3. Ladda AI-profilen (Här använder vi den NYA hjälper-funktionen med path!)
+		_set_option_by_path(opts[i], slot_data["ai_path"])
 
 func _save_settings_to_autoload():
 	print("Sparar inställningar till GameSettings...")
@@ -198,41 +206,36 @@ func _save_settings_to_autoload():
 	GameSettings.game_speed = speed_slider.value
 	GameSettings.max_turns = int(max_turns_slider.value)
 	
-	# --- BOTTEN ---
-	GameSettings.slots["bottom"]["active"] = true 
-	GameSettings.slots["bottom"]["is_human"] = bottom_human_check.button_pressed
-	GameSettings.slots["bottom"]["show_cards"] = bottom_visible_check.button_pressed
-	GameSettings.slots["bottom"]["ai_type"] = bottom_type_opt.get_item_id(bottom_type_opt.selected)
-	
-	# NYTT: Sätt namnet baserat på om det är en människa eller AI
-	if bottom_human_check.button_pressed:
-		GameSettings.slots["bottom"]["ai_name"] = "You"
-	else:
-		GameSettings.slots["bottom"]["ai_name"] = bottom_type_opt.get_item_text(bottom_type_opt.selected)
-	
-	# --- VÄNSTER ---
-	GameSettings.slots["left"]["active"] = left_active_check.button_pressed
-	GameSettings.slots["left"]["is_human"] = false
-	GameSettings.slots["left"]["show_cards"] = left_visible_check.button_pressed
-	GameSettings.slots["left"]["ai_type"] = left_type_opt.get_item_id(left_type_opt.selected)
-	# NYTT: Hämta namnet direkt från dropdown-menyn
-	GameSettings.slots["left"]["ai_name"] = left_type_opt.get_item_text(left_type_opt.selected)
+	# Vi skapar listor med våra UI-noder så vi kan loopa igenom dem
+	var slot_keys = ["bottom", "left", "top", "right"]
+	var active_checks = [null, left_active_check, top_active_check, right_active_check]
+	var opts = [bottom_type_opt, left_type_opt, top_type_opt, right_type_opt]
+	var vis_checks = [bottom_visible_check, left_visible_check, top_visible_check, right_visible_check]
 
-	# --- TOPP ---
-	GameSettings.slots["top"]["active"] = top_active_check.button_pressed
-	GameSettings.slots["top"]["is_human"] = false
-	GameSettings.slots["top"]["show_cards"] = top_visible_check.button_pressed
-	GameSettings.slots["top"]["ai_type"] = top_type_opt.get_item_id(top_type_opt.selected)
-	# NYTT
-	GameSettings.slots["top"]["ai_name"] = top_type_opt.get_item_text(top_type_opt.selected)
-
-	# --- HÖGER ---
-	GameSettings.slots["right"]["active"] = right_active_check.button_pressed
-	GameSettings.slots["right"]["is_human"] = false
-	GameSettings.slots["right"]["show_cards"] = right_visible_check.button_pressed
-	GameSettings.slots["right"]["ai_type"] = right_type_opt.get_item_id(right_type_opt.selected)
-	# NYTT
-	GameSettings.slots["right"]["ai_name"] = right_type_opt.get_item_text(right_type_opt.selected)
+	for i in range(4):
+		var key = slot_keys[i]
+		var menu = opts[i]
+		
+		# 1. Spara om platsen är aktiv (Bottom är alltid sann)
+		if i == 0:
+			GameSettings.slots[key]["active"] = true
+			GameSettings.slots[key]["is_human"] = bottom_human_check.button_pressed
+		else:
+			GameSettings.slots[key]["active"] = active_checks[i].button_pressed
+			GameSettings.slots[key]["is_human"] = false # Bara botten kan vara människa
+		
+		# 2. Spara om kort ska synas
+		GameSettings.slots[key]["show_cards"] = vis_checks[i].button_pressed
+		
+		# 3. Spara AI-stigen från metadata (Här dör "ai_type" och "ai_path" föds!)
+		var selected_idx = menu.selected
+		GameSettings.slots[key]["ai_path"] = menu.get_item_metadata(selected_idx)
+		
+		# 4. Spara namnet (Om människa -> "You", annars dropdownens text)
+		if i == 0 and bottom_human_check.button_pressed:
+			GameSettings.slots[key]["ai_name"] = "You"
+		else:
+			GameSettings.slots[key]["ai_name"] = menu.get_item_text(selected_idx)
 
 func _set_option_by_id(opt_btn: OptionButton, id: int):
 	# Hittar vilken rad (index) som har det sparade ID:t och väljer den
@@ -253,3 +256,11 @@ func _on_exit_button_pressed():
 
 func _on_main_menu_button_pressed():
 	get_tree().change_scene_to_file("res://menus/MainMenu.tscn")
+
+func _set_option_by_path(opt_btn: OptionButton, path: String):
+	for i in range(opt_btn.item_count):
+		if opt_btn.get_item_metadata(i) == path:
+			opt_btn.selected = i
+			return
+	# Om vi inte hittar stigen (t.ex. om en fil tagits bort), välj den första i listan
+	opt_btn.selected = 0
