@@ -55,6 +55,7 @@ const UNO_COLORS = {
 	Card.CardColor.WILD: Color(1.0, 1.0, 1.0)
 }
 
+var last_human_clicked_card_node: Control = null
 var last_player_index: int = -1
 var _active_draws: int = 0
 
@@ -379,28 +380,34 @@ func _on_card_drawn(player_index: int, card: Card):
 		target_hand.play_flex_animation()
 
 func _on_card_played(player_index: int, card: Card, declared_color: Card.CardColor):
-	# --- NYTT: Hämta rätt UI-index via metadata ---
 	var p = game_manager.state.players[player_index]
 	var ui_idx = p.get_meta("ui_index")
 	
-	# Använd ui_idx istället för player_index för ALLT som rör grafiken
 	var hand_ui = player_uis[ui_idx] 
 	var start_rotation = hand_ui.rotation_degrees
 	
 	var children = hand_ui.container.get_children()
 	var chosen_ui_card = null
-	
-	# ... (Samma logik som förut för att hitta chosen_ui_card) ...
-	if children.size() > 0:
-		for ui_card in children:
-			if ui_card.has_meta("logical_card"):
-				var logical = ui_card.get_meta("logical_card")
-				if logical.color == card.color and logical.value == card.value:
-					chosen_ui_card = ui_card
-					break
-		if chosen_ui_card == null:
-			chosen_ui_card = children[randi() % children.size()]
 
+	# --- HÄR KOMMER ÄNDRINGEN! ---
+	# Vi kollar först om vi har sparat undan ett klickat kort från människan
+	if p.is_human and is_instance_valid(last_human_clicked_card_node):
+		chosen_ui_card = last_human_clicked_card_node
+		last_human_clicked_card_node = null # Rensa den direkt efter användning!
+	else:
+		# Om det är en AI (eller om klicket saknas), kör vi din gamla sök-logik
+		if children.size() > 0:
+			for ui_card in children:
+				if ui_card.has_meta("logical_card"):
+					var logical = ui_card.get_meta("logical_card")
+					if logical.color == card.color and logical.value == card.value:
+						chosen_ui_card = ui_card
+						break
+			
+			# Fallback: Om vi mot förmodan inte hittade kortet, ta ett slumpmässigt
+			if chosen_ui_card == null:
+				chosen_ui_card = children[randi() % children.size()]
+	
 	if chosen_ui_card != null:
 		_spawn_discard_card(card, chosen_ui_card, start_rotation)
 		
@@ -692,6 +699,7 @@ func _on_card_ui_clicked(card_node: Control):
 			# Lås dörren direkt så man inte kan dubbelklicka
 			human_can_play = false 
 			human_card_selected.emit(clicked_card)
+			last_human_clicked_card_node = card_node
 		else:
 			print("Ogiltigt drag!")
 
