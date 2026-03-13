@@ -82,6 +82,9 @@ func _ready():
 	# Koppla pausmenyns knappar
 	pause_back_button.pressed.connect(_on_pause_back_pressed)
 	quit_confirm_dialog.confirmed.connect(_on_quit_confirmed)
+	pause_main_menu_btn.pressed.connect(_on_pause_main_menu_pressed)
+	main_menu_confirm_dialog.confirmed.connect(_go_to_main_menu)
+	pause_exit_button.pressed.connect(_on_exit_pressed)
 	
 	# Koppla Game Over-menyns knappar
 	game_over_back_button.pressed.connect(_on_game_over_back_pressed)
