@@ -312,3 +312,5 @@ layout_mode = 2
 label_settings = SubResource("LabelSettings_atn1r")
 horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
