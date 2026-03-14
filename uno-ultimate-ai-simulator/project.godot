@@ -21,6 +21,7 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 [autoload]
 
 GameSettings="*uid://chyqagnkn7c20"
+AiManager="*uid://qhigaaloglgr"
 
 [display]
 
