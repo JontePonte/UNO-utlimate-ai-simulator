@@ -115,6 +115,8 @@ text = "Placeholder"
 label_settings = SubResource("LabelSettings_nqpsq")
 horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/BoardGrid/SlotTop" unique_id=1220848605]
 custom_minimum_size = Vector2(300, 0)
@@ -127,6 +129,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
 theme_override_styles/hover = SubResource("StyleBoxFlat_1nt5m")
 alignment = 1
+clip_text = true
 selected = 1
 item_count = 2
 popup/item_0/text = "test"
@@ -160,12 +163,14 @@ theme_override_font_sizes/font_size = 20
 text = "Active
 "
 
-[node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotLeft" unique_id=792413300]
+[node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotLeft" unique_id=266383483]
 layout_mode = 2
 text = "Placeholder"
 label_settings = SubResource("LabelSettings_nqpsq")
 horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/BoardGrid/SlotLeft" unique_id=2024161808]
 custom_minimum_size = Vector2(300, 0)
@@ -178,7 +183,9 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
 theme_override_styles/hover = SubResource("StyleBoxFlat_1nt5m")
 alignment = 1
+clip_text = true
 selected = 1
+fit_to_longest_item = false
 item_count = 2
 popup/item_0/text = "test"
 popup/item_0/id = 0
@@ -211,12 +218,14 @@ theme_override_font_sizes/font_size = 20
 text = "Active
 "
 
-[node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotRight" unique_id=101861203]
+[node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotRight" unique_id=1341850397]
 layout_mode = 2
 text = "Placeholder"
 label_settings = SubResource("LabelSettings_nqpsq")
 horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/BoardGrid/SlotRight" unique_id=2099442219]
 custom_minimum_size = Vector2(300, 0)
@@ -229,6 +238,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
 theme_override_styles/hover = SubResource("StyleBoxFlat_1nt5m")
 alignment = 1
+clip_text = true
 selected = 1
 item_count = 2
 popup/item_0/text = "test"
@@ -262,12 +272,14 @@ text = "Human
 
 "
 
-[node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotBottom" unique_id=605450993]
+[node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotBottom" unique_id=2013694892]
 layout_mode = 2
 text = "Placeholder"
 label_settings = SubResource("LabelSettings_nqpsq")
 horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/BoardGrid/SlotBottom" unique_id=2123302856]
 custom_minimum_size = Vector2(300, 0)
@@ -280,6 +292,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_1nt5m")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_1nt5m")
 theme_override_styles/hover = SubResource("StyleBoxFlat_1nt5m")
 alignment = 1
+clip_text = true
 selected = 1
 item_count = 2
 popup/item_0/text = "test"
