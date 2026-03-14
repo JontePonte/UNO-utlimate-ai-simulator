@@ -31,7 +31,6 @@ extends Control
 @onready var exit_button = $MarginContainer/MainVBox/ButtonHBox/BackExit/ExitGame
 @onready var main_menu_button = $MarginContainer/MainVBox/ButtonHBox/BackExit/Back
 
-const AI_PROFILES_DIR = "res://ai_profiles/"
 var available_ais = []
 
 func _ready():
@@ -153,19 +152,19 @@ func _on_max_turns_spinbox_changed(value: float):
 
 func _refresh_ai_lists():
 	available_ais.clear()
-	var dir = DirAccess.open(AI_PROFILES_DIR)
-	if dir:
-		dir.list_dir_begin()
-		var file_name = dir.get_next()
-		while file_name != "":
-			if not dir.current_is_dir() and file_name.ends_with(".json"):
-				var display_name = "AI: " + file_name.replace(".json", "").capitalize()
-				available_ais.append({
-					"name": display_name,
-					"path": AI_PROFILES_DIR + file_name
-				})
-			file_name = dir.get_next()
-		dir.list_dir_end()
+	
+	# Hämta fil-listan från vår globala manager
+	var ai_files = AiManager.get_all_ai_files()
+	
+	for file_name in ai_files:
+		# Snygga till namnet precis som du gjorde förut
+		var display_name = "AI: " + file_name.replace(".json", "").capitalize()
+		
+		# Lägg till i listan, och använd AiManagers sökväg för att bygga den fullständiga stigen
+		available_ais.append({
+			"name": display_name,
+			"path": AiManager.AI_FOLDER_PATH + file_name
+		})
 
 func _load_settings_from_autoload():
 	print("Laddar inställningar från GameSettings...")

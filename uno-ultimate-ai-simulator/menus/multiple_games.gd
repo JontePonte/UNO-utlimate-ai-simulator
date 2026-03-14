@@ -21,8 +21,6 @@ extends Control
 
 # En lista som sparar information om de AI:s vi hittar { "name": "Test AI", "path": "res://..." }
 var available_ais = []
-# Sökvägen till mappen där alla AI-profiler ligger
-const AI_PROFILES_DIR = "res://ai_profiles/"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -45,30 +43,29 @@ func _ready() -> void:
 
 func _refresh_ai_lists():
 	available_ais.clear()
-	var dir = DirAccess.open(AI_PROFILES_DIR)
 	
-	if dir:
-		dir.list_dir_begin()
-		var file_name = dir.get_next()
-		while file_name != "":
-			if not dir.current_is_dir() and file_name.ends_with(".json"):
-				var path = AI_PROFILES_DIR + file_name
-				
-				# --- HÄR ÄR OPTIMERINGEN: Läs filen NU istället för i loopen ---
-				var file = FileAccess.open(path, FileAccess.READ)
-				var json_text = file.get_as_text()
-				var json_data = JSON.parse_string(json_text)
-				
-				if json_data:
-					var display_name = file_name.replace(".json", "").capitalize()
-					available_ais.append({
-						"name": display_name,
-						"brain_data": json_data # Vi sparar hela datan här!
-					})
-			file_name = dir.get_next()
-		dir.list_dir_end()
-
-	# Uppdatera menyerna
+	# 1. Hämta fil-listan från vår globala manager
+	var ai_files = AiManager.get_all_ai_files()
+	
+	# 2. Loopa igenom filerna och cacha dem för snabb simulering
+	for file_name in ai_files:
+		var path = AiManager.AI_FOLDER_PATH + file_name
+		
+		# Läs filen direkt från användarens mapp
+		var file = FileAccess.open(path, FileAccess.READ)
+		if file:
+			var json_text = file.get_as_text()
+			var json_data = JSON.parse_string(json_text)
+			file.close() # Bra vana att stänga filen när vi är klara
+			
+			if json_data:
+				var display_name = "AI: " + file_name.replace(".json", "").capitalize()
+				available_ais.append({
+					"name": display_name,
+					"brain_data": json_data # Vi sparar hela datan här för snabbhet!
+				})
+	
+	# 3. Uppdatera menyerna
 	var menus = [slot1_opt, slot2_opt, slot3_opt, slot4_opt]
 	for menu in menus:
 		menu.clear()
@@ -139,7 +136,7 @@ func _on_start_button_pressed():
 		var result = await sim_manager.run_match(max_turns) 
 		
 		if i == 0:
-			sim_manager.save_debug_log("res://debug_match_log.txt")
+			sim_manager.save_debug_log("user://debug_match_log.txt")
 		
 		# Registrera vinsten
 		var winner = result["winner_name"]
