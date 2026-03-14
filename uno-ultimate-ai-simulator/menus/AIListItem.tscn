@@ -13,7 +13,7 @@ shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(-2, 1)
 
 [node name="AiListItem" type="PanelContainer" unique_id=143799783]
-custom_minimum_size = Vector2(550, 40)
+custom_minimum_size = Vector2(600, 40)
 mouse_filter = 1
 script = ExtResource("1_ifv5m")
 
@@ -36,11 +36,21 @@ text_overrun_behavior = 3
 
 [node name="ActionButtons" type="HBoxContainer" parent="HBox" unique_id=1881337929]
 layout_mode = 2
-size_flags_horizontal = 10
+size_flags_horizontal = 8
+
+[node name="RemoveButton" type="Button" parent="HBox/ActionButtons" unique_id=338191005]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("1_io2pl")
+theme_override_font_sizes/font_size = 20
+text = "Delete"
 
 [node name="EditButton" type="Button" parent="HBox/ActionButtons" unique_id=1322164812]
 custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
+size_flags_horizontal = 8
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("1_io2pl")
 theme_override_font_sizes/font_size = 20
@@ -49,18 +59,11 @@ text = "Edit"
 [node name="CopyButton" type="Button" parent="HBox/ActionButtons" unique_id=1246595343]
 custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
+size_flags_horizontal = 8
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("1_io2pl")
 theme_override_font_sizes/font_size = 20
 text = "Copy"
-
-[node name="RemoveButton" type="Button" parent="HBox/ActionButtons" unique_id=338191005]
-custom_minimum_size = Vector2(90, 0)
-layout_mode = 2
-theme_override_constants/outline_size = 5
-theme_override_fonts/font = ExtResource("1_io2pl")
-theme_override_font_sizes/font_size = 20
-text = "Delete"
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

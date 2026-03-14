@@ -29,11 +29,23 @@ func _ready():
 	copy_btn.pressed.connect(func(): copy_requested.emit(my_file_name))
 	delete_btn.pressed.connect(func(): delete_requested.emit(my_file_name))
 
-# 3. Uppdatera setup_item så den tar emot filnamnet också
-func setup_item(display_name: String, file_name: String):
-	name_label.text = display_name
-	name_label.tooltip_text = display_name
+func setup_item(display_name: String, file_name: String, is_standard: bool = false):
 	my_file_name = file_name
+	
+	if is_standard:
+		name_label.text = display_name + " (Standard)"
+		name_label.tooltip_text = "Standard AI - Copy to edit"
+		
+		# Göm knapparna (De kommer förbli gömda även när containern visas vid hover)
+		edit_btn.hide()
+		delete_btn.hide()
+	else:
+		name_label.text = display_name
+		name_label.tooltip_text = display_name
+		
+		# Se till att de är synliga för egna filer
+		edit_btn.show()
+		delete_btn.show()
 
 func _on_mouse_entered():
 	if hover_tween:

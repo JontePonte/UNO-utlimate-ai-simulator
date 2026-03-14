@@ -37,13 +37,16 @@ func _create_list_item(file_name: String):
 	ai_list_container.add_child(item)
 	
 	var display_name = file_name.replace(".json", "") 
-	item.setup_item(display_name, file_name)
 	
-	# Lyssna på signaler från raden
+	# --- NYTT: Kolla om filen finns i res:// (Då är det en standard-AI) ---
+	var is_standard = FileAccess.file_exists("res://ai_profiles/" + file_name)
+	
+	# Skicka in vår nya is_standard-variabel
+	item.setup_item(display_name, file_name, is_standard)
+	
+	# Lyssna på signalerna (De skickas ju bara om knapparna faktiskt finns och kan klickas på!)
 	item.copy_requested.connect(_on_ai_copy_requested)
-	item.delete_requested.connect(_on_ai_delete_requested) # NY! Lyssna på delete
-
-# --- DELETE LOGIK ---
+	item.delete_requested.connect(_on_ai_delete_requested)
 
 func _on_ai_delete_requested(file_name: String):
 	current_file_to_delete = file_name
