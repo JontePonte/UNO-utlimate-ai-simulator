@@ -160,11 +160,12 @@ label_settings = SubResource("LabelSettings_bhea4")
 vertical_alignment = 1
 
 [node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot1" unique_id=750972038]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 theme = ExtResource("3_3hh3q")
-alignment = 1
+clip_text = true
 selected = 0
+fit_to_longest_item = false
 item_count = 3
 popup/item_0/text = "Simple"
 popup/item_0/id = 0
@@ -184,11 +185,12 @@ label_settings = SubResource("LabelSettings_bhea4")
 vertical_alignment = 1
 
 [node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot2" unique_id=1029136076]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 theme = ExtResource("3_3hh3q")
-alignment = 1
+clip_text = true
 selected = 0
+fit_to_longest_item = false
 item_count = 3
 popup/item_0/text = "Simple"
 popup/item_0/id = 0
@@ -208,11 +210,12 @@ label_settings = SubResource("LabelSettings_bhea4")
 vertical_alignment = 1
 
 [node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot3" unique_id=227450975]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 theme = ExtResource("3_3hh3q")
-alignment = 1
+clip_text = true
 selected = 0
+fit_to_longest_item = false
 item_count = 3
 popup/item_0/text = "Simple"
 popup/item_0/id = 0
@@ -232,11 +235,12 @@ label_settings = SubResource("LabelSettings_bhea4")
 vertical_alignment = 1
 
 [node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot4" unique_id=1881655851]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 theme = ExtResource("3_3hh3q")
-alignment = 1
+clip_text = true
 selected = 0
+fit_to_longest_item = false
 item_count = 3
 popup/item_0/text = "Simple"
 popup/item_0/id = 0
