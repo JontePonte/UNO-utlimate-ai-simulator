@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://ddb185iuqanmp"]
+
+[ext_resource type="Script" uid="uid://ckm58gta3xw06" path="res://menus/ai_list_item.gd" id="1_ifv5m"]
+[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="1_io2pl"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ifv5m"]
+font = ExtResource("1_io2pl")
+font_size = 26
+outline_size = 7
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 8
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(-2, 1)
+
+[node name="AiListItem" type="PanelContainer" unique_id=143799783]
+custom_minimum_size = Vector2(550, 40)
+mouse_filter = 1
+script = ExtResource("1_ifv5m")
+
+[node name="HBox" type="HBoxContainer" parent="." unique_id=1587169447]
+layout_mode = 2
+
+[node name="LabelMargin" type="MarginContainer" parent="HBox" unique_id=360192414]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 0
+
+[node name="Label" type="Label" parent="HBox/LabelMargin" unique_id=10034247]
+layout_mode = 2
+text = "PlaceHolderExtraLong"
+label_settings = SubResource("LabelSettings_ifv5m")
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="ActionButtons" type="HBoxContainer" parent="HBox" unique_id=1881337929]
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="EditButton" type="Button" parent="HBox/ActionButtons" unique_id=1322164812]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("1_io2pl")
+theme_override_font_sizes/font_size = 20
+text = "Edit"
+
+[node name="CopyButton" type="Button" parent="HBox/ActionButtons" unique_id=1246595343]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("1_io2pl")
+theme_override_font_sizes/font_size = 20
+text = "Copy"
+
+[node name="RemoveButton" type="Button" parent="HBox/ActionButtons" unique_id=338191005]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("1_io2pl")
+theme_override_font_sizes/font_size = 20
+text = "Remove"
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
