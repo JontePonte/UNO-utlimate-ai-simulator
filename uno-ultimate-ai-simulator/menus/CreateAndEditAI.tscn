@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://c1mkdkiiydmwl"]
 
-[ext_resource type="Script" uid="uid://d2ovrpajj2brc" path="res://menus/creat_and_edit_ai.gd" id="1_rh4an"]
-[ext_resource type="PackedScene" uid="uid://ddb185iuqanmp" path="res://menus/AIListItem.tscn" id="2_2d3l6"]
-[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="2_68r7n"]
+[ext_resource type="Script" uid="uid://d2ovrpajj2brc" path="res://menus/create_and_edit_ai.gd" id="1_cak1p"]
+[ext_resource type="PackedScene" uid="uid://ddb185iuqanmp" path="res://menus/AIListItem.tscn" id="2_34lbw"]
+[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="3_5yo0l"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
-font = ExtResource("2_68r7n")
+font = ExtResource("3_5yo0l")
 font_size = 140
 outline_size = 13
 outline_color = Color(0, 0, 0, 1)
@@ -20,8 +20,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_rh4an")
-ai_list_item_scene = ExtResource("2_2d3l6")
+script = ExtResource("1_cak1p")
+ai_list_item_scene = ExtResource("2_34lbw")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1416727137]
 layout_mode = 1
@@ -72,7 +72,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 8
 theme_override_constants/outline_size = 8
-theme_override_fonts/font = ExtResource("2_68r7n")
+theme_override_fonts/font = ExtResource("3_5yo0l")
 theme_override_font_sizes/font_size = 34
 text = "Create New AI"
 
@@ -87,7 +87,7 @@ layout_mode = 2
 [node name="Back" type="Button" parent="MarginContainer/MainVBox/MainHBox/VBoxLeftSide/BottomHBox/HBoxBackExit" unique_id=1051092805]
 layout_mode = 2
 theme_override_constants/outline_size = 19
-theme_override_fonts/font = ExtResource("2_68r7n")
+theme_override_fonts/font = ExtResource("3_5yo0l")
 theme_override_font_sizes/font_size = 60
 text = "Back to Menu
 "
@@ -97,7 +97,7 @@ alignment = 0
 [node name="ExitGame" type="Button" parent="MarginContainer/MainVBox/MainHBox/VBoxLeftSide/BottomHBox/HBoxBackExit" unique_id=103533672]
 layout_mode = 2
 theme_override_constants/outline_size = 19
-theme_override_fonts/font = ExtResource("2_68r7n")
+theme_override_fonts/font = ExtResource("3_5yo0l")
 theme_override_font_sizes/font_size = 60
 text = "Exit Game
 "
