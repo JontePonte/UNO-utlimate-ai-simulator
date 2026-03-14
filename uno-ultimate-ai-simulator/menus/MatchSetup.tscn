@@ -111,6 +111,7 @@ text = "Active
 
 [node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotTop" unique_id=489297501]
 layout_mode = 2
+mouse_filter = 1
 text = "Placeholder"
 label_settings = SubResource("LabelSettings_nqpsq")
 horizontal_alignment = 1
@@ -165,6 +166,7 @@ text = "Active
 
 [node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotLeft" unique_id=266383483]
 layout_mode = 2
+mouse_filter = 1
 text = "Placeholder"
 label_settings = SubResource("LabelSettings_nqpsq")
 horizontal_alignment = 1
@@ -220,6 +222,7 @@ text = "Active
 
 [node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotRight" unique_id=1341850397]
 layout_mode = 2
+mouse_filter = 1
 text = "Placeholder"
 label_settings = SubResource("LabelSettings_nqpsq")
 horizontal_alignment = 1
@@ -274,6 +277,7 @@ text = "Human
 
 [node name="NameLabel" type="Label" parent="MarginContainer/MainVBox/BoardGrid/SlotBottom" unique_id=2013694892]
 layout_mode = 2
+mouse_filter = 1
 text = "Placeholder"
 label_settings = SubResource("LabelSettings_nqpsq")
 horizontal_alignment = 1

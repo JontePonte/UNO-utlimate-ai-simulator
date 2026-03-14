@@ -105,6 +105,7 @@ func _update_ui_states():
 		# Hämta texten från det valda alternativet i dropdownen
 		var selected_text = bottom_type_opt.get_item_text(bottom_type_opt.selected)
 		bottom_name_label.text = "Bottom: " + selected_text
+		bottom_name_label.tooltip_text = selected_text # Visar hela namnet vid hover!
 		
 	# --- VÄNSTER ---
 	if left_active_check.button_pressed:
@@ -112,6 +113,7 @@ func _update_ui_states():
 		left_visible_check.disabled = false
 		var selected_text = left_type_opt.get_item_text(left_type_opt.selected)
 		left_name_label.text = "Left: " + selected_text
+		left_name_label.tooltip_text = selected_text # Visar hela namnet vid hover!
 	else:
 		left_type_opt.disabled = true
 		left_visible_check.disabled = true
@@ -123,6 +125,7 @@ func _update_ui_states():
 		top_visible_check.disabled = false
 		var selected_text = top_type_opt.get_item_text(top_type_opt.selected)
 		top_name_label.text = "Top: " + selected_text
+		top_name_label.tooltip_text = selected_text # Visar hela namnet vid hover!
 	else:
 		top_type_opt.disabled = true
 		top_visible_check.disabled = true
@@ -134,6 +137,7 @@ func _update_ui_states():
 		right_visible_check.disabled = false
 		var selected_text = right_type_opt.get_item_text(right_type_opt.selected)
 		right_name_label.text = "Right: " + selected_text
+		right_name_label.tooltip_text = selected_text # Visar hela namnet vid hover!
 	else:
 		right_type_opt.disabled = true
 		right_visible_check.disabled = true
