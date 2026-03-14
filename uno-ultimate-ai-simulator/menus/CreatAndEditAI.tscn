@@ -64,6 +64,14 @@ layout_mode = 2
 [node name="Spacer" type="Control" parent="MarginContainer/MainVBox/MainHBox/VBoxLeftSide" unique_id=1053914404]
 layout_mode = 2
 
+[node name="Button" type="Button" parent="MarginContainer/MainVBox/MainHBox/VBoxLeftSide" unique_id=1059933118]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("2_68r7n")
+theme_override_font_sizes/font_size = 34
+text = "Create New AI"
+
 [node name="BottomHBox" type="HBoxContainer" parent="MarginContainer/MainVBox/MainHBox/VBoxLeftSide" unique_id=1408743332]
 layout_mode = 2
 size_flags_horizontal = 0
@@ -108,3 +116,22 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="NameDialog" type="ConfirmationDialog" parent="." unique_id=412330365]
+oversampling_override = 1.0
+title = "Enter Name"
+position = Vector2i(0, 36)
+
+[node name="LineEdit" type="LineEdit" parent="NameDialog" unique_id=433225882]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 192.0
+offset_bottom = 51.0
+
+[node name="DeleteDialog" type="ConfirmationDialog" parent="." unique_id=1305693864]
+oversampling_override = 1.0
+title = ""
+position = Vector2i(0, 36)
+size = Vector2i(313, 100)
+ok_button_text = "Delete AI"
+dialog_text = "Are you sure you want to delet this AI?"
