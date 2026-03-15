@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://drfi5bele7ty3"]
+
+[ext_resource type="Script" uid="uid://dsyoymx12y0uc" path="res://ai_editor/root_node.gd" id="1_ktnyg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ktnyg"]
+bg_color = Color(0.11764706, 0.15686275, 0.078431375, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_akb84"]
+bg_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
+
+[node name="RootNode" type="GraphNode" unique_id=1241447829]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/titlebar = SubResource("StyleBoxFlat_ktnyg")
+draggable = false
+selectable = false
+title = "AI Start"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+script = ExtResource("1_ktnyg")
+
+[node name="StartLabel" type="Label" parent="." unique_id=1143163045]
+layout_mode = 2
+text = "Evaluating Logic"
+
+[node name="FallbackLabel" type="Label" parent="." unique_id=480970364]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_akb84")
+text = "[Fallback: Draw Card]"
