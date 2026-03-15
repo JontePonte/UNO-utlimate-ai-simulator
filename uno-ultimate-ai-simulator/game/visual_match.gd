@@ -406,9 +406,12 @@ func _on_card_played(player_index: int, card: Card, declared_color: Card.CardCol
 			await close_tween.finished
 			if is_instance_valid(dummy_hole):
 				dummy_hole.queue_free()
-	
+		
 	update_ui_color(declared_color if card.color == Card.CardColor.WILD else card.color)
-	
+	# Om spelaren har exakt 1 kort kvar efter att ha spelat sitt kort:
+	if p.hand.size() == 1:
+		_show_uno_animation(ui_idx)
+		
 	if _active_draws == 0:
 		var pos_name = ["bottom", "left", "top", "right"][ui_idx]
 		var show_cards = GameSettings.slots[pos_name].show_cards
@@ -576,6 +579,7 @@ func _show_uno_animation(player_index: int):
 	# 1. Skapa en ny textnod i farten
 	var uno_label = Label.new()
 	uno_label.text = "UNO!"
+	uno_label.z_index = 26
 	
 	# 2. Skapa snygga textinställningar (Guldgul med svart kant)
 	var settings = LabelSettings.new()
