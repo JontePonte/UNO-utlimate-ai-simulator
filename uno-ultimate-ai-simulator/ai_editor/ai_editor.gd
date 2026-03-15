@@ -2,7 +2,7 @@ extends Control
 
 @export var root_node_scene: PackedScene
 @export var action_draw_node_scene: PackedScene
-@export var condition_node_scene: PackedScene
+@export var condition_hand_node_scene: PackedScene
 @export var action_play_node_scene: PackedScene
 
 @onready var back_button = $MarginContainer/HBoxContainer/BackToMenuButton
@@ -100,7 +100,7 @@ func _on_context_menu_id_pressed(id: int):
 		
 		new_node.gui_input.connect(_on_node_gui_input.bind(new_node))
 	if id == 2:
-		var new_node = condition_node_scene.instantiate()
+		var new_node = condition_hand_node_scene.instantiate()
 		graph_edit.add_child(new_node)
 		
 		var scroll_offset = graph_edit.scroll_offset

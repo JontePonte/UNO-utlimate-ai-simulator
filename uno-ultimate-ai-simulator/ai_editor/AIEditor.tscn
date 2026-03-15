@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dwxxmkb42ao8x" path="res://ai_editor/ai_editor.gd" id="1_p57j3"]
 [ext_resource type="PackedScene" uid="uid://drfi5bele7ty3" path="res://ai_editor/RootNode.tscn" id="2_tqyhn"]
 [ext_resource type="PackedScene" uid="uid://cwnx5tatig8h4" path="res://ai_editor/ActionDrawNode.tscn" id="3_byxos"]
-[ext_resource type="PackedScene" uid="uid://yxtwdgd42xw7" path="res://ai_editor/ConditionNode.tscn" id="4_knltd"]
+[ext_resource type="PackedScene" uid="uid://yxtwdgd42xw7" path="res://ai_editor/ConditionHandNode.tscn" id="4_knltd"]
 [ext_resource type="PackedScene" uid="uid://cqi6nnjg7ruih" path="res://ai_editor/ActionPlayNode.tscn" id="5_2maqe"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_045bj"]
@@ -19,7 +19,7 @@ grow_vertical = 2
 script = ExtResource("1_p57j3")
 root_node_scene = ExtResource("2_tqyhn")
 action_draw_node_scene = ExtResource("3_byxos")
-condition_node_scene = ExtResource("4_knltd")
+condition_hand_node_scene = ExtResource("4_knltd")
 action_play_node_scene = ExtResource("5_2maqe")
 
 [node name="GraphEdit" type="GraphEdit" parent="." unique_id=1139485564]

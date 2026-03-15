@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://yxtwdgd42xw7"]
 
-[ext_resource type="Script" uid="uid://b3csg3nueonsg" path="res://ai_editor/condition_node.gd" id="1_0shvr"]
+[ext_resource type="Script" uid="uid://b3csg3nueonsg" path="res://ai_editor/condition_hand_node.gd" id="1_0shvr"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ktnyg"]
 bg_color = Color(0.3137255, 0.078431375, 0.078431375, 1)
@@ -8,7 +8,7 @@ bg_color = Color(0.3137255, 0.078431375, 0.078431375, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cphd1"]
 bg_color = Color(0.627451, 0.15686275, 0.15686275, 1)
 
-[node name="ConditionNode" type="GraphNode" unique_id=1241447829]
+[node name="ConditionHandNode" type="GraphNode" unique_id=1241447829]
 offset_right = 200.0
 offset_bottom = 95.0
 theme_override_styles/titlebar = SubResource("StyleBoxFlat_ktnyg")
