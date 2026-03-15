@@ -18,6 +18,9 @@ var node_to_edit: GraphNode = null
 var rename_dialog: ConfirmationDialog
 var rename_input: LineEdit
 
+var has_unsaved_changes: bool = false
+var unsaved_dialog: ConfirmationDialog
+
 func _ready():
 	back_button.pressed.connect(_on_back_button_pressed)
 	rename_button.pressed.connect(_on_rename_button_pressed)
@@ -47,17 +50,23 @@ func _ready():
 	graph_edit.disconnection_request.connect(_on_disconnection_request)
 	
 	_setup_rename_dialog()
+	_setup_unsaved_dialog()
 
 func _on_connection_request(from_node: StringName, from_port: int, to_node: StringName, to_port: int):
 	# Godkänn sladden och be GraphEdit att rita den permanent!
+	_mark_unsaved()
 	graph_edit.connect_node(from_node, from_port, to_node, to_port)
 
 func _on_disconnection_request(from_node: StringName, from_port: int, to_node: StringName, to_port: int):
 	# Ta bort sladden om användaren kopplar loss den
+	_mark_unsaved()
 	graph_edit.disconnect_node(from_node, from_port, to_node, to_port)
 
 func _on_back_button_pressed():
-	get_tree().change_scene_to_file("res://menus/CreateAndEditAI.tscn")
+	if has_unsaved_changes:
+		unsaved_dialog.popup_centered()
+	else:
+		get_tree().change_scene_to_file("res://menus/CreateAndEditAI.tscn")
 
 func _on_graph_edit_popup_request(p_position: Vector2):
 	# Spara positionen där musen är just nu
@@ -69,9 +78,11 @@ func _on_graph_edit_popup_request(p_position: Vector2):
 	context_menu.popup()
 
 func _on_context_menu_id_pressed(id: int):
+	_mark_unsaved()
 	if id == 0:
 		var new_node = action_draw_node_scene.instantiate()
 		graph_edit.add_child(new_node)
+		new_node.dragged.connect(_mark_unsaved.unbind(2))
 		
 		var scroll_offset = graph_edit.scroll_offset
 		new_node.position_offset = right_click_position + scroll_offset
@@ -81,6 +92,7 @@ func _on_context_menu_id_pressed(id: int):
 	if id == 1:
 		var new_node = action_play_node_scene.instantiate()
 		graph_edit.add_child(new_node)
+		new_node.dragged.connect(_mark_unsaved.unbind(2))
 		
 		var scroll_offset = graph_edit.scroll_offset
 		new_node.position_offset = right_click_position + scroll_offset
@@ -89,6 +101,7 @@ func _on_context_menu_id_pressed(id: int):
 	if id == 2:
 		var new_node = condition_hand_node_scene.instantiate()
 		graph_edit.add_child(new_node)
+		new_node.dragged.connect(_mark_unsaved.unbind(2))
 		
 		var scroll_offset = graph_edit.scroll_offset
 		new_node.position_offset = right_click_position + scroll_offset
@@ -117,6 +130,7 @@ func _on_node_gui_input(event: InputEvent, node: GraphNode):
 
 func _on_node_context_menu_id_pressed(id: int):
 	if node_to_edit == null: return
+	_mark_unsaved()
 	
 	if id == 0: # COPY (Kopiera)
 		# duplicate() skapar en exakt kopia av noden vi klickade på
@@ -140,7 +154,6 @@ func _on_node_context_menu_id_pressed(id: int):
 		node_to_edit.queue_free()
 		node_to_edit = null
 
-
 func _on_delete_nodes_request(nodes: Array[StringName]):
 	# Godot ger oss en lista med namnen på alla noder som var markerade
 	for node_name in nodes:
@@ -161,6 +174,7 @@ func _on_delete_nodes_request(nodes: Array[StringName]):
 				graph_edit.disconnect_node(conn["from_node"], conn["from_port"], conn["to_node"], conn["to_port"])
 		
 		# 2. Radera noden!
+		_mark_unsaved()
 		node_to_delete.queue_free()
 
 func _on_rename_button_pressed():
@@ -266,6 +280,7 @@ func _on_save_button_pressed():
 			# Har denna nod en dropdown-meny (OptionButton)? I så fall, spara vad som är valt!
 			if child.has_node("OptionButton"):
 				var dropdown = child.get_node("OptionButton")
+				dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 				node_info["selected_index"] = dropdown.selected # Sparar siffran (0, 1, 2...)
 				
 			save_data["visual_data"]["nodes"].append(node_info)
@@ -281,6 +296,43 @@ func _on_save_button_pressed():
 		print("Sparandet lyckades!")
 	else:
 		print("Kunde inte öppna filen för att spara: ", file_path)
+	
+	has_unsaved_changes = false
+	save_button.text = "Save AI"
+
+func _mark_unsaved():
+	if not has_unsaved_changes:
+		has_unsaved_changes = true
+		save_button.text = "Save AI *" # Visuell feedback!
+
+func _setup_unsaved_dialog():
+	unsaved_dialog = ConfirmationDialog.new()
+	unsaved_dialog.title = "Unsaved Progress"
+	unsaved_dialog.dialog_text = "Du har osparade ändringar. Vill du spara innan du stänger?"
+	
+	# 1. Ändra standardknapparna
+	unsaved_dialog.ok_button_text = "Save & Exit"
+	unsaved_dialog.cancel_button_text = "Cancel"
+	
+	# 2. Hacka in en TREDJE knapp i Godots dialog!
+	# add_button("Text", right_side, "action_name")
+	unsaved_dialog.add_button("Exit without saving", true, "exit_no_save")
+	
+	# 3. Koppla signalerna
+	unsaved_dialog.confirmed.connect(_on_save_and_exit)
+	unsaved_dialog.custom_action.connect(_on_unsaved_custom_action)
+	
+	add_child(unsaved_dialog)
+
+# Körs om man trycker "Save & Exit"
+func _on_save_and_exit():
+	_on_save_button_pressed() # Spara först!
+	get_tree().change_scene_to_file("res://menus/CreateAndEditAI.tscn")
+
+# Körs om man trycker på vår egna "Exit without saving"-knapp
+func _on_unsaved_custom_action(action: StringName):
+	if action == "exit_no_save":
+		get_tree().change_scene_to_file("res://menus/CreateAndEditAI.tscn")
 
 func _load_ai_graph(file_name: String):
 	# 1. Rensa duken helt först
@@ -343,10 +395,13 @@ func _load_ai_graph(file_name: String):
 			new_node.name = node_data["name"]
 			new_node.position_offset = Vector2(node_data["pos_x"], node_data["pos_y"])
 			graph_edit.add_child(new_node)
+			
 			new_node.gui_input.connect(_on_node_gui_input.bind(new_node))
+			new_node.dragged.connect(_mark_unsaved.unbind(2))
 			
 			if node_data.has("selected_index") and new_node.has_node("OptionButton"):
 				var dropdown = new_node.get_node("OptionButton")
+				dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 				dropdown.selected = int(node_data["selected_index"])
 				
 			print("-> Lade till noden: ", new_node.name)
@@ -397,6 +452,7 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 			result["name"] = "draw_card"
 		elif node.title == "Action: Play Card":
 			var dropdown = node.get_node("OptionButton")
+			dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 			if dropdown.selected == 0: result["name"] = "play_first_playable"
 			elif dropdown.selected == 1: result["name"] = "play_playable_attack_card"
 			elif dropdown.selected == 2: result["name"] = "play_color_card" # Bara ett exempel!
@@ -408,6 +464,7 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 		result["type"] = "condition"
 		
 		var dropdown = node.get_node("OptionButton")
+		dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 		if dropdown.selected == 0: result["name"] = "can_play_any_card"
 		elif dropdown.selected == 1: result["name"] = "has_playable_attack_card"
 		# ... (här kan vi lägga till fler matchningar för de andra dropdown-valen senare)
