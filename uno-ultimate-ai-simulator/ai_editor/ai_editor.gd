@@ -43,28 +43,6 @@ func _ready():
 	graph_edit.connection_request.connect(_on_connection_request)
 	graph_edit.disconnection_request.connect(_on_disconnection_request)
 
-# Den här funktionen kommer bygga hela trädet framöver
-func _load_ai_graph(file_name: String):
-	# 1. Rensa hela duken ifall det låg gammalt skräp där
-	graph_edit.clear_connections()
-	for child in graph_edit.get_children():
-		if child is GraphNode:
-			child.queue_free()
-			
-	# 2. Skapa vår Root Node!
-	var root = root_node_scene.instantiate()
-	graph_edit.add_child(root)
-	
-	# 3. Placera den snyggt på vänster sida av duken (X=100, Y=200)
-	graph_edit.scroll_offset = Vector2.ZERO # Tvingar kameran till startpunkten
-	root.position_offset = Vector2(40, 320)
-	
-	root.gui_input.connect(_on_node_gui_input.bind(root))
-	
-	# (Senare ska vi lägga in kod här som läser JSON-filen 
-	# och lägger ut alla andra noder eleven har byggt!)
-	print("Förbereder GraphEdit för att senare läsa in: ", file_name)
-
 func _on_connection_request(from_node: StringName, from_port: int, to_node: StringName, to_port: int):
 	# Godkänn sladden och be GraphEdit att rita den permanent!
 	graph_edit.connect_node(from_node, from_port, to_node, to_port)
@@ -184,5 +162,137 @@ func _on_rename_button_pressed():
 	print("Här ska vi fixa rename")
 
 func _on_save_button_pressed():
-	print("Nu ska vi spara filen: ", AiManager.file_to_edit)
-	# (Här ska vi snart skriva logiken för att läsa av duken!)
+	print("Sparar AI: ", AiManager.file_to_edit)
+	
+	var save_data = {
+		"nodes": [], 
+		"connections": []
+	}
+	
+	# 1. SPARA ALLA SLADDAR (Godot gör det superenkelt för oss)
+	var all_connections = graph_edit.get_connection_list()
+	for conn in all_connections:
+		save_data["connections"].append({
+			"from_node": String(conn["from_node"]),
+			"from_port": conn["from_port"],
+			"to_node": String(conn["to_node"]),
+			"to_port": conn["to_port"]
+		})
+	
+	# 2. SPARA ALLA NODER
+	for child in graph_edit.get_children():
+		if child is GraphNode:
+			var node_info = {
+				"name": child.name, # Godots interna namn (viktigt för sladdarna)
+				"title": child.title, # Berättar för oss vilken TYP av nod det är
+				"pos_x": child.position_offset.x,
+				"pos_y": child.position_offset.y
+			}
+			
+			# Har denna nod en dropdown-meny (OptionButton)? I så fall, spara vad som är valt!
+			if child.has_node("OptionButton"):
+				var dropdown = child.get_node("OptionButton")
+				node_info["selected_index"] = dropdown.selected # Sparar siffran (0, 1, 2...)
+				
+			save_data["nodes"].append(node_info)
+			
+	# 3. SKRIV TILL JSON-FILEN
+	var file_path = AiManager.AI_FOLDER_PATH + AiManager.file_to_edit
+	var file = FileAccess.open(file_path, FileAccess.WRITE)
+	
+	if file:
+		# JSON.stringify formaterar vår Dictionary till snygg text. "\t" ger indrag!
+		file.store_string(JSON.stringify(save_data, "\t"))
+		file.close()
+		print("Sparandet lyckades!")
+	else:
+		print("Kunde inte öppna filen för att spara: ", file_path)
+
+func _load_ai_graph(file_name: String):
+	# 1. Rensa duken helt först
+	graph_edit.clear_connections()
+	for child in graph_edit.get_children():
+		if child is GraphNode:
+			# VIKTIGT: remove_child tvingar Godot att släppa namnet omedelbart!
+			graph_edit.remove_child(child) 
+			child.queue_free()
+
+	# 2. Öppna och läs filen
+	var file_path = AiManager.AI_FOLDER_PATH + file_name
+	
+	if not FileAccess.file_exists(file_path):
+		print("Hittade ingen fil, skapar en ny blank duk med Start-nod!")
+		_create_default_start_node()
+		return
+		
+	var file = FileAccess.open(file_path, FileAccess.READ)
+	var json_string = file.get_as_text()
+	file.close()
+	
+	var json = JSON.new()
+	var error = json.parse(json_string)
+	
+	if error != OK:
+		print("Fel vid läsning av JSON-filen, spawnar Start-nod som backup!")
+		_create_default_start_node()
+		return
+		
+	var data = json.get_data()
+	
+	if not data.has("nodes") or not data.has("connections") or data["nodes"].size() == 0:
+		print("Filen saknar noder (eller är ett gammalt format). Spawnar Start-nod!")
+		_create_default_start_node()
+		return
+
+	print("--- BÖRJAR LADDA IN NODER ---")
+	# 3. ÅTERSKAPA ALLA NODER
+	for node_data in data["nodes"]:
+		var new_node: GraphNode = null
+		
+		# Säkerhets-konvertering till sträng
+		var node_title = str(node_data["title"]) 
+		print("Läser från JSON: Titel = '", node_title, "'")
+		
+		match node_title:
+			"AI Start":
+				new_node = root_node_scene.instantiate()
+			"Condition: Check Hand":
+				new_node = condition_hand_node_scene.instantiate()
+			"Action: Play Card":
+				new_node = action_play_node_scene.instantiate()
+			"Action: Draw Card":
+				new_node = action_draw_node_scene.instantiate()
+			_: # Detta körs om ingen av ovanstående matchar!
+				print("-> FEL: Titeln '", node_title, "' matchade ingenting! Felstavat?")
+				
+		if new_node != null:
+			new_node.name = node_data["name"]
+			new_node.position_offset = Vector2(node_data["pos_x"], node_data["pos_y"])
+			graph_edit.add_child(new_node)
+			new_node.gui_input.connect(_on_node_gui_input.bind(new_node))
+			
+			if node_data.has("selected_index") and new_node.has_node("OptionButton"):
+				var dropdown = new_node.get_node("OptionButton")
+				dropdown.selected = int(node_data["selected_index"])
+				
+			print("-> Lade till noden: ", new_node.name)
+		else:
+			print("-> FEL: new_node är null! Är dina @export-scener inlagda i Inspektorn?")
+
+	print("--- BÖRJAR DRA SLADDAR ---")
+	# 4. DRA ALLA SLADDAR
+	for conn in data["connections"]:
+		var err = graph_edit.connect_node(StringName(conn["from_node"]), conn["from_port"], StringName(conn["to_node"]), conn["to_port"])
+		if err != OK:
+			print("-> FEL: Kunde inte dra sladd från ", conn["from_node"], " till ", conn["to_node"])
+		
+	print("Laddade in AI-trädet framgångsrikt!")
+
+func _create_default_start_node():
+	var root = root_node_scene.instantiate()
+	root.name = "RootNode" # Tvingar den att heta RootNode internt
+	root.position_offset = Vector2(40, 320) # En snygg startposition till vänster
+	graph_edit.add_child(root)
+	
+	# Säg åt noden att lyssna på klick (så vi kan dra sladdar etc, men vår tidigare if-sats blockerar ju Remove-menyn)
+	root.gui_input.connect(_on_node_gui_input.bind(root))
