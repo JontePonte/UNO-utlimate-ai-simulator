@@ -1,6 +1,7 @@
 extends Node
 
 const AI_FOLDER_PATH = "user://ai_profiles/"
+var file_to_edit: String = ""
 
 func _ready():
 	_ensure_ai_folder_exists()

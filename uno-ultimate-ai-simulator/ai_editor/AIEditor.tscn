@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://bq3gh23n1h5sk"]
+
+[ext_resource type="Script" uid="uid://dwxxmkb42ao8x" path="res://ai_editor/ai_editor.gd" id="1_p57j3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_045bj"]
+bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+
+[node name="Control" type="Control" unique_id=1393535991]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_p57j3")
+
+[node name="AiEditor" type="GraphEdit" parent="." unique_id=1139485564]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_045bj")
+scroll_offset = Vector2(-40, -40)
+show_menu = false
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2041601459]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=1685803279]
+layout_mode = 2
+
+[node name="BackToMenuButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=567928158]
+layout_mode = 2
+text = "<- Back to Menu"

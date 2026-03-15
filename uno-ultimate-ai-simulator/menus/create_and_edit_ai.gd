@@ -6,6 +6,8 @@ extends Control
 @onready var main_menu_button = $MarginContainer/MainVBox/MainHBox/VBoxLeftSide/BottomHBox/HBoxBackExit/Back
 @onready var exit_game_button = $MarginContainer/MainVBox/MainHBox/VBoxLeftSide/BottomHBox/HBoxBackExit/ExitGame
 
+@onready var create_new_btn = $MarginContainer/MainVBox/MainHBox/VBoxLeftSide/CreateNewAIButton
+
 # -- POPUPS --
 @onready var name_dialog = $NameDialog
 @onready var name_input = $NameDialog/LineEdit
@@ -14,11 +16,13 @@ extends Control
 # -- VARIABLER FÖR ATT MINNAS VAD VI KLICKADE PÅ --
 var current_file_to_copy: String = ""
 var current_file_to_delete: String = "" # NY! Minns vilken fil som ska raderas
+var dialog_mode: String = ""
 
 func _ready():
 	populate_ai_list()
 	main_menu_button.pressed.connect(_on_main_menu_button_pressed)
 	exit_game_button.pressed.connect(_on_exit_button_pressed)
+	create_new_btn.pressed.connect(_on_create_new_pressed)
 	
 	# Koppla OK-knapparna för våra popups
 	name_dialog.confirmed.connect(_on_name_dialog_confirmed)
@@ -45,8 +49,9 @@ func _create_list_item(file_name: String):
 	item.setup_item(display_name, file_name, is_standard)
 	
 	# Lyssna på signalerna (De skickas ju bara om knapparna faktiskt finns och kan klickas på!)
-	item.copy_requested.connect(_on_ai_copy_requested)
 	item.delete_requested.connect(_on_ai_delete_requested)
+	item.edit_requested.connect(_on_ai_edit_requested)
+	item.copy_requested.connect(_on_ai_copy_requested)
 
 func _on_ai_delete_requested(file_name: String):
 	current_file_to_delete = file_name
@@ -81,8 +86,25 @@ func _on_delete_dialog_confirmed():
 
 func _on_ai_copy_requested(original_file_name: String):
 	current_file_to_copy = original_file_name
+	dialog_mode = "copy" # <-- Berätta att vi kopierar!
 	var default_name = original_file_name.replace(".json", "") + " Copy"
 	name_input.text = default_name
+	name_dialog.popup_centered()
+	name_input.grab_focus()
+
+# --- ÖPPNA EDITORN (EDIT) ---
+func _on_ai_edit_requested(file_name: String):
+	# Berätta för manager vilken fil som gäller
+	AiManager.file_to_edit = file_name
+	
+	# Byt scen! (Uppdatera sökvägen till din nya ai_editor-mapp)
+	get_tree().change_scene_to_file("res://ai_editor/AIEditor.tscn")
+
+# --- SKAPA NY AI ---
+func _on_create_new_pressed():
+	dialog_mode = "create" # Vi återanvänder samma popup som förut!
+	name_dialog.title = "Create New AI"
+	name_input.text = "My_New_AI"
 	name_dialog.popup_centered()
 	name_input.grab_focus()
 
@@ -91,24 +113,43 @@ func _on_name_dialog_confirmed():
 	if new_name == "": return
 	if not new_name.ends_with(".json"): new_name += ".json"
 		
-	var base_dir = AiManager.AI_FOLDER_PATH
-	var source_path = base_dir + current_file_to_copy
-	var dest_path = base_dir + new_name
-	
-	var file_to_copy = FileAccess.open(source_path, FileAccess.READ)
-	if file_to_copy:
-		var content = file_to_copy.get_as_text()
-		file_to_copy.close()
+	if dialog_mode == "copy":
+		var base_dir = AiManager.AI_FOLDER_PATH
+		var source_path = base_dir + current_file_to_copy
+		var dest_path = base_dir + new_name
+		
+		var file_to_copy = FileAccess.open(source_path, FileAccess.READ)
+		if file_to_copy:
+			var content = file_to_copy.get_as_text()
+			file_to_copy.close()
+			
+			var new_file = FileAccess.open(dest_path, FileAccess.WRITE)
+			new_file.store_string(content)
+			new_file.close()
+			
+			print("Kopierade till: " + new_name)
+			populate_ai_list()
+
+	elif dialog_mode == "create":
+		var dest_path = AiManager.AI_FOLDER_PATH + new_name
+		
+		# Vi skapar en tom JSON-struktur för att grunda filen
+		var empty_data = {
+			"nodes": [],
+			"connections": []
+		}
 		
 		var new_file = FileAccess.open(dest_path, FileAccess.WRITE)
-		new_file.store_string(content)
+		new_file.store_string(JSON.stringify(empty_data, "\t"))
 		new_file.close()
 		
-		print("Kopierade till: " + new_name)
-		populate_ai_list()
+		print("Skapade ny AI: ", new_name)
+		
+		# Skicka användaren direkt in i Editorn!
+		AiManager.file_to_edit = new_name
+		get_tree().change_scene_to_file("res://ai_editor/AIEditor.tscn")
 
 # --- NAVIGATION ---
-
 func _on_exit_button_pressed():
 	get_tree().quit()
 

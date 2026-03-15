@@ -68,7 +68,7 @@ layout_mode = 2
 [node name="Spacer" type="Control" parent="MarginContainer/MainVBox/MainHBox/VBoxLeftSide" unique_id=1053914404]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="MarginContainer/MainVBox/MainHBox/VBoxLeftSide" unique_id=1059933118]
+[node name="CreateNewAIButton" type="Button" parent="MarginContainer/MainVBox/MainHBox/VBoxLeftSide" unique_id=1059933118]
 layout_mode = 2
 size_flags_horizontal = 8
 theme_override_constants/outline_size = 8

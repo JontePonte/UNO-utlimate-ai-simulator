@@ -56,8 +56,16 @@ func _on_mouse_entered():
 	hover_tween.tween_property(action_buttons, "modulate:a", 1.0, 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 func _on_mouse_exited():
-	# --- NYTT: Vänta en mikrosekund så musens position hinner uppdateras i Godot ---
+	# 1. Finns vi innan pausen?
+	if not is_inside_tree() or not get_tree():
+		return
+		
+	# Vänta en mikrosekund så musens position hinner uppdateras i Godot
 	await get_tree().process_frame
+	
+	# 2. FINNS VI KVAR EFTER PAUSEN? (Det är här scenbytet sker!)
+	if not is_inside_tree() or get_viewport() == null:
+		return
 	
 	# Är musen fortfarande inuti hela radens område?
 	var mouse_pos = get_global_mouse_position()
