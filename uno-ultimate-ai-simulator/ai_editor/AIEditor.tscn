@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dwxxmkb42ao8x" path="res://ai_editor/ai_editor.gd" id="1_p57j3"]
 [ext_resource type="PackedScene" uid="uid://drfi5bele7ty3" path="res://ai_editor/RootNode.tscn" id="2_tqyhn"]
+[ext_resource type="PackedScene" uid="uid://cwnx5tatig8h4" path="res://ai_editor/ActionNode.tscn" id="3_byxos"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_045bj"]
 bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
@@ -15,6 +16,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_p57j3")
 root_node_scene = ExtResource("2_tqyhn")
+action_draw_node_scene = ExtResource("3_byxos")
 
 [node name="GraphEdit" type="GraphEdit" parent="." unique_id=1139485564]
 layout_mode = 1
@@ -39,3 +41,5 @@ layout_mode = 2
 [node name="BackToMenuButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=567928158]
 layout_mode = 2
 text = "<- Back to Menu"
+
+[node name="GraphContextMenu" type="PopupMenu" parent="." unique_id=1224044069]
