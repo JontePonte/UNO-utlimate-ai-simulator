@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://cwnx5tatig8h4"]
+[gd_scene format=3 uid="uid://cqi6nnjg7ruih"]
 
-[ext_resource type="Script" uid="uid://by2l1h8eg5iiq" path="res://ai_editor/action_node.gd" id="1_cphd1"]
+[ext_resource type="Script" uid="uid://cap86a5eaa8ch" path="res://ai_editor/action_play_node.gd" id="1_favk3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ktnyg"]
 bg_color = Color(0.078431375, 0.078431375, 0.3137255, 1)
@@ -8,7 +8,7 @@ bg_color = Color(0.078431375, 0.078431375, 0.3137255, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cphd1"]
 bg_color = Color(0.15686275, 0.15686275, 0.627451, 1)
 
-[node name="ActionNode" type="GraphNode" unique_id=1241447829]
+[node name="ActionPlayNode" type="GraphNode" unique_id=1241447829]
 offset_right = 200.0
 offset_bottom = 95.0
 theme_override_styles/titlebar = SubResource("StyleBoxFlat_ktnyg")
@@ -23,8 +23,7 @@ slot/0/right_type = 0
 slot/0/right_color = Color(1, 1, 1, 1)
 slot/0/right_icon = null
 slot/0/draw_stylebox = true
-script = ExtResource("1_cphd1")
+script = ExtResource("1_favk3")
 
-[node name="InfoLabel" type="Label" parent="." unique_id=1143163045]
+[node name="OptionButton" type="OptionButton" parent="." unique_id=1883045778]
 layout_mode = 2
-text = "Ends Turn"

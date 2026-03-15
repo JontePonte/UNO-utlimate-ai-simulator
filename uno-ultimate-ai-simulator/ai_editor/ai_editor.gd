@@ -3,6 +3,7 @@ extends Control
 @export var root_node_scene: PackedScene
 @export var action_draw_node_scene: PackedScene
 @export var condition_node_scene: PackedScene
+@export var action_play_node_scene: PackedScene
 
 @onready var back_button = $MarginContainer/HBoxContainer/BackToMenuButton
 @onready var graph_edit = $GraphEdit
@@ -16,7 +17,8 @@ func _ready():
 	back_button.pressed.connect(_on_back_button_pressed)
 	
 	context_menu.add_item("Action: Draw Card", 0)
-	context_menu.add_item("Condition: Check Hand", 1)
+	context_menu.add_item("Action: Play Card", 1)
+	context_menu.add_item("Condition: Check Hand", 2)
 	context_menu.id_pressed.connect(_on_context_menu_id_pressed)
 	
 	# Lyssna på när GraphEdit ber om en högerklicksmeny (popup_request)
@@ -90,6 +92,14 @@ func _on_context_menu_id_pressed(id: int):
 		# NYTT: Säg åt den nya noden att lyssna på musklick!
 		new_node.gui_input.connect(_on_node_gui_input.bind(new_node))
 	if id == 1:
+		var new_node = action_play_node_scene.instantiate()
+		graph_edit.add_child(new_node)
+		
+		var scroll_offset = graph_edit.scroll_offset
+		new_node.position_offset = right_click_position + scroll_offset
+		
+		new_node.gui_input.connect(_on_node_gui_input.bind(new_node))
+	if id == 2:
 		var new_node = condition_node_scene.instantiate()
 		graph_edit.add_child(new_node)
 		
@@ -142,6 +152,7 @@ func _on_node_context_menu_id_pressed(id: int):
 		# Nu är det säkert att radera noden!
 		node_to_edit.queue_free()
 		node_to_edit = null
+
 
 func _on_delete_nodes_request(nodes: Array[StringName]):
 	# Godot ger oss en lista med namnen på alla noder som var markerade
