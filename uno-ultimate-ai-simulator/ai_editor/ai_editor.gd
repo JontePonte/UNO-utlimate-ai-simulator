@@ -6,6 +6,8 @@ extends Control
 @export var action_play_node_scene: PackedScene
 
 @onready var back_button = $MarginContainer/HBoxContainer/BackToMenuButton
+@onready var save_button = $MarginContainer/HBoxContainer/SaveButton
+@onready var rename_button = $MarginContainer/HBoxContainer/RenameButton
 @onready var graph_edit = $GraphEdit
 @onready var context_menu = $GraphContextMenu
 @onready var node_context_menu = $NodeContextMenu
@@ -15,6 +17,8 @@ var node_to_edit: GraphNode = null
 
 func _ready():
 	back_button.pressed.connect(_on_back_button_pressed)
+	rename_button.pressed.connect(_on_rename_button_pressed)
+	save_button.pressed.connect(_on_save_button_pressed)
 	
 	context_menu.add_item("Action: Draw Card", 0)
 	context_menu.add_item("Action: Play Card", 1)
@@ -175,3 +179,10 @@ func _on_delete_nodes_request(nodes: Array[StringName]):
 		
 		# 2. Radera noden!
 		node_to_delete.queue_free()
+
+func _on_rename_button_pressed():
+	print("Här ska vi fixa rename")
+
+func _on_save_button_pressed():
+	print("Nu ska vi spara filen: ", AiManager.file_to_edit)
+	# (Här ska vi snart skriva logiken för att läsa av duken!)

@@ -9,6 +9,12 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_045bj"]
 bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2maqe"]
+bg_color = Color(0.078431375, 0.19607843, 0.078431375, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kgwxg"]
+bg_color = Color(0.15686275, 0.39215687, 0.15686275, 1)
+
 [node name="AiEditor" type="Control" unique_id=1393535991]
 layout_mode = 3
 anchors_preset = 15
@@ -45,6 +51,17 @@ layout_mode = 2
 [node name="BackToMenuButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=567928158]
 layout_mode = 2
 text = "<- Back to Menu"
+
+[node name="RenameButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=804307129]
+layout_mode = 2
+text = "Rename AI"
+
+[node name="SaveButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=798030839]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_2maqe")
+theme_override_styles/hover = SubResource("StyleBoxFlat_kgwxg")
+text = "Save AI"
 
 [node name="GraphContextMenu" type="PopupMenu" parent="." unique_id=1224044069]
 
