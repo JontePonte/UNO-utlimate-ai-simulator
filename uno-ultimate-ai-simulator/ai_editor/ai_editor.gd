@@ -53,7 +53,7 @@ func _load_ai_graph(file_name: String):
 	
 	# 3. Placera den snyggt på vänster sida av duken (X=100, Y=200)
 	graph_edit.scroll_offset = Vector2.ZERO # Tvingar kameran till startpunkten
-	root.position_offset = Vector2(40, 350)
+	root.position_offset = Vector2(40, 320)
 	
 	root.gui_input.connect(_on_node_gui_input.bind(root))
 	
