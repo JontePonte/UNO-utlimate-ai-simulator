@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://yxtwdgd42xw7"]
+
+[ext_resource type="Script" uid="uid://b3csg3nueonsg" path="res://ai_editor/condition_node.gd" id="1_0shvr"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ktnyg"]
+bg_color = Color(0.3137255, 0.078431375, 0.078431375, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cphd1"]
+bg_color = Color(0.627451, 0.15686275, 0.15686275, 1)
+
+[node name="ConditionNode" type="GraphNode" unique_id=1241447829]
+offset_right = 200.0
+offset_bottom = 95.0
+theme_override_styles/titlebar = SubResource("StyleBoxFlat_ktnyg")
+theme_override_styles/titlebar_selected = SubResource("StyleBoxFlat_cphd1")
+title = "Condition: Check Hand"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+script = ExtResource("1_0shvr")
+
+[node name="OptionButton" type="OptionButton" parent="." unique_id=305183506]
+layout_mode = 2
+
+[node name="Lable" type="Label" parent="." unique_id=1143163045]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "False"
