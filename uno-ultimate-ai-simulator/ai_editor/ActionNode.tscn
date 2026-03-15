@@ -5,12 +5,14 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ktnyg"]
 bg_color = Color(0.078431375, 0.078431375, 0.3137255, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cphd1"]
+bg_color = Color(0.15686275, 0.15686275, 0.627451, 1)
+
 [node name="ActionNode" type="GraphNode" unique_id=1241447829]
 offset_right = 200.0
 offset_bottom = 95.0
 theme_override_styles/titlebar = SubResource("StyleBoxFlat_ktnyg")
-draggable = false
-selectable = false
+theme_override_styles/titlebar_selected = SubResource("StyleBoxFlat_cphd1")
 title = "Action: Draw Card"
 slot/0/left_enabled = false
 slot/0/left_type = 0

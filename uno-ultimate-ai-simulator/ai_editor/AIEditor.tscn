@@ -43,3 +43,5 @@ layout_mode = 2
 text = "<- Back to Menu"
 
 [node name="GraphContextMenu" type="PopupMenu" parent="." unique_id=1224044069]
+
+[node name="NodeContextMenu" type="PopupMenu" parent="." unique_id=216108866]
