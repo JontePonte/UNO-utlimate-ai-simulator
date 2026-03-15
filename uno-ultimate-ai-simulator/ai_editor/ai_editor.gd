@@ -15,6 +15,9 @@ extends Control
 var right_click_position: Vector2 = Vector2.ZERO
 var node_to_edit: GraphNode = null
 
+var rename_dialog: ConfirmationDialog
+var rename_input: LineEdit
+
 func _ready():
 	back_button.pressed.connect(_on_back_button_pressed)
 	rename_button.pressed.connect(_on_rename_button_pressed)
@@ -42,6 +45,8 @@ func _ready():
 	
 	graph_edit.connection_request.connect(_on_connection_request)
 	graph_edit.disconnection_request.connect(_on_disconnection_request)
+	
+	_setup_rename_dialog()
 
 func _on_connection_request(from_node: StringName, from_port: int, to_node: StringName, to_port: int):
 	# Godkänn sladden och be GraphEdit att rita den permanent!
@@ -159,20 +164,89 @@ func _on_delete_nodes_request(nodes: Array[StringName]):
 		node_to_delete.queue_free()
 
 func _on_rename_button_pressed():
-	print("Här ska vi fixa rename")
+	# Fyll i nuvarande namn (utan .json) i textrutan
+	rename_input.text = AiManager.file_to_edit.replace(".json", "")
+	# Visa rutan i mitten av skärmen
+	rename_dialog.popup_centered(Vector2(300, 120))
+
+func _on_rename_confirmed():
+	var new_name = rename_input.text.strip_edges() # Ta bort onödiga mellanslag
+	
+	if new_name == "":
+		print("Namnet får inte vara tomt!")
+		return
+		
+	var new_filename = new_name + ".json"
+	
+	# Om namnet inte ens ändrades, gör ingenting
+	if new_filename == AiManager.file_to_edit:
+		return
+		
+	var new_path = AiManager.AI_FOLDER_PATH + new_filename
+	
+	# Kolla så vi inte råkar skriva över en annan AI
+	if FileAccess.file_exists(new_path):
+		print("En AI med det namnet finns redan!")
+		return
+		
+	# Byt namn på filen via DirAccess
+	var dir = DirAccess.open(AiManager.AI_FOLDER_PATH)
+	if dir:
+		var error = dir.rename(AiManager.file_to_edit, new_filename)
+		
+		if error == OK:
+			print("Bytte namn från ", AiManager.file_to_edit, " till ", new_filename)
+			
+			# 1. Uppdatera vår globala variabel
+			AiManager.file_to_edit = new_filename
+			
+			# 2. Det absolut smartaste tricket: Vi sparar om filen direkt!
+			# Eftersom filen precis fick ett nytt namn, och vår _on_save_button_pressed
+			# använder AiManager.file_to_edit för att sätta "ai_name" inuti JSON-filen,
+			# så kommer ett snabbt spara-anrop här att uppdatera allt perfekt!
+			_on_save_button_pressed()
+		else:
+			print("Kunde inte byta namn på filen. Felkod: ", error)
+
+func _setup_rename_dialog():
+	rename_dialog = ConfirmationDialog.new()
+	rename_dialog.title = "Rename AI"
+	rename_dialog.dialog_text = "Skriv in det nya namnet på din AI:"
+	
+	# Skapa en textruta där vi kan skriva
+	rename_input = LineEdit.new()
+	rename_dialog.add_child(rename_input)
+	
+	# När man trycker "OK" i rutan körs denna:
+	rename_dialog.confirmed.connect(_on_rename_confirmed)
+	
+	# Lägg till rutan i spelet (men den är dold tills vi kallar på den)
+	add_child(rename_dialog)
 
 func _on_save_button_pressed():
 	print("Sparar AI: ", AiManager.file_to_edit)
 	
+	# 1. Hitta vad startnoden heter (vanligtvis "RootNode")
+	var start_node_name = "RootNode" 
+	# Hitta vilken nod som är kopplad till startnodens enda utgång (port 0)
+	var first_logic_node = _get_connected_node(start_node_name, 0)
+	
+	# 2. Skapa datan vi ska spara!
 	var save_data = {
-		"nodes": [], 
-		"connections": []
+		"ai_name": AiManager.file_to_edit.replace(".json", ""), # Snyggt namn för UI:t
+		"description": "En AI skapad i den visuella editorn.",
+		"visual_data": { # HÄR lägger vi den gamla visuella datan
+			"nodes": [], 
+			"connections": []
+		},
+		# HÄR bygger vi trädet för spelet!
+		"root": _build_logic_tree(first_logic_node) 
 	}
 	
 	# 1. SPARA ALLA SLADDAR (Godot gör det superenkelt för oss)
 	var all_connections = graph_edit.get_connection_list()
 	for conn in all_connections:
-		save_data["connections"].append({
+		save_data["visual_data"]["connections"].append({
 			"from_node": String(conn["from_node"]),
 			"from_port": conn["from_port"],
 			"to_node": String(conn["to_node"]),
@@ -194,7 +268,7 @@ func _on_save_button_pressed():
 				var dropdown = child.get_node("OptionButton")
 				node_info["selected_index"] = dropdown.selected # Sparar siffran (0, 1, 2...)
 				
-			save_data["nodes"].append(node_info)
+			save_data["visual_data"]["nodes"].append(node_info)
 			
 	# 3. SKRIV TILL JSON-FILEN
 	var file_path = AiManager.AI_FOLDER_PATH + AiManager.file_to_edit
@@ -239,14 +313,14 @@ func _load_ai_graph(file_name: String):
 		
 	var data = json.get_data()
 	
-	if not data.has("nodes") or not data.has("connections") or data["nodes"].size() == 0:
-		print("Filen saknar noder (eller är ett gammalt format). Spawnar Start-nod!")
+	if not data.has("visual_data") or data["visual_data"]["nodes"].size() == 0:
+		print("Filen saknar visuell data. Spawnar Start-nod!")
 		_create_default_start_node()
 		return
 
 	print("--- BÖRJAR LADDA IN NODER ---")
 	# 3. ÅTERSKAPA ALLA NODER
-	for node_data in data["nodes"]:
+	for node_data in data["visual_data"]["nodes"]:
 		var new_node: GraphNode = null
 		
 		# Säkerhets-konvertering till sträng
@@ -281,11 +355,10 @@ func _load_ai_graph(file_name: String):
 
 	print("--- BÖRJAR DRA SLADDAR ---")
 	# 4. DRA ALLA SLADDAR
-	for conn in data["connections"]:
+	for conn in data["visual_data"]["connections"]:
 		var err = graph_edit.connect_node(StringName(conn["from_node"]), conn["from_port"], StringName(conn["to_node"]), conn["to_port"])
 		if err != OK:
 			print("-> FEL: Kunde inte dra sladd från ", conn["from_node"], " till ", conn["to_node"])
-		
 	print("Laddade in AI-trädet framgångsrikt!")
 
 func _create_default_start_node():
@@ -296,3 +369,71 @@ func _create_default_start_node():
 	
 	# Säg åt noden att lyssna på klick (så vi kan dra sladdar etc, men vår tidigare if-sats blockerar ju Remove-menyn)
 	root.gui_input.connect(_on_node_gui_input.bind(root))
+
+func _get_connected_node(from_node_name: String, from_port: int) -> String:
+	for conn in graph_edit.get_connection_list():
+		if conn["from_node"] == from_node_name and conn["from_port"] == from_port:
+			return conn["to_node"]
+	return "" # Returnerar tomt om ingen sladd är dragen
+
+# Den magiska rekursiva funktionen!
+func _build_logic_tree(current_node_name: String) -> Dictionary:
+	if current_node_name == "":
+		# Om tråden slutar i tomma intet, gör en fallback till "Draw Card"
+		return {"type": "action", "name": "draw_card"}
+		
+	var node = graph_edit.get_node_or_null(NodePath(current_node_name))
+	if node == null:
+		return {"type": "action", "name": "draw_card"}
+		
+	var result = {}
+	
+	# Är det en ACTION-nod?
+	if "Action:" in node.title:
+		result["type"] = "action"
+		
+		# Beroende på VILKEN action det är, och vad dropdownen står på:
+		if node.title == "Action: Draw Card":
+			result["name"] = "draw_card"
+		elif node.title == "Action: Play Card":
+			var dropdown = node.get_node("OptionButton")
+			if dropdown.selected == 0: result["name"] = "play_first_playable"
+			elif dropdown.selected == 1: result["name"] = "play_playable_attack_card"
+			elif dropdown.selected == 2: result["name"] = "play_color_card" # Bara ett exempel!
+			
+		return result
+		
+	# Är det en CONDITION-nod?
+	elif "Condition:" in node.title:
+		result["type"] = "condition"
+		
+		var dropdown = node.get_node("OptionButton")
+		if dropdown.selected == 0: result["name"] = "can_play_any_card"
+		elif dropdown.selected == 1: result["name"] = "has_playable_attack_card"
+		# ... (här kan vi lägga till fler matchningar för de andra dropdown-valen senare)
+		
+		# Nu kommer magin: Vi bygger True och False-grenarna genom att anropa oss själva!
+		var true_node_name = _get_connected_node(current_node_name, 0)
+		var false_node_name = _get_connected_node(current_node_name, 1)
+		
+		result["true_branch"] = _build_logic_tree(true_node_name)
+		result["false_branch"] = _build_logic_tree(false_node_name)
+		
+		return result
+		
+	# Fallback om något går fel
+	return {"type": "action", "name": "draw_card"}
+
+func _input(event):
+	# Kolla om det är ett tangentbordstryck, att knappen trycks NER (inte släpps upp),
+	# och att det inte är ett "eko" (att man håller in knappen)
+	if event is InputEventKey and event.pressed and not event.echo:
+		
+		# Kolla om knappen är 'S', och om Ctrl (eller Cmd på Mac) hålls inne!
+		if event.keycode == KEY_S and event.is_command_or_control_pressed():
+			
+			# Anropa vår vanliga spara-funktion!
+			_on_save_button_pressed()
+			
+			# Säg åt Godot: "Jag har tagit hand om det här knapptrycket, skicka det inte vidare"
+			get_viewport().set_input_as_handled()

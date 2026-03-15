@@ -1,8 +1,0 @@
-{
-  "ai_name": "Always Draw AI",
-  "description": "En jättedålig AI som vägrar spela kort och bara drar nya hela tiden. Bra för stresstestning!",
-  "root": {
-	"type": "action",
-	"name": "draw_card"
-  }
-}

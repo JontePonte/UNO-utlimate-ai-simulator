@@ -1,0 +1,66 @@
+{
+	"ai_name": "simple_ai",
+	"description": "En AI skapad i den visuella editorn.",
+	"root": {
+		"false_branch": {
+			"name": "draw_card",
+			"type": "action"
+		},
+		"name": "can_play_any_card",
+		"true_branch": {
+			"name": "play_first_playable",
+			"type": "action"
+		},
+		"type": "condition"
+	},
+	"visual_data": {
+		"connections": [
+			{
+				"from_node": "RootNode",
+				"from_port": 0,
+				"to_node": "ConditionHandNode",
+				"to_port": 0
+			},
+			{
+				"from_node": "ConditionHandNode",
+				"from_port": 0,
+				"to_node": "ActionPlayNode",
+				"to_port": 0
+			},
+			{
+				"from_node": "ConditionHandNode",
+				"from_port": 1,
+				"to_node": "ActionDrawNode",
+				"to_port": 0
+			}
+		],
+		"nodes": [
+			{
+				"name": "RootNode",
+				"pos_x": 40.0,
+				"pos_y": 320.0,
+				"title": "AI Start"
+			},
+			{
+				"name": "ConditionHandNode",
+				"pos_x": 300.0,
+				"pos_y": 320.0,
+				"selected_index": 0,
+				"title": "Condition: Check Hand"
+			},
+			{
+				"name": "ActionDrawNode",
+				"pos_x": 680.0,
+				"pos_y": 420.0,
+				"title": "Action: Draw Card"
+			},
+			{
+				"name": "ActionPlayNode",
+				"pos_x": 680.0,
+				"pos_y": 280.0,
+				"selected_index": 0,
+				"title": "Action: Play Card"
+			}
+		]
+	}
+}

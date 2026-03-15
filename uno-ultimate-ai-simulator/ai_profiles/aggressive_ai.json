@@ -1,24 +1,100 @@
 {
-  "ai_name": "Aggressive AI",
-  "description": "Spelar alltid attack-kort (+2, +4, Skip, Reverse) om den kan. Annars vanliga kort, eller drar ett kort.",
-  "root": {
-	"type": "condition",
-	"name": "has_playable_attack_card",
-	"true_branch": {
-	  "type": "action",
-	  "name": "play_playable_attack_card"
+	"ai_name": "aggressive_ai",
+	"description": "En AI skapad i den visuella editorn.",
+	"root": {
+		"false_branch": {
+			"false_branch": {
+				"name": "draw_card",
+				"type": "action"
+			},
+			"name": "can_play_any_card",
+			"true_branch": {
+				"name": "play_first_playable",
+				"type": "action"
+			},
+			"type": "condition"
+		},
+		"name": "has_playable_attack_card",
+		"true_branch": {
+			"name": "play_playable_attack_card",
+			"type": "action"
+		},
+		"type": "condition"
 	},
-	"false_branch": {
-	  "type": "condition",
-	  "name": "has_playable_card",
-	  "true_branch": {
-		"type": "action",
-		"name": "play_first_playable"
-	  },
-	  "false_branch": {
-		"type": "action",
-		"name": "draw_card"
-	  }
+	"visual_data": {
+		"connections": [
+			{
+				"from_node": "RootNode",
+				"from_port": 0,
+				"to_node": "ConditionHandNode",
+				"to_port": 0
+			},
+			{
+				"from_node": "ConditionHandNode",
+				"from_port": 0,
+				"to_node": "ActionPlayNode",
+				"to_port": 0
+			},
+			{
+				"from_node": "ConditionHandNode",
+				"from_port": 1,
+				"to_node": "@GraphNode@183",
+				"to_port": 0
+			},
+			{
+				"from_node": "@GraphNode@183",
+				"from_port": 0,
+				"to_node": "@GraphNode@195",
+				"to_port": 0
+			},
+			{
+				"from_node": "@GraphNode@183",
+				"from_port": 1,
+				"to_node": "ActionDrawNode",
+				"to_port": 0
+			}
+		],
+		"nodes": [
+			{
+				"name": "RootNode",
+				"pos_x": 40.0,
+				"pos_y": 320.0,
+				"title": "AI Start"
+			},
+			{
+				"name": "ConditionHandNode",
+				"pos_x": 340.0,
+				"pos_y": 320.0,
+				"selected_index": 1,
+				"title": "Condition: Check Hand"
+			},
+			{
+				"name": "ActionPlayNode",
+				"pos_x": 700.0,
+				"pos_y": 300.0,
+				"selected_index": 1,
+				"title": "Action: Play Card"
+			},
+			{
+				"name": "@GraphNode@183",
+				"pos_x": 700.0,
+				"pos_y": 460.0,
+				"selected_index": 0,
+				"title": "Condition: Check Hand"
+			},
+			{
+				"name": "@GraphNode@195",
+				"pos_x": 1080.0,
+				"pos_y": 420.0,
+				"selected_index": 0,
+				"title": "Action: Play Card"
+			},
+			{
+				"name": "ActionDrawNode",
+				"pos_x": 1080.0,
+				"pos_y": 560.0,
+				"title": "Action: Draw Card"
+			}
+		]
 	}
-  }
 }

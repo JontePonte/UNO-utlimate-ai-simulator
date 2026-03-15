@@ -51,7 +51,7 @@ func _process_node(node: Dictionary, view: PlayerView) -> PlayerAction:
 # --- LOGIKEN FÖR FRÅGOR (CONDITIONS) ---
 func _evaluate_condition(condition_name: String, view: PlayerView, node: Dictionary) -> bool:
 	match condition_name:
-		"has_playable_card":
+		"can_play_any_card":
 			for card in view.own_hand:
 				if card.is_playable_on(view.top_discard, view.current_color):
 					return true

@@ -1,0 +1,32 @@
+{
+	"ai_name": "allways_draw_card_ai",
+	"description": "En AI skapad i den visuella editorn.",
+	"root": {
+		"name": "draw_card",
+		"type": "action"
+	},
+	"visual_data": {
+		"connections": [
+			{
+				"from_node": "RootNode",
+				"from_port": 0,
+				"to_node": "ActionDrawNode",
+				"to_port": 0
+			}
+		],
+		"nodes": [
+			{
+				"name": "RootNode",
+				"pos_x": 40.0,
+				"pos_y": 320.0,
+				"title": "AI Start"
+			},
+			{
+				"name": "ActionDrawNode",
+				"pos_x": 340.0,
+				"pos_y": 320.0,
+				"title": "Action: Draw Card"
+			}
+		]
+	}
+}
