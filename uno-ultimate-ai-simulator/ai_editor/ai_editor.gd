@@ -29,7 +29,9 @@ func _load_ai_graph(file_name: String):
 	graph_edit.add_child(root)
 	
 	# 3. Placera den snyggt på vänster sida av duken (X=100, Y=200)
-	root.position_offset = Vector2(100, 200)
+	graph_edit.scroll_offset = Vector2.ZERO # Tvingar kameran till startpunkten
+	root.position_offset = Vector2(40, 40) # Lägger noden nära övre vänstra hörnet
+	
 	
 	# (Senare ska vi lägga in kod här som läser JSON-filen 
 	# och lägger ut alla andra noder eleven har byggt!)

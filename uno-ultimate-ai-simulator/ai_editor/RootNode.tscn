@@ -9,11 +9,8 @@ bg_color = Color(0.11764706, 0.15686275, 0.078431375, 1)
 bg_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
 
 [node name="RootNode" type="GraphNode" unique_id=1241447829]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_right = 200.0
+offset_bottom = 95.0
 theme_override_styles/titlebar = SubResource("StyleBoxFlat_ktnyg")
 draggable = false
 selectable = false
