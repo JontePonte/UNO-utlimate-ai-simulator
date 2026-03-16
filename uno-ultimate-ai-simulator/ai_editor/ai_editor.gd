@@ -8,6 +8,7 @@ extends Control
 @onready var back_button = $MarginContainer/HBoxContainer/BackToMenuButton
 @onready var save_button = $MarginContainer/HBoxContainer/SaveButton
 @onready var rename_button = $MarginContainer/HBoxContainer/RenameButton
+@onready var test_button = $MarginContainer/HBoxContainer/TestButton
 @onready var graph_edit = $GraphEdit
 @onready var context_menu = $GraphContextMenu
 @onready var node_context_menu = $NodeContextMenu
@@ -30,6 +31,7 @@ func _ready():
 	back_button.pressed.connect(_on_back_button_pressed)
 	rename_button.pressed.connect(_on_rename_button_pressed)
 	save_button.pressed.connect(_on_save_button_pressed)
+	test_button.pressed.connect(_on_test_button_pressed)
 	
 	context_menu.add_item("Action: Draw Card", 0)
 	context_menu.add_item("Action: Play Card", 1)
@@ -412,6 +414,27 @@ func _load_ai_graph(file_name: String):
 		if err != OK:
 			print("-> FEL: Kunde inte dra sladd från ", conn["from_node"], " till ", conn["to_node"])
 	print("Laddade in AI-trädet framgångsrikt!")
+
+func _on_test_button_pressed():
+	# 1. Spara AI:n först så vi testar den senaste versionen!
+	_on_save_button_pressed()
+	
+	# 2. Skapa det flytande fönstret
+	var test_window = Window.new()
+	test_window.title = "Test Match: " + AiManager.file_to_edit
+	test_window.size = Vector2i(1280, 720) # En bra storlek för ett kortspel
+	test_window.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_MAIN_WINDOW_SCREEN
+	
+	# När man klickar på krysset (X) i fönstret, radera det från minnet
+	test_window.close_requested.connect(test_window.queue_free)
+	
+	# 3. Ladda in din VisualMatch-scen
+	# Byt ut sökvägen om din VisualMatch.tscn ligger i en annan mapp!
+	var match_scene = load("res://game/VisualMatch.scn").instantiate()
+	
+	# 4. Lägg in matchen i fönstret, och fönstret i editorn
+	test_window.add_child(match_scene)
+	add_child(test_window)
 
 func _create_default_start_node():
 	var root = root_node_scene.instantiate()

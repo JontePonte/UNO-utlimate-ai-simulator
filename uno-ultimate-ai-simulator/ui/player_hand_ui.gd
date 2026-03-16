@@ -35,7 +35,9 @@ func update_hand(hand_cards: Array, show_face: bool = true):
 		
 		# Koppla klick-signalen (vi vill nog bara att människan ska kunna klicka, 
 		# men vi låter signalen finnas kvar för enkelhetens skull)
-		visual_card.card_clicked.connect(get_tree().current_scene._on_card_ui_clicked)
+		var match_node = get_tree().get_first_node_in_group("visual_match")
+		if match_node:
+			visual_card.card_clicked.connect(match_node._on_card_ui_clicked)
 		
 	# 3. Kalla på vår nya beräkning efter en frame
 	call_deferred("_adjust_card_spacing")

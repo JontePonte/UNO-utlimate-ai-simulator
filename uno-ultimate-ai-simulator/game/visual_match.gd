@@ -67,6 +67,7 @@ var player_uis: Array[PlayerHandUI] = []
 @export var edge_margin: float = 100.0 
 
 func _ready():
+	add_to_group("visual_match")
 	await get_tree().process_frame
 	
 	Engine.time_scale = GameSettings.game_speed

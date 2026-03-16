@@ -53,6 +53,7 @@ layout_mode = 2
 text = "<- Back to Menu"
 
 [node name="RenameButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=804307129]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "Rename AI"
 
@@ -62,6 +63,11 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2maqe")
 theme_override_styles/hover = SubResource("StyleBoxFlat_kgwxg")
 text = "Save AI"
+
+[node name="TestButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=36678182]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Test AI"
 
 [node name="GraphContextMenu" type="PopupMenu" parent="." unique_id=1224044069]
 
