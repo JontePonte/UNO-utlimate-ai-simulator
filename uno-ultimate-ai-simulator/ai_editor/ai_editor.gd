@@ -28,6 +28,7 @@ var has_unsaved_changes: bool = false
 var unsaved_dialog: ConfirmationDialog
 
 func _ready():
+	AiManager.ai_node_executing.connect(_on_ai_node_executing)
 	back_button.pressed.connect(_on_back_button_pressed)
 	rename_button.pressed.connect(_on_rename_button_pressed)
 	save_button.pressed.connect(_on_save_button_pressed)
@@ -477,6 +478,23 @@ func _on_test_match_selected(id: int):
 	test_window.add_child(match_scene)
 	add_child(test_window)
 
+# --- VISUELL DEBUGGING ---
+func _on_ai_node_executing(node_name: String):
+	# Hitta noden i vår GraphEdit
+	var node = graph_edit.get_node_or_null(NodePath(node_name))
+	
+	if node != null and node is GraphNode:
+		# 1. Sätt nodens färg till knallgul (eller vilken färg du vill att den ska lysa i)
+		# modulate fungerar som ett färgfilter över hela noden
+		node.modulate = Color(2.0, 2.0, 1.0) # Över 1.0 skapar en "glow"-effekt om du har glow påslaget, annars bara starkt gul
+		
+		# 2. Skapa en Tween för att tona tillbaka färgen mjukt
+		var tween = get_tree().create_tween()
+		
+		# Tona tillbaka nodens 'modulate' till Color.WHITE (standardfärg) över 1.0 sekunder.
+		# TRANS_EXPO och EASE_OUT gör att den "släcks" snabbt först och sen mjukt på slutet.
+		tween.tween_property(node, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+
 func _create_default_start_node():
 	var root = root_node_scene.instantiate()
 	root.name = "RootNode" # Tvingar den att heta RootNode internt
@@ -492,10 +510,9 @@ func _get_connected_node(from_node_name: String, from_port: int) -> String:
 			return conn["to_node"]
 	return "" # Returnerar tomt om ingen sladd är dragen
 
-# Den magiska rekursiva funktionen!
+# Den magiska rekursiva funktionen (Nu med Editor-ID!)
 func _build_logic_tree(current_node_name: String) -> Dictionary:
 	if current_node_name == "":
-		# Om tråden slutar i tomma intet, gör en fallback till "Draw Card"
 		return {"type": "action", "name": "draw_card"}
 		
 	var node = graph_edit.get_node_or_null(NodePath(current_node_name))
@@ -504,31 +521,30 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 		
 	var result = {}
 	
-	# Är det en ACTION-nod?
+	# --- NYTT: Spara nodens namn i trädet så matchen vet vilken nod det är! ---
+	result["editor_node"] = current_node_name 
+	# ------------------------------------------------------------------------
+	
 	if "Action:" in node.title:
 		result["type"] = "action"
 		
-		# Beroende på VILKEN action det är, och vad dropdownen står på:
 		if node.title == "Action: Draw Card":
 			result["name"] = "draw_card"
 		elif node.title == "Action: Play Card":
 			var dropdown = node.get_node("OptionButton")
 			if dropdown.selected == 0: result["name"] = "play_first_playable"
 			elif dropdown.selected == 1: result["name"] = "play_playable_attack_card"
-			elif dropdown.selected == 2: result["name"] = "play_color_card" # Bara ett exempel!
+			elif dropdown.selected == 2: result["name"] = "play_color_card" 
 			
 		return result
 		
-	# Är det en CONDITION-nod?
 	elif "Condition:" in node.title:
 		result["type"] = "condition"
 		
 		var dropdown = node.get_node("OptionButton")
 		if dropdown.selected == 0: result["name"] = "can_play_any_card"
 		elif dropdown.selected == 1: result["name"] = "has_playable_attack_card"
-		# ... (här kan vi lägga till fler matchningar för de andra dropdown-valen senare)
 		
-		# Nu kommer magin: Vi bygger True och False-grenarna genom att anropa oss själva!
 		var true_node_name = _get_connected_node(current_node_name, 0)
 		var false_node_name = _get_connected_node(current_node_name, 1)
 		
@@ -537,7 +553,6 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 		
 		return result
 		
-	# Fallback om något går fel
 	return {"type": "action", "name": "draw_card"}
 
 func _input(event):

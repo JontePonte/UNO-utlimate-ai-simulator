@@ -1,7 +1,12 @@
 extends Node
 
+# Denna signal skickas ut av matchen när en AI-regel körs.
+# Editorn lyssnar på den för att veta vilken GraphNode som ska blinka!
+signal ai_node_executing(node_name: String)
+
 const AI_FOLDER_PATH = "user://ai_profiles/"
 var file_to_edit: String = ""
+
 
 func _ready():
 	_ensure_ai_folder_exists()

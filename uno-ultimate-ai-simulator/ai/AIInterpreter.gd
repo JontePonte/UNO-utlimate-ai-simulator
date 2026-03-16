@@ -29,6 +29,13 @@ func choose_action(view: PlayerView) -> PlayerAction:
 
 # Den rekursiva funktionen som vandrar genom trädet
 func _process_node(node: Dictionary, view: PlayerView) -> PlayerAction:
+	
+	# --- STEG 2.5: SKRIK I MEGAFONEN! ---
+	# Om noden har ett sparat namn från editorn, skicka ut det!
+	if node.has("editor_node"):
+		AiManager.ai_node_executing.emit(node["editor_node"])
+	# ------------------------------------
+	
 	var type = node.get("type", "")
 	
 	# 1. Om vi nått en handling (Action)
