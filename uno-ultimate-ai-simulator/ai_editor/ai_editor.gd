@@ -422,14 +422,18 @@ func _on_test_button_pressed():
 	# 2. Skapa det flytande fönstret
 	var test_window = Window.new()
 	test_window.title = "Test Match: " + AiManager.file_to_edit
-	test_window.size = Vector2i(1280, 720) # En bra storlek för ett kortspel
+	test_window.size = Vector2i(1280, 720) 
 	test_window.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_MAIN_WINDOW_SCREEN
+	
+	# --- RÄTT SKALNINGSMETOD ---
+	test_window.content_scale_size = Vector2i(1920, 1080)
+	test_window.content_scale_mode = Window.CONTENT_SCALE_MODE_VIEWPORT # <--- Ändrad till VIEWPORT
+	test_window.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
 	
 	# När man klickar på krysset (X) i fönstret, radera det från minnet
 	test_window.close_requested.connect(test_window.queue_free)
 	
 	# 3. Ladda in din VisualMatch-scen
-	# Byt ut sökvägen om din VisualMatch.tscn ligger i en annan mapp!
 	var match_scene = load("res://game/VisualMatch.scn").instantiate()
 	
 	# 4. Lägg in matchen i fönstret, och fönstret i editorn
