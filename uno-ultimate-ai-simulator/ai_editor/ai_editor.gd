@@ -8,7 +8,7 @@ extends Control
 @onready var back_button = $MarginContainer/HBoxContainer/BackToMenuButton
 @onready var save_button = $MarginContainer/HBoxContainer/SaveButton
 @onready var rename_button = $MarginContainer/HBoxContainer/RenameButton
-@onready var test_button = $MarginContainer/HBoxContainer/TestButton
+@onready var test_menu_button = $MarginContainer/HBoxContainer/TestButton
 @onready var graph_edit = $GraphEdit
 @onready var context_menu = $GraphContextMenu
 @onready var node_context_menu = $NodeContextMenu
@@ -31,7 +31,16 @@ func _ready():
 	back_button.pressed.connect(_on_back_button_pressed)
 	rename_button.pressed.connect(_on_rename_button_pressed)
 	save_button.pressed.connect(_on_save_button_pressed)
-	test_button.pressed.connect(_on_test_button_pressed)
+	
+	# Hämta popup-menyn som tillhör knappen
+	var popup = test_menu_button.get_popup()
+	popup.clear()
+	popup.add_item("Testa: 2 Spelare") # Blir ID 0
+	popup.add_item("Testa: 3 Spelare") # Blir ID 1
+	popup.add_item("Testa: 4 Spelare") # Blir ID 2
+	
+	# Koppla signalen när man klickar på ett alternativ i listan
+	popup.id_pressed.connect(_on_test_match_selected)
 	
 	context_menu.add_item("Action: Draw Card", 0)
 	context_menu.add_item("Action: Play Card", 1)
@@ -415,28 +424,56 @@ func _load_ai_graph(file_name: String):
 			print("-> FEL: Kunde inte dra sladd från ", conn["from_node"], " till ", conn["to_node"])
 	print("Laddade in AI-trädet framgångsrikt!")
 
-func _on_test_button_pressed():
-	# 1. Spara AI:n först så vi testar den senaste versionen!
+func _on_test_match_selected(id: int):
+	# Räkna ut antal spelare baserat på vilket alternativ (ID) vi klickade på
+	var total_players = id + 2 
+	
+	# 1. Spara AI:n först!
 	_on_save_button_pressed()
 	
-	# 2. Skapa det flytande fönstret
+	# 2. Bygg sökvägen till AI:n vi redigerar just nu
+	# Byt ut "res://ai_profiles/" om dina filer sparas någon annanstans
+	var current_ai_path = "user://ai_profiles/" + AiManager.file_to_edit 
+	var current_ai_name = "AI: " + AiManager.file_to_edit.replace(".json", "")
+	
+	# 3. Uppdatera GameSettings dynamiskt
+	# Nollställ först alla platser så de är avstängda, men tvinga korten att synas
+	for key in GameSettings.slots.keys():
+		GameSettings.slots[key].active = false
+		GameSettings.slots[key].is_human = false
+		GameSettings.slots[key].show_cards = true # <-- Du ville att alla kort alltid ska synas!
+		GameSettings.slots[key].ai_name = current_ai_name
+		GameSettings.slots[key].ai_path = current_ai_path
+		
+	# Botten är ALLTID människa och aktiv
+	GameSettings.slots["bottom"].active = true
+	GameSettings.slots["bottom"].is_human = true
+	GameSettings.slots["bottom"].ai_name = "You"
+	
+	# Aktivera rätt antal AI-motståndare baserat på valet
+	if total_players == 2:
+		GameSettings.slots["top"].active = true
+	elif total_players == 3:
+		GameSettings.slots["left"].active = true
+		GameSettings.slots["right"].active = true
+	elif total_players == 4:
+		GameSettings.slots["left"].active = true
+		GameSettings.slots["top"].active = true
+		GameSettings.slots["right"].active = true
+
+	# 4. Skapa det flytande fönstret (Samma kod som förut)
 	var test_window = Window.new()
-	test_window.title = "Test Match: " + AiManager.file_to_edit
+	test_window.title = "Test Match (" + str(total_players) + " players): " + AiManager.file_to_edit
 	test_window.size = Vector2i(1280, 720) 
 	test_window.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_MAIN_WINDOW_SCREEN
 	
-	# --- RÄTT SKALNINGSMETOD ---
 	test_window.content_scale_size = Vector2i(1920, 1080)
-	test_window.content_scale_mode = Window.CONTENT_SCALE_MODE_VIEWPORT # <--- Ändrad till VIEWPORT
+	test_window.content_scale_mode = Window.CONTENT_SCALE_MODE_VIEWPORT
 	test_window.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
 	
-	# När man klickar på krysset (X) i fönstret, radera det från minnet
 	test_window.close_requested.connect(test_window.queue_free)
 	
-	# 3. Ladda in din VisualMatch-scen
 	var match_scene = load("res://game/VisualMatch.scn").instantiate()
-	
-	# 4. Lägg in matchen i fönstret, och fönstret i editorn
 	test_window.add_child(match_scene)
 	add_child(test_window)
 

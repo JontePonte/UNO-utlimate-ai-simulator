@@ -1,6 +1,6 @@
 extends Node
 
-var ai_path1 = "res://ai_profiles/test_ai.json"
+var ai_path1 = "res://ai_profiles/simple_ai.json"
 
 var slots = {
 	"bottom": {"active": true, "is_human": true, "show_cards": true, "ai_name": "You", "ai_path": ai_path1},
