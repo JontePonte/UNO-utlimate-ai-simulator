@@ -17,7 +17,8 @@ var node_to_edit: GraphNode = null
 
 var is_right_dragging: bool = false
 var has_panned: bool = false
-var menu_was_open_on_press: bool = false
+var right_click_start_pos: Vector2 = Vector2.ZERO
+const DRAG_THRESHOLD: float = 10.0 # Antal pixlar vi tillåter musen att skaka
 
 var rename_dialog: ConfirmationDialog
 var rename_input: LineEdit
@@ -34,6 +35,8 @@ func _ready():
 	context_menu.add_item("Action: Play Card", 1)
 	context_menu.add_item("Condition: Check Hand", 2)
 	context_menu.id_pressed.connect(_on_context_menu_id_pressed)
+	context_menu.window_input.connect(_on_menu_window_input.bind(context_menu))
+	node_context_menu.window_input.connect(_on_menu_window_input.bind(node_context_menu))
 	
 	# Lyssna på när GraphEdit ber om en högerklicksmeny (popup_request)
 	graph_edit.delete_nodes_request.connect(_on_delete_nodes_request)	
@@ -108,10 +111,6 @@ func _on_node_gui_input(event: InputEvent, node: GraphNode):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		node.accept_event()
 		
-		# Om vi precis klickade för att stänga en meny, avbryt direkt!
-		if menu_was_open_on_press:
-			return
-			
 		if node.name == "RootNode" or node.title == "AI Start":
 			return # Hoppa ur funktionen direkt
 		
@@ -478,42 +477,45 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 	return {"type": "action", "name": "draw_card"}
 
 func _input(event):
-	# 1. Kolla Ctrl+S (Spara)
+	# Kolla Ctrl+S (Spara)
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_S and event.is_command_or_control_pressed():
 			_on_save_button_pressed()
 			get_viewport().set_input_as_handled()
-			return
-			
-	# 2. Fånga mus-klick INNAN de når noderna
-	if event is InputEventMouseButton and event.pressed:
-		# Låg det en meny uppe när vi klickade?
-		if context_menu.visible or node_context_menu.visible:
-			menu_was_open_on_press = true # Markera att vi precis stängde något
-			context_menu.hide()
-			node_context_menu.hide()
-		else:
-			menu_was_open_on_press = false # Kusten är klar!
+
+func _on_menu_window_input(event: InputEvent, menu: PopupMenu):
+	# Fick menyn ett högerklick tagit på sig?
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		
+		# Stäng just den här menyn!
+		menu.hide()
+		
+		# Säg åt menyn att kasta klicket, så det inte blöder igenom till bakgrunden
+		menu.set_input_as_handled()
 
 func _on_graph_edit_gui_input(event: InputEvent):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if event.pressed:
-			# Bara börja dra om menyn INTE precis stängdes
-			if not menu_was_open_on_press:
-				is_right_dragging = true
-				has_panned = false
+			is_right_dragging = true
+			has_panned = false
+			right_click_start_pos = event.position # Spara exakt var klicket började!
 		else:
-			is_right_dragging = false
-			# Om vi klickade ner för att stänga en meny, strunta i att öppna en ny nu när knappen släpps!
-			if menu_was_open_on_press:
-				return
+			# Knappen släpps
+			if is_right_dragging:
+				is_right_dragging = false
 				
-			if not has_panned:
-				right_click_position = event.position
-				context_menu.position = Vector2i(get_viewport().get_mouse_position())
-				context_menu.popup()
+				# Om vi inte passerade "Deadzone"-gränsen, räknas det som ett vanligt klick!
+				if not has_panned:
+					right_click_position = event.position
+					context_menu.position = Vector2i(get_viewport().get_mouse_position())
+					context_menu.popup()
 				
 	elif event is InputEventMouseMotion and is_right_dragging:
-		has_panned = true
-		graph_edit.scroll_offset -= event.relative / graph_edit.zoom
-		graph_edit.accept_event()
+		# Har vi rört musen tillräckligt långt från startpunkten?
+		if not has_panned and event.position.distance_to(right_click_start_pos) > DRAG_THRESHOLD:
+			has_panned = true # Nu räknas det officiellt som ett drag!
+			
+		# Om vi dragit tillräckligt långt, börja flytta duken
+		if has_panned:
+			graph_edit.scroll_offset -= event.relative / graph_edit.zoom
+			graph_edit.accept_event()
