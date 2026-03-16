@@ -74,6 +74,7 @@ func _ready():
 	
 	speed_slider.value_changed.connect(_on_speed_slider_changed)
 	speed_reset.pressed.connect(_on_reset_button_pressed)
+	AiManager.ai_profile_saved.connect(_on_ai_profile_updated)
 
 	speed_slider.value = GameSettings.game_speed
 	_update_speed(GameSettings.game_speed)
@@ -826,3 +827,39 @@ func _go_back_to_setup():
 	print("Återvänder till Match Setup...")
 	get_tree().paused = false 
 	get_tree().change_scene_to_file("res://menus/MatchSetup.tscn")
+
+# --- VISUELL POPUP I MATCHEN ---
+func _on_ai_profile_updated(saved_file_name: String, _new_data: Dictionary):
+	# Formatera namnet snyggt (ta bort .json)
+	var clean_name = saved_file_name.replace(".json", "")
+	
+	# 1. Skapa en CanvasLayer så texten hamnar överst
+	var canvas = CanvasLayer.new()
+	canvas.layer = 100 
+	add_child(canvas) # <-- Nu fungerar detta, för VisualMatch ÄR en Node!
+	
+	# 2. Skapa själva texten
+	var label = Label.new()
+	label.text = "AI: " + clean_name + " UPDATED!" 
+	
+	# 3. Gör den stor och snygg
+	label.add_theme_font_size_override("font_size", 64)
+	label.add_theme_color_override("font_color", Color(0.965, 0.91, 0.843, 1.0)) 
+	label.add_theme_color_override("font_outline_color", Color.BLACK)
+	label.add_theme_constant_override("outline_size", 12)
+	
+	# 4. Tvinga den till mitten av fönstret
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	
+	canvas.add_child(label)
+	
+	# 5. Animera!
+	var tween = get_tree().create_tween()
+	tween.set_parallel(true)
+	
+	tween.tween_property(label, "position:y", label.position.y - 150, 2.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0, 2.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	
+	tween.chain().tween_callback(canvas.queue_free)
