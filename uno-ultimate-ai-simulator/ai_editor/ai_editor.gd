@@ -15,6 +15,8 @@ extends Control
 var right_click_position: Vector2 = Vector2.ZERO
 var node_to_edit: GraphNode = null
 
+var is_left_dragging: bool = false
+
 var rename_dialog: ConfirmationDialog
 var rename_input: LineEdit
 
@@ -34,6 +36,8 @@ func _ready():
 	# Lyssna på när GraphEdit ber om en högerklicksmeny (popup_request)
 	graph_edit.popup_request.connect(_on_graph_edit_popup_request)
 	graph_edit.delete_nodes_request.connect(_on_delete_nodes_request)
+	
+	graph_edit.gui_input.connect(_on_graph_edit_gui_input)
 	
 	# Sätt upp vår nya nod-meny
 	node_context_menu.add_item("Copy Node", 0)
@@ -494,3 +498,19 @@ func _input(event):
 			
 			# Säg åt Godot: "Jag har tagit hand om det här knapptrycket, skicka det inte vidare"
 			get_viewport().set_input_as_handled()
+
+func _on_graph_edit_gui_input(event: InputEvent):
+	# 1. Klickar vi ner eller släpper vi vänster musknapp på bakgrunden?
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			is_left_dragging = true
+		else:
+			is_left_dragging = false
+
+	# 2. Drar vi musen medan vänsterknappen är nedtryckt?
+	elif event is InputEventMouseMotion and is_left_dragging:
+		# Panorera skärmen!
+		graph_edit.scroll_offset -= event.relative / graph_edit.zoom
+		
+		# Säg åt Godot att vi har hanterat draget (hindrar spelet från att försöka rita en markeringsruta)
+		graph_edit.accept_event()
