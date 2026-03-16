@@ -303,6 +303,7 @@ func _on_save_button_pressed():
 		file.store_string(JSON.stringify(save_data, "\t"))
 		file.close()
 		print("Sparandet lyckades!")
+		AiManager.ai_profile_saved.emit(AiManager.file_to_edit, save_data)
 	else:
 		print("Kunde inte öppna filen för att spara: ", file_path)
 	

@@ -1,8 +1,10 @@
 extends Node
 
-# Denna signal skickas ut av matchen när en AI-regel körs.
-# Editorn lyssnar på den för att veta vilken GraphNode som ska blinka!
+# --- MEGAFONEN ---
 signal ai_node_executing(node_name: String)
+
+# --- NY MEGAFON: Hjärntransplantation! ---
+signal ai_profile_saved(file_name: String, new_data: Dictionary)
 
 const AI_FOLDER_PATH = "user://ai_profiles/"
 var file_to_edit: String = ""

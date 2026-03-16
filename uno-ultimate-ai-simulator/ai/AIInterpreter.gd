@@ -3,8 +3,11 @@ class_name AIInterpreter
 
 # AI:ns inlästa "hjärna"
 var brain_data: Dictionary = {}
+var current_file_path: String = "" # <-- NY: Håller koll på vår fil
 
 func load_profile(file_path: String):
+	current_file_path = file_path # Spara sökvägen
+	
 	if not FileAccess.file_exists(file_path): 
 		return
 		
@@ -14,6 +17,17 @@ func load_profile(file_path: String):
 	
 	if json_data:
 		load_from_data(json_data)
+		
+	# --- NYTT: Börja lyssna på uppdateringar om vi inte redan gör det ---
+	if not AiManager.ai_profile_saved.is_connected(_on_ai_profile_saved):
+		AiManager.ai_profile_saved.connect(_on_ai_profile_saved)
+
+# --- NY FUNKTION: Byt hjärna i realtid ---
+func _on_ai_profile_saved(saved_file_name: String, new_data: Dictionary):
+	# Kolla så att det är VÅR fil som har sparats (ifall det finns andra AI i matchen)
+	if current_file_path.ends_with(saved_file_name):
+		print(ai_name + " fick en live-uppdatering av sin hjärna!")
+		load_from_data(new_data) # Ladda in det nya trädet!
 
 func load_from_data(data: Dictionary):
 	brain_data = data
