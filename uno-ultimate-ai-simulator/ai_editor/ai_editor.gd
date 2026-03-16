@@ -17,7 +17,7 @@ var node_to_edit: GraphNode = null
 
 var is_right_dragging: bool = false
 var has_panned: bool = false
-var last_menu_close_time: int = 0
+var menu_was_open_on_press: bool = false
 
 var rename_dialog: ConfirmationDialog
 var rename_input: LineEdit
@@ -36,10 +36,7 @@ func _ready():
 	context_menu.id_pressed.connect(_on_context_menu_id_pressed)
 	
 	# Lyssna på när GraphEdit ber om en högerklicksmeny (popup_request)
-	graph_edit.delete_nodes_request.connect(_on_delete_nodes_request)
-	context_menu.popup_hide.connect(func(): last_menu_close_time = Time.get_ticks_msec())
-	node_context_menu.popup_hide.connect(func(): last_menu_close_time = Time.get_ticks_msec())
-	
+	graph_edit.delete_nodes_request.connect(_on_delete_nodes_request)	
 	graph_edit.gui_input.connect(_on_graph_edit_gui_input)
 	
 	# Sätt upp vår nya nod-meny
@@ -111,10 +108,10 @@ func _on_node_gui_input(event: InputEvent, node: GraphNode):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		node.accept_event()
 		
-		# Om en meny PRECIS stängdes av detta klick, strunta i att öppna en ny!
-		if Time.get_ticks_msec() - last_menu_close_time < 100:
+		# Om vi precis klickade för att stänga en meny, avbryt direkt!
+		if menu_was_open_on_press:
 			return
-		
+			
 		if node.name == "RootNode" or node.title == "AI Start":
 			return # Hoppa ur funktionen direkt
 		
@@ -481,28 +478,41 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 	return {"type": "action", "name": "draw_card"}
 
 func _input(event):
-	# Kolla Ctrl+S (Spara)
+	# 1. Kolla Ctrl+S (Spara)
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_S and event.is_command_or_control_pressed():
 			_on_save_button_pressed()
 			get_viewport().set_input_as_handled()
+			return
+			
+	# 2. Fånga mus-klick INNAN de når noderna
+	if event is InputEventMouseButton and event.pressed:
+		# Låg det en meny uppe när vi klickade?
+		if context_menu.visible or node_context_menu.visible:
+			menu_was_open_on_press = true # Markera att vi precis stängde något
+			context_menu.hide()
+			node_context_menu.hide()
+		else:
+			menu_was_open_on_press = false # Kusten är klar!
 
 func _on_graph_edit_gui_input(event: InputEvent):
-	# 1. Hantera högerklick på bakgrunden
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if event.pressed:
-			is_right_dragging = true
-			has_panned = false # Nollställ
+			# Bara börja dra om menyn INTE precis stängdes
+			if not menu_was_open_on_press:
+				is_right_dragging = true
+				has_panned = false
 		else:
 			is_right_dragging = false
-			
-			# Öppna menyn BARA om vi inte drog i duken, OCH om vi inte precis stängde en meny!
-			if not has_panned and (Time.get_ticks_msec() - last_menu_close_time > 100):
+			# Om vi klickade ner för att stänga en meny, strunta i att öppna en ny nu när knappen släpps!
+			if menu_was_open_on_press:
+				return
+				
+			if not has_panned:
 				right_click_position = event.position
 				context_menu.position = Vector2i(get_viewport().get_mouse_position())
 				context_menu.popup()
-
-	# 2. Panorera om vi drar med högerklicket nertryckt
+				
 	elif event is InputEventMouseMotion and is_right_dragging:
 		has_panned = true
 		graph_edit.scroll_offset -= event.relative / graph_edit.zoom
