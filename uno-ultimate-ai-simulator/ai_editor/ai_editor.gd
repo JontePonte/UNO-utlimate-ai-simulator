@@ -465,8 +465,12 @@ func _on_test_match_selected(id: int):
 	# 4. Skapa det flytande fönstret (Samma kod som förut)
 	var test_window = Window.new()
 	test_window.title = "Test Match (" + str(total_players) + " players): " + AiManager.file_to_edit
-	test_window.size = Vector2i(1280, 720) 
-	test_window.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_MAIN_WINDOW_SCREEN
+	test_window.size = Vector2i(1024, 576) 
+	test_window.initial_position = Window.WINDOW_INITIAL_POSITION_ABSOLUTE
+	
+	# Sätt positionen (X, Y). 
+	# X = avstånd från vänsterkant, Y = avstånd från överkant.
+	test_window.position = Vector2i(850, 100)
 	
 	test_window.content_scale_size = Vector2i(1920, 1080)
 	test_window.content_scale_mode = Window.CONTENT_SCALE_MODE_VIEWPORT
@@ -484,16 +488,19 @@ func _on_ai_node_executing(node_name: String):
 	var node = graph_edit.get_node_or_null(NodePath(node_name))
 	
 	if node != null and node is GraphNode:
-		# 1. Sätt nodens färg till knallgul (eller vilken färg du vill att den ska lysa i)
-		# modulate fungerar som ett färgfilter över hela noden
-		node.modulate = Color(2.0, 2.0, 1.0) # Över 1.0 skapar en "glow"-effekt om du har glow påslaget, annars bara starkt gul
+		# 1. En ännu starkare, nästan "neon-gul" färg. 
+		# (Testa Color(0.5, 2.5, 0.5) om du hellre vill ha en stark grön färg!)
+		node.modulate = Color(2.5, 2.5, 0.5) 
 		
-		# 2. Skapa en Tween för att tona tillbaka färgen mjukt
+		# 2. Skapa en Tween
 		var tween = get_tree().create_tween()
 		
-		# Tona tillbaka nodens 'modulate' till Color.WHITE (standardfärg) över 1.0 sekunder.
-		# TRANS_EXPO och EASE_OUT gör att den "släcks" snabbt först och sen mjukt på slutet.
-		tween.tween_property(node, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+		# 3. NYTT TRICK: Låt noden lysa på maxstyrka i 0.5 sekunder först
+		tween.tween_interval(0.5)
+		
+		# 4. Tona sedan mjukt tillbaka till vitt över 1.5 sekunder.
+		# TRANS_SINE gör övergången mycket jämnare och lugnare än EXPO.
+		tween.tween_property(node, "modulate", Color.WHITE, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 func _create_default_start_node():
 	var root = root_node_scene.instantiate()
