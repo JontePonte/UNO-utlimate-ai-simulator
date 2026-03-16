@@ -15,7 +15,9 @@ extends Control
 var right_click_position: Vector2 = Vector2.ZERO
 var node_to_edit: GraphNode = null
 
-var is_left_dragging: bool = false
+var is_right_dragging: bool = false
+var has_panned: bool = false
+var last_menu_close_time: int = 0
 
 var rename_dialog: ConfirmationDialog
 var rename_input: LineEdit
@@ -34,8 +36,9 @@ func _ready():
 	context_menu.id_pressed.connect(_on_context_menu_id_pressed)
 	
 	# Lyssna på när GraphEdit ber om en högerklicksmeny (popup_request)
-	graph_edit.popup_request.connect(_on_graph_edit_popup_request)
 	graph_edit.delete_nodes_request.connect(_on_delete_nodes_request)
+	context_menu.popup_hide.connect(func(): last_menu_close_time = Time.get_ticks_msec())
+	node_context_menu.popup_hide.connect(func(): last_menu_close_time = Time.get_ticks_msec())
 	
 	graph_edit.gui_input.connect(_on_graph_edit_gui_input)
 	
@@ -72,15 +75,6 @@ func _on_back_button_pressed():
 	else:
 		get_tree().change_scene_to_file("res://menus/CreateAndEditAI.tscn")
 
-func _on_graph_edit_popup_request(p_position: Vector2):
-	# Spara positionen där musen är just nu
-	right_click_position = p_position
-	
-	# Flytta menyn till musens position och visa den!
-	# p_position är musens position relativt till skärmen, så vi använder get_screen_position() + p_position
-	context_menu.position = Vector2i(get_viewport().get_mouse_position())
-	context_menu.popup()
-
 func _on_context_menu_id_pressed(id: int):
 	_mark_unsaved()
 	if id == 0:
@@ -116,6 +110,10 @@ func _on_node_gui_input(event: InputEvent, node: GraphNode):
 	# Koll om det är ett högerklick!
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		node.accept_event()
+		
+		# Om en meny PRECIS stängdes av detta klick, strunta i att öppna en ny!
+		if Time.get_ticks_msec() - last_menu_close_time < 100:
+			return
 		
 		if node.name == "RootNode" or node.title == "AI Start":
 			return # Hoppa ur funktionen direkt
@@ -284,7 +282,6 @@ func _on_save_button_pressed():
 			# Har denna nod en dropdown-meny (OptionButton)? I så fall, spara vad som är valt!
 			if child.has_node("OptionButton"):
 				var dropdown = child.get_node("OptionButton")
-				dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 				node_info["selected_index"] = dropdown.selected # Sparar siffran (0, 1, 2...)
 				
 			save_data["visual_data"]["nodes"].append(node_info)
@@ -456,7 +453,6 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 			result["name"] = "draw_card"
 		elif node.title == "Action: Play Card":
 			var dropdown = node.get_node("OptionButton")
-			dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 			if dropdown.selected == 0: result["name"] = "play_first_playable"
 			elif dropdown.selected == 1: result["name"] = "play_playable_attack_card"
 			elif dropdown.selected == 2: result["name"] = "play_color_card" # Bara ett exempel!
@@ -468,7 +464,6 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 		result["type"] = "condition"
 		
 		var dropdown = node.get_node("OptionButton")
-		dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 		if dropdown.selected == 0: result["name"] = "can_play_any_card"
 		elif dropdown.selected == 1: result["name"] = "has_playable_attack_card"
 		# ... (här kan vi lägga till fler matchningar för de andra dropdown-valen senare)
@@ -486,31 +481,29 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 	return {"type": "action", "name": "draw_card"}
 
 func _input(event):
-	# Kolla om det är ett tangentbordstryck, att knappen trycks NER (inte släpps upp),
-	# och att det inte är ett "eko" (att man håller in knappen)
+	# Kolla Ctrl+S (Spara)
 	if event is InputEventKey and event.pressed and not event.echo:
-		
-		# Kolla om knappen är 'S', och om Ctrl (eller Cmd på Mac) hålls inne!
 		if event.keycode == KEY_S and event.is_command_or_control_pressed():
-			
-			# Anropa vår vanliga spara-funktion!
 			_on_save_button_pressed()
-			
-			# Säg åt Godot: "Jag har tagit hand om det här knapptrycket, skicka det inte vidare"
 			get_viewport().set_input_as_handled()
 
 func _on_graph_edit_gui_input(event: InputEvent):
-	# 1. Klickar vi ner eller släpper vi vänster musknapp på bakgrunden?
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+	# 1. Hantera högerklick på bakgrunden
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if event.pressed:
-			is_left_dragging = true
+			is_right_dragging = true
+			has_panned = false # Nollställ
 		else:
-			is_left_dragging = false
+			is_right_dragging = false
+			
+			# Öppna menyn BARA om vi inte drog i duken, OCH om vi inte precis stängde en meny!
+			if not has_panned and (Time.get_ticks_msec() - last_menu_close_time > 100):
+				right_click_position = event.position
+				context_menu.position = Vector2i(get_viewport().get_mouse_position())
+				context_menu.popup()
 
-	# 2. Drar vi musen medan vänsterknappen är nedtryckt?
-	elif event is InputEventMouseMotion and is_left_dragging:
-		# Panorera skärmen!
+	# 2. Panorera om vi drar med högerklicket nertryckt
+	elif event is InputEventMouseMotion and is_right_dragging:
+		has_panned = true
 		graph_edit.scroll_offset -= event.relative / graph_edit.zoom
-		
-		# Säg åt Godot att vi har hanterat draget (hindrar spelet från att försöka rita en markeringsruta)
 		graph_edit.accept_event()
