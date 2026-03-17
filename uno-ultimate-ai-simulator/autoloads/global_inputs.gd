@@ -1,5 +1,8 @@
 extends Node
 
+func _ready():
+	toggle_window_mode()
+
 func _input(event):
 	# Vi använder _input istället för _unhandled för att "hinna först"
 	if event is InputEventKey and event.pressed and event.keycode == KEY_F11:
@@ -31,7 +34,7 @@ func toggle_window_mode():
 		
 		# 4. Centrera
 		var screen_rect = DisplayServer.screen_get_usable_rect()
-		var center_pos = screen_rect.position + (screen_rect.size / 2) - (Vector2i(1600, 900) / 2)
+		var center_pos = screen_rect.position + (screen_rect.size / 2) - (Vector2i(1600*0.5, 900*0.5))
 		DisplayServer.window_set_position(center_pos, main_id)
 
 	print("Bytte läge! Nytt läge: ", DisplayServer.window_get_mode(main_id))
