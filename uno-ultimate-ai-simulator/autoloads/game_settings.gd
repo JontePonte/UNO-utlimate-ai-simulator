@@ -12,6 +12,9 @@ var slots = {
 var max_turns: int = 500
 var game_speed: float = 1.0
 
+# Berättar om vi spelar på riktigt eller bara testar i editorn
+var is_test_mode: bool = false
+
 func get_active_player_count() -> int:
 	var count = 0
 	for s in slots.values():

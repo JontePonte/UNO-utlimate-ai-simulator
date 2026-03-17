@@ -462,7 +462,10 @@ func _on_test_match_selected(id: int):
 		GameSettings.slots["left"].active = true
 		GameSettings.slots["top"].active = true
 		GameSettings.slots["right"].active = true
-
+	
+	# BERÄTTA ATT DETTA ÄR ETT TEST!
+	GameSettings.is_test_mode = true
+	
 	# 4. Skapa det flytande fönstret (Samma kod som förut)
 	var test_window = Window.new()
 	test_window.title = "Test Match (" + str(total_players) + " players): " + AiManager.file_to_edit

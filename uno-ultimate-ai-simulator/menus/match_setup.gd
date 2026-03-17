@@ -206,6 +206,7 @@ func _save_settings_to_autoload():
 	print("Sparar inställningar till GameSettings...")
 	
 	# --- GLOBALA INSTÄLLNINGAR ---
+	GameSettings.is_test_mode = false
 	GameSettings.game_speed = speed_slider.value
 	GameSettings.max_turns = int(max_turns_slider.value)
 	

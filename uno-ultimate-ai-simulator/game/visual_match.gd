@@ -95,6 +95,19 @@ func _ready():
 	game_over_back_button.pressed.connect(_on_game_over_back_pressed)
 	game_over_main_menu_btn.pressed.connect(_go_to_main_menu)
 	
+	if GameSettings.is_test_mode:
+		# Dölj knappar som vi inte vill ha i editorn
+		pause_back_button.hide()
+		pause_exit_button.hide()
+		pause_main_menu_btn.hide()
+		
+		game_over_main_menu_btn.hide()
+		game_over_back_button.hide()
+		exit_button.hide()
+	# Many add a close test game button
+	else:
+		pass
+	
 	_update_layout()
 	start_real_game()
 
