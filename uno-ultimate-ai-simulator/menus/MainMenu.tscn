@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dkmud1ys5kvv6"]
 
 [ext_resource type="Script" uid="uid://boa2tcqu417fr" path="res://menus/main_menu.gd" id="1_ot3ob"]
-[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="2_218cn"]
+[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="2_218cn"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
 font = ExtResource("2_218cn")
@@ -12,7 +12,7 @@ shadow_size = 21
 shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(-4, 1)
 
-[node name="MatchSetup" type="Control" unique_id=1779067515]
+[node name="MainMenu" type="Control" unique_id=1779067515]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
