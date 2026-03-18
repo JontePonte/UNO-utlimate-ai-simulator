@@ -711,10 +711,22 @@ func _on_game_ended(winner_index: int):
 	tween.tween_property(game_over_overlay, "modulate:a", 1.0, fade_time)
 
 func _on_restart_pressed():
-	# Godots absolut bästa funktion för snabba omstarter!
-	# Detta laddar om hela scenen från noll, blandar om leken och nollställer AI:n.
 	get_tree().paused = false
-	get_tree().reload_current_scene()
+	
+	if GameSettings.is_test_mode:
+		# LOKAL OMSTART FÖR TESTLÄGET
+		# 1. Hämta sökvägen till den här scenen (t.ex. "res://VisualMatch.tscn")
+		var my_scene_path = scene_file_path
+		# 2. Ladda scenen och skapa en helt ny, fräsch kopia
+		var new_match = load(my_scene_path).instantiate()
+		# 3. Lägg in den nya matchen i samma fönster som vi befinner oss i nu
+		get_parent().add_child(new_match)
+		# 4. Radera den gamla, färdigspelade matchen från fönstret
+		queue_free()
+	else:
+		# VANLIG OMSTART FÖR RIKTIGA SPELET
+		# Detta fungerar bara säkert om VisualMatch är huvudscenen
+		get_tree().reload_current_scene()
 
 func _on_exit_pressed():
 	# Säger åt hela Godot-motorn att stänga ner fönstret och avsluta spelet
