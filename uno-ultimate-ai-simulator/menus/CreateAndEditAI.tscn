@@ -70,12 +70,24 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="CreateNewAIButton" type="Button" parent="MarginContainer/MainVBox/MainHBox/VBoxLeftSide" unique_id=1059933118]
+custom_minimum_size = Vector2(380, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 theme_override_constants/outline_size = 8
 theme_override_fonts/font = ExtResource("3_5yo0l")
 theme_override_font_sizes/font_size = 34
 text = "Create New AI"
+alignment = 0
+
+[node name="ImportAIButton" type="Button" parent="MarginContainer/MainVBox/MainHBox/VBoxLeftSide" unique_id=1722821747]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("3_5yo0l")
+theme_override_font_sizes/font_size = 34
+text = "Import AI from Code"
+alignment = 0
 
 [node name="BottomHBox" type="HBoxContainer" parent="MarginContainer/MainVBox/MainHBox/VBoxLeftSide" unique_id=1408743332]
 layout_mode = 2
@@ -132,6 +144,35 @@ offset_left = 8.0
 offset_top = 8.0
 offset_right = 192.0
 offset_bottom = 51.0
+
+[node name="ImportDialog" type="ConfirmationDialog" parent="." unique_id=1599752344]
+oversampling_override = 1.0
+title = "Import AI"
+position = Vector2i(0, 36)
+size = Vector2i(300, 346)
+ok_button_text = "Import"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ImportDialog" unique_id=227326654]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 292.0
+offset_bottom = 297.0
+
+[node name="NameLabel" type="Label" parent="ImportDialog/VBoxContainer" unique_id=382375642]
+layout_mode = 2
+text = "AI Name:"
+
+[node name="ImportNameInput" type="LineEdit" parent="ImportDialog/VBoxContainer" unique_id=2070938947]
+layout_mode = 2
+placeholder_text = "empty will use stored name"
+
+[node name="CodeLabel" type="Label" parent="ImportDialog/VBoxContainer" unique_id=237655954]
+layout_mode = 2
+text = "Paste AI Code Here:"
+
+[node name="ImportCodeInput" type="TextEdit" parent="ImportDialog/VBoxContainer" unique_id=68635808]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
 
 [node name="DeleteDialog" type="ConfirmationDialog" parent="." unique_id=1305693864]
 oversampling_override = 1.0

@@ -7,11 +7,16 @@ extends Control
 @onready var exit_game_button = $MarginContainer/MainVBox/MainHBox/VBoxLeftSide/BottomHBox/HBoxBackExit/ExitGame
 
 @onready var create_new_btn = $MarginContainer/MainVBox/MainHBox/VBoxLeftSide/CreateNewAIButton
+@onready var import_ai_btn = $MarginContainer/MainVBox/MainHBox/VBoxLeftSide/ImportAIButton
 
 # -- POPUPS --
 @onready var name_dialog = $NameDialog
 @onready var name_input = $NameDialog/LineEdit
 @onready var delete_dialog = $DeleteDialog
+
+@onready var import_dialog = $ImportDialog
+@onready var import_name_input = $ImportDialog/VBoxContainer/ImportNameInput
+@onready var import_code_input = $ImportDialog/VBoxContainer/ImportCodeInput
 
 # -- VARIABLER FÖR ATT MINNAS VAD VI KLICKADE PÅ --
 var current_file_to_copy: String = ""
@@ -26,7 +31,10 @@ func _ready():
 	
 	# Koppla OK-knapparna för våra popups
 	name_dialog.confirmed.connect(_on_name_dialog_confirmed)
-	delete_dialog.confirmed.connect(_on_delete_dialog_confirmed) # NY!
+	delete_dialog.confirmed.connect(_on_delete_dialog_confirmed)
+	
+	import_ai_btn.pressed.connect(_on_import_ai_pressed)
+	import_dialog.confirmed.connect(_on_import_dialog_confirmed)
 
 func populate_ai_list():
 	for child in ai_list_container.get_children():
@@ -202,3 +210,60 @@ func _show_toast(message: String):
 	tween.tween_interval(3.0) 
 	tween.tween_property(toast, "modulate:a", 0.0, 1.0) 
 	tween.tween_callback(toast.queue_free)
+
+# --- IMPORT AI LOGIK ---
+func _on_import_ai_pressed():
+	# 1. Nollställ fälten från förra gången
+	import_name_input.text = ""
+	import_code_input.text = ""
+	
+	# 2. QoL: Har de redan kopierat koden? Klistra in den automatiskt!
+	var clipboard_text = DisplayServer.clipboard_get()
+	if clipboard_text.begins_with("{") and clipboard_text.ends_with("}"):
+		import_code_input.text = clipboard_text
+	
+	# 3. Visa rutan
+	import_dialog.popup_centered()
+	import_name_input.grab_focus()
+
+func _on_import_dialog_confirmed():
+	var new_name = import_name_input.text.strip_edges()
+	var pasted_code = import_code_input.text.strip_edges()
+	
+	# 1. Säkerhetskollar
+	if new_name == "":
+		_show_toast("Error: Please provide a name for the AI.")
+		return
+		
+	if pasted_code == "":
+		_show_toast("Error: No code pasted!")
+		return
+		
+	if not new_name.ends_with(".json"): 
+		new_name += ".json"
+		
+	# 2. Validera att koden faktiskt är fungerande JSON
+	var json = JSON.new()
+	var error = json.parse(pasted_code)
+	
+	if error != OK:
+		_show_toast("Error: The pasted code is invalid or corrupted.")
+		return
+		
+	# 3. Validera att det faktiskt är en AI-profil (och inte typ ett recept på pannkakor)
+	var data = json.get_data()
+	if typeof(data) != TYPE_DICTIONARY or not data.has("visual_data"):
+		_show_toast("Error: The code doesn't look like a valid AI profile.")
+		return
+		
+	# 4. Spara ner filen
+	var dest_path = AiManager.AI_FOLDER_PATH + new_name
+	var new_file = FileAccess.open(dest_path, FileAccess.WRITE)
+	
+	if new_file:
+		new_file.store_string(pasted_code)
+		new_file.close()
+		_show_toast("Success! Imported '" + new_name.replace(".json", "") + "'")
+		populate_ai_list() # Ladda om listan så den nya AI:n dyker upp
+	else:
+		_show_toast("Error: Could not save the file.")
