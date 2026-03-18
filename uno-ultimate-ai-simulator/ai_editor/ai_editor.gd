@@ -4,6 +4,7 @@ extends Control
 @export var action_draw_node_scene: PackedScene
 @export var condition_hand_node_scene: PackedScene
 @export var action_play_node_scene: PackedScene
+@export var condition_table_color_node_scene: PackedScene
 
 @onready var back_button = $MarginContainer/HBoxContainer/BackToMenuButton
 @onready var fullscreen_button = $MarginContainer/HBoxContainer/FullscreenButton
@@ -51,6 +52,7 @@ func _ready():
 	context_menu.add_item("Action: Draw Card", 0)
 	context_menu.add_item("Action: Play Card", 1)
 	context_menu.add_item("Condition: Check Hand", 2)
+	context_menu.add_item("Condition: Table Color", 3)
 	context_menu.id_pressed.connect(_on_context_menu_id_pressed)
 	context_menu.window_input.connect(_on_menu_window_input.bind(context_menu))
 	node_context_menu.window_input.connect(_on_menu_window_input.bind(node_context_menu))
@@ -113,34 +115,42 @@ func _update_fullscreen_button_text(is_fullscreen: bool):
 
 func _on_context_menu_id_pressed(id: int):
 	_mark_unsaved()
+	
+	var new_node: GraphNode = null
+	
+	# 1. Bestäm vilken scen som ska instansieras
 	if id == 0:
-		var new_node = action_draw_node_scene.instantiate()
+		new_node = action_draw_node_scene.instantiate()
+	elif id == 1:
+		new_node = action_play_node_scene.instantiate()
+	elif id == 2:
+		new_node = condition_hand_node_scene.instantiate()
+	elif id == 3: # --- HÄR ÄR DEN NYA NODEN ---
+		new_node = condition_table_color_node_scene.instantiate()
+		
+	# 2. Om vi faktiskt skapade en nod, ställ in den!
+	if new_node != null:
 		graph_edit.add_child(new_node)
 		new_node.dragged.connect(_mark_unsaved.unbind(2))
 		
-		var scroll_offset = graph_edit.scroll_offset
-		new_node.position_offset = right_click_position + scroll_offset
+		#Räkna ut exakt var på duken vi befinner oss, med hänsyn till scroll och zoom!
+		var mouse_pos = graph_edit.get_local_mouse_position()
+		new_node.position_offset = (mouse_pos + graph_edit.scroll_offset) / graph_edit.zoom
 		
-		# NYTT: Säg åt den nya noden att lyssna på musklick!
+		# Säg åt den nya noden att lyssna på musklick
 		new_node.gui_input.connect(_on_node_gui_input.bind(new_node))
-	if id == 1:
-		var new_node = action_play_node_scene.instantiate()
-		graph_edit.add_child(new_node)
-		new_node.dragged.connect(_mark_unsaved.unbind(2))
 		
-		var scroll_offset = graph_edit.scroll_offset
-		new_node.position_offset = right_click_position + scroll_offset
+		# --- BONUS: Få Stjärnan (*) att dyka upp när man ändrar en rullgardin! ---
+		var dropdown = new_node.get_node_or_null("OptionDropdown")
+		if not dropdown: dropdown = new_node.get_node_or_null("OptionsDropdown")
+		if not dropdown: dropdown = new_node.get_node_or_null("OptionButton")
 		
-		new_node.gui_input.connect(_on_node_gui_input.bind(new_node))
-	if id == 2:
-		var new_node = condition_hand_node_scene.instantiate()
-		graph_edit.add_child(new_node)
-		new_node.dragged.connect(_mark_unsaved.unbind(2))
-		
-		var scroll_offset = graph_edit.scroll_offset
-		new_node.position_offset = right_click_position + scroll_offset
-		
-		new_node.gui_input.connect(_on_node_gui_input.bind(new_node))
+		if dropdown:
+			dropdown.item_selected.connect(func(_idx): _mark_unsaved())
+			
+		var color_dropdown = new_node.get_node_or_null("ColorDropdown")
+		if color_dropdown:
+			color_dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 
 func _on_node_gui_input(event: InputEvent, node: GraphNode):
 	# Koll om det är ett högerklick!
@@ -476,6 +486,8 @@ func _load_ai_graph(file_name: String):
 				new_node = root_node_scene.instantiate()
 			"Condition: Check Hand":
 				new_node = condition_hand_node_scene.instantiate()
+			"Condition: Table Color Is":
+				new_node = condition_table_color_node_scene.instantiate()
 			"Action: Play Card":
 				new_node = action_play_node_scene.instantiate()
 			"Action: Draw Card":
@@ -664,8 +676,8 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 					8: result["name"] = "play_same_color"
 					9: result["name"] = "play_same_number"
 					
-				# Hämta färgvalet för BÅDA Wild-korten (Index 2 och 3)
-				if dropdown.selected == 2 or dropdown.selected == 3:
+				# --- RÄTTAD: Hämta färgvalet för Wild-korten (som nu är Index 3 och 4!) ---
+				if dropdown.selected == 3 or dropdown.selected == 4:
 					var color_drop = node.get_node_or_null("ColorDropdown")
 					if color_drop:
 						result["color_choice"] = color_drop.selected
@@ -682,31 +694,39 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 	elif "Condition:" in node.title:
 		result["type"] = "condition"
 		
-		# Leta efter rullgardinen med olika stavningar!
-		var dropdown = node.get_node_or_null("OptionDropdown")
-		if dropdown == null: 
-			dropdown = node.get_node_or_null("OptionsDropdown") # Med 's'
-		if dropdown == null: 
-			dropdown = node.get_node_or_null("OptionButton") # Det gamla namnet! (Rättade typot här)
+		# Kolla VILKEN Condition-nod det är!
+		if node.title == "Condition: Check Hand":
+			var dropdown = node.get_node_or_null("OptionDropdown")
+			if not dropdown: dropdown = node.get_node_or_null("OptionsDropdown")
+			if not dropdown: dropdown = node.get_node_or_null("OptionButton")
 			
-		# Om vi faktiskt hittade den, läs av värdet
-		if dropdown != null:
-			match dropdown.selected:
-				0: result["name"] = "can_play_any_card"
-				1: result["name"] = "has_playable_special_card"
-				2: result["name"] = "has_playable_attack_card"
-				3: result["name"] = "can_play_same_color"
-				4: result["name"] = "can_play_same_number"
-				5: result["name"] = "has_uno"
-				6: result["name"] = "can_play_wild"
-				7: result["name"] = "can_play_wild_draw_four"
-				8: result["name"] = "can_play_draw_two"
-				9: result["name"] = "can_play_skip"
-				10: result["name"] = "can_play_reverse"
-		else:
-			# Om den VERKLIGEN inte finns, förhindra krasch och varna!
-			print("⚠️ SUPER-VARNING: Hittade ingen rullgardin i noden '", node.title, "'!")
-			result["name"] = "can_play_any_card" # Fallback
+			if dropdown != null:
+				match dropdown.selected:
+					0: result["name"] = "can_play_any_card"
+					1: result["name"] = "has_playable_special_card"
+					2: result["name"] = "has_playable_attack_card"
+					3: result["name"] = "can_play_same_color"
+					4: result["name"] = "can_play_same_number"
+					5: result["name"] = "has_uno"
+					6: result["name"] = "can_play_wild"
+					7: result["name"] = "can_play_wild_draw_four"
+					8: result["name"] = "can_play_draw_two"
+					9: result["name"] = "can_play_skip"
+					10: result["name"] = "can_play_reverse"
+			else:
+				result["name"] = "can_play_any_card" # Fallback
+				
+		elif node.title == "Condition: Table Color is":
+			var dropdown = node.get_node_or_null("OptionDropdown")
+			if not dropdown: dropdown = node.get_node_or_null("OptionsDropdown")
+			if not dropdown: dropdown = node.get_node_or_null("OptionButton")
+			
+			if dropdown != null:
+				result["name"] = "compare_table_color"
+				result["rank_choice"] = dropdown.selected # Spara vilket index de valde (0-3)!
+			else:
+				result["name"] = "compare_table_color"
+				result["rank_choice"] = 0 # Fallback till most numerous
 		
 		# Gå vidare i trädet
 		var true_node_name = _get_connected_node(current_node_name, 0)

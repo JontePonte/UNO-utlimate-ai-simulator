@@ -70,7 +70,7 @@ func _process_node(node: Dictionary, view: PlayerView) -> PlayerAction:
 	return PlayerAction.new(null)
 
 # --- LOGIKEN FÖR FRÅGOR (CONDITIONS) ---
-func _evaluate_condition(condition_name: String, view: PlayerView, _node: Dictionary) -> bool:
+func _evaluate_condition(condition_name: String, view: PlayerView, node: Dictionary) -> bool:
 	match condition_name:
 		"can_play_any_card":
 			for card in view.own_hand:
@@ -156,7 +156,19 @@ func _evaluate_condition(condition_name: String, view: PlayerView, _node: Dictio
 				if card.is_playable_on(view.top_discard, view.current_color) and card.value == Card.CardValue.REVERSE:
 					return true
 			return false
+		"compare_table_color":
+			# Hämta vilket val spelaren gjorde (0 = Most numerous ... 3 = Least numerous)
+			# Använder 0 som fallback om inget sparats
+			var target_rank = int(node.get("rank_choice", 0))
 			
+			var ranked_colors = _get_color_ranking(view.own_hand)
+			
+			# Säkerhetskontroll att indexet finns
+			if target_rank >= 0 and target_rank < ranked_colors.size():
+				# Fråga: "Är färgen på bordet just nu Samma Färg som den på plats 'target_rank' i min hand?"
+				return view.current_color == ranked_colors[target_rank]
+				
+			return false
 	return false
 
 # --- LOGIKEN FÖR HANDLINGAR (ACTIONS) ---
@@ -166,7 +178,7 @@ func _execute_action(node: Dictionary, view: PlayerView) -> PlayerAction:
 	match action_name:
 		"play_first_playable":
 			for card in view.own_hand:
-				if card.is_playable_on(view.top_discard, view.current_color) and card.color != Card.CardColor.WILD:
+				if card.is_playable_on(view.top_discard, view.current_color):
 					return _create_action_with_color(card, view, 0)
 		"play_first_special_card":
 			for card in view.own_hand:
