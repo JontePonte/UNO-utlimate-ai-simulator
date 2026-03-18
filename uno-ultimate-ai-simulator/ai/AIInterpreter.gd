@@ -54,7 +54,7 @@ func _process_node(node: Dictionary, view: PlayerView) -> PlayerAction:
 	
 	# 1. Om vi nått en handling (Action)
 	if type == "action":
-		return _execute_action(node.get("name", ""), view)
+		return _execute_action(node, view)
 	
 	# 2. Om vi nått ett villkor (Condition)
 	elif type == "condition":
@@ -70,59 +70,191 @@ func _process_node(node: Dictionary, view: PlayerView) -> PlayerAction:
 	return PlayerAction.new(null)
 
 # --- LOGIKEN FÖR FRÅGOR (CONDITIONS) ---
-func _evaluate_condition(condition_name: String, view: PlayerView, node: Dictionary) -> bool:
+func _evaluate_condition(condition_name: String, view: PlayerView, _node: Dictionary) -> bool:
 	match condition_name:
 		"can_play_any_card":
 			for card in view.own_hand:
 				if card.is_playable_on(view.top_discard, view.current_color):
 					return true
 			return false
-			
-		"has_playable_attack_card":
+		
+		"has_playable_special_card":
 			for card in view.own_hand:
 				if card.is_playable_on(view.top_discard, view.current_color):
-					if card.value in [Card.CardValue.SKIP, Card.CardValue.REVERSE, Card.CardValue.DRAW_TWO, Card.CardValue.WILD_DRAW_FOUR]:
+					# Alla kort som inte är vanliga siffror räknas som special
+					if card.value in [Card.CardValue.SKIP, Card.CardValue.REVERSE, Card.CardValue.DRAW_TWO, Card.CardValue.WILD_DRAW_FOUR] or card.color == Card.CardColor.WILD:
 						return true
 			return false
 			
-		"has_wild_card":
+		"has_playable_attack_card":
+			var is_two_player = view.card_counts.size() == 2
 			for card in view.own_hand:
-				if card.color == Card.CardColor.WILD:
+				if card.is_playable_on(view.top_discard, view.current_color):
+					# +2, Skip och +4 är alltid attacker
+					var is_attack = card.value in [Card.CardValue.SKIP, Card.CardValue.DRAW_TWO, Card.CardValue.WILD_DRAW_FOUR]
+					# Reverse är BARA en attack om man är 2 spelare
+					if is_two_player and card.value == Card.CardValue.REVERSE:
+						is_attack = true
+						
+					if is_attack:
+						return true
+			return false
+		
+		"can_play_same_color":
+			for card in view.own_hand:
+				# Vi letar efter ett kort som matchar spelets nuvarande färg.
+				# Vi ignorerar Wild-kort här (de spelas ju när man VILL byta färg).
+				if card.color == view.current_color and card.color != Card.CardColor.WILD:
+					# Säkerhetskoll att det faktiskt är ett giltigt drag
+					if card.is_playable_on(view.top_discard, view.current_color):
+						return true
+			return false
+			
+		"can_play_same_number":
+			for card in view.own_hand:
+				# Vi vill bara matcha siffror/symboler om det översta kortet INTE är ett Wild-kort
+				if view.top_discard.color != Card.CardColor.WILD:
+					if card.value == view.top_discard.value:
+						if card.is_playable_on(view.top_discard, view.current_color):
+							return true
+			return false
+			
+		"has_uno":
+			# "UNO" betyder ju att man sitter med exakt 1 kort på handen.
+			# Om du hellre vill att AI:n ska reagera precis INNAN den får UNO 
+			# (t.ex. för att skrika "UNO!" när den lägger sitt näst sista kort), 
+			# kan du ändra detta till: return view.own_hand.size() == 2
+			return view.own_hand.size() == 1
+		
+		"can_play_wild":
+			for card in view.own_hand:
+				# Kollar så det är en vanlig Wild (inte +4)
+				if card.color == Card.CardColor.WILD and card.value != Card.CardValue.WILD_DRAW_FOUR:
 					return true
 			return false
 			
-		"chance":
-			# Om vi har en "chance"-nod, läser vi värdet från JSON (standard 50%)
-			var threshold = node.get("value", 50)
-			return (randi() % 100) < threshold
+		"can_play_wild_draw_four":
+			for card in view.own_hand:
+				if card.color == Card.CardColor.WILD and card.value == Card.CardValue.WILD_DRAW_FOUR:
+					return true
+			return false
+			
+		"can_play_draw_two":
+			for card in view.own_hand:
+				if card.is_playable_on(view.top_discard, view.current_color) and card.value == Card.CardValue.DRAW_TWO:
+					return true
+			return false
+			
+		"can_play_skip":
+			for card in view.own_hand:
+				if card.is_playable_on(view.top_discard, view.current_color) and card.value == Card.CardValue.SKIP:
+					return true
+			return false
+			
+		"can_play_reverse":
+			for card in view.own_hand:
+				if card.is_playable_on(view.top_discard, view.current_color) and card.value == Card.CardValue.REVERSE:
+					return true
+			return false
 			
 	return false
 
 # --- LOGIKEN FÖR HANDLINGAR (ACTIONS) ---
-func _execute_action(action_name: String, view: PlayerView) -> PlayerAction:
+func _execute_action(node: Dictionary, view: PlayerView) -> PlayerAction:
+	var action_name = node.get("name", "")
+	
 	match action_name:
 		"play_first_playable":
 			for card in view.own_hand:
-				if card.is_playable_on(view.top_discard, view.current_color):
-					return _create_action_with_color(card)
-					
-		"play_playable_attack_card":
+				if card.is_playable_on(view.top_discard, view.current_color) and card.color != Card.CardColor.WILD:
+					return _create_action_with_color(card, view, 0)
+		"play_first_special_card":
 			for card in view.own_hand:
 				if card.is_playable_on(view.top_discard, view.current_color):
-					if card.value in [Card.CardValue.SKIP, Card.CardValue.REVERSE, Card.CardValue.DRAW_TWO, Card.CardValue.WILD_DRAW_FOUR]:
-						return _create_action_with_color(card)
+					if card.value in [Card.CardValue.SKIP, Card.CardValue.REVERSE, Card.CardValue.DRAW_TWO, Card.CardValue.WILD_DRAW_FOUR] or card.color == Card.CardColor.WILD:
+						# Om det råkar vara ett Wild-kort, låter vi spelet automatiskt välja vår bästa färg (0)
+						return _create_action_with_color(card, view, 0)
+						
+		"play_first_attack_card":
+			var is_two_player = view.card_counts.size() == 2
+			for card in view.own_hand:
+				if card.is_playable_on(view.top_discard, view.current_color):
+					var is_attack = card.value in [Card.CardValue.SKIP, Card.CardValue.DRAW_TWO, Card.CardValue.WILD_DRAW_FOUR]
+					if is_two_player and card.value == Card.CardValue.REVERSE:
+						is_attack = true
+						
+					if is_attack:
+						# Om det råkar vara en +4, låter vi spelet automatiskt välja vår bästa färg
+						return _create_action_with_color(card, view, 0)		
 		
+		"play_wild":
+			for card in view.own_hand:
+				if card.color == Card.CardColor.WILD and card.value != Card.CardValue.WILD_DRAW_FOUR:
+					var color_choice = int(node.get("color_choice", 0))
+					return _create_action_with_color(card, view, color_choice)
+					
+		"play_wild_draw_four":
+			for card in view.own_hand:
+				if card.color == Card.CardColor.WILD and card.value == Card.CardValue.WILD_DRAW_FOUR:
+					var color_choice = int(node.get("color_choice", 0))
+					return _create_action_with_color(card, view, color_choice)
+					
+		"play_draw_two":
+			for card in view.own_hand:
+				if card.is_playable_on(view.top_discard, view.current_color) and card.value == Card.CardValue.DRAW_TWO:
+					return _create_action_with_color(card, view, 0)
+					
+		"play_skip":
+			for card in view.own_hand:
+				if card.is_playable_on(view.top_discard, view.current_color) and card.value == Card.CardValue.SKIP:
+					return _create_action_with_color(card, view, 0)
+					
+		"play_reverse":
+			for card in view.own_hand:
+				if card.is_playable_on(view.top_discard, view.current_color) and card.value == Card.CardValue.REVERSE:
+					return _create_action_with_color(card, view, 0)
+					
+		"play_same_color":
+			for card in view.own_hand:
+				if card.color == view.current_color and card.color != Card.CardColor.WILD:
+					if card.is_playable_on(view.top_discard, view.current_color):
+						return _create_action_with_color(card, view, 0)
+						
+		"play_same_number":
+			for card in view.own_hand:
+				if view.top_discard.color != Card.CardColor.WILD:
+					if card.value == view.top_discard.value:
+						if card.is_playable_on(view.top_discard, view.current_color):
+							return _create_action_with_color(card, view, 0)
+							
 		"draw_card":
 			return PlayerAction.new(null)
 			
-	return PlayerAction.new(null) # Standard: dra kort
+	return PlayerAction.new(null)
 
-# Hjälpfunktion för att hantera färgval om kortet är WILD
-func _create_action_with_color(card: Card) -> PlayerAction:
+func _create_action_with_color(card: Card, view: PlayerView, color_rank: int) -> PlayerAction:
 	var color = card.color
-	if card.color == Card.CardColor.WILD:
-		# Enkel logik för nu: Slumpa färg
-		var colors = [Card.CardColor.RED, Card.CardColor.GREEN, Card.CardColor.BLUE, Card.CardColor.YELLOW]
-		color = colors.pick_random()
 	
+	if card.color == Card.CardColor.WILD:
+		var ranked_colors = _get_color_ranking(view.own_hand)
+		
+		# Kolla så att rankingen är giltig (0 till 3)
+		if color_rank >= 0 and color_rank < ranked_colors.size():
+			color = ranked_colors[color_rank]
+		else:
+			color = ranked_colors[0] # Fallback till bästa färgen
+			
 	return PlayerAction.new(card, color)
+
+# --- HJÄLPFUNKTION: Rangordna färgerna på handen ---
+func _get_color_ranking(hand: Array) -> Array:
+	var counts = {
+		Card.CardColor.RED: 0, Card.CardColor.GREEN: 0,
+		Card.CardColor.BLUE: 0, Card.CardColor.YELLOW: 0
+	}
+	for card in hand:
+		if card.color in counts:
+			counts[card.color] += 1
+	var ranked_colors = counts.keys()
+	ranked_colors.sort_custom(func(a, b): return counts[a] > counts[b])
+	return ranked_colors

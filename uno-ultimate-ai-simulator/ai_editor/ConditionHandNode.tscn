@@ -34,7 +34,7 @@ slot/1/right_icon = null
 slot/1/draw_stylebox = true
 script = ExtResource("1_0shvr")
 
-[node name="OptionButton" type="OptionButton" parent="." unique_id=305183506]
+[node name="OptionDropdown" type="OptionButton" parent="." unique_id=305183506]
 layout_mode = 2
 
 [node name="Lable" type="Label" parent="." unique_id=1143163045]

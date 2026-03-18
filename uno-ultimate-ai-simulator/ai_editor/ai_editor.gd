@@ -344,13 +344,13 @@ func _on_save_button_pressed():
 		"root": _build_logic_tree(first_logic_node) 
 	}
 	
-# 1. SPARA ALLA SLADDAR (Byt ut @ mot _)
+	# 1. SPARA ALLA SLADDAR (Byt ut @ mot _)
 	var all_connections = graph_edit.get_connection_list()
 	for conn in all_connections:
 		save_data["visual_data"]["connections"].append({
-			"from_node": String(conn["from_node"]).replace("@", "_"), # NYTT!
+			"from_node": String(conn["from_node"]).replace("@", "_"),
 			"from_port": conn["from_port"],
-			"to_node": String(conn["to_node"]).replace("@", "_"), # NYTT!
+			"to_node": String(conn["to_node"]).replace("@", "_"),
 			"to_port": conn["to_port"]
 		})
 	
@@ -358,15 +358,21 @@ func _on_save_button_pressed():
 	for child in graph_edit.get_children():
 		if child is GraphNode:
 			var node_info = {
-				"name": child.name.replace("@", "_"), # NYTT: Tvätta namnet!
+				"name": child.name.replace("@", "_"), # Tvätta namnet!
 				"title": child.title,
 				"pos_x": child.position_offset.x,
 				"pos_y": child.position_offset.y
 			}
 			
-			if child.has_node("OptionButton"):
-				var dropdown = child.get_node("OptionButton")
+			# Spara vanliga rullgardinen (OptionDropdown)
+			if child.has_node("OptionDropdown"):
+				var dropdown = child.get_node("OptionDropdown")
 				node_info["selected_index"] = dropdown.selected
+				
+			# --- NYTT: Spara färg-rullgardinen (ColorDropdown) om den finns! ---
+			if child.has_node("ColorDropdown"):
+				var color_dropdown = child.get_node("ColorDropdown")
+				node_info["color_choice"] = color_dropdown.selected
 				
 			save_data["visual_data"]["nodes"].append(node_info)
 			
@@ -478,17 +484,31 @@ func _load_ai_graph(file_name: String):
 				print("-> FEL: Titeln '", node_title, "' matchade ingenting! Felstavat?")
 				
 		if new_node != null:
-			new_node.name = node_data["name"]
+			# Tvätta namnet om filen har gamla '@'-tecken sparade!
+			new_node.name = str(node_data["name"]).replace("@", "_")
 			new_node.position_offset = Vector2(node_data["pos_x"], node_data["pos_y"])
 			graph_edit.add_child(new_node)
 			
 			new_node.gui_input.connect(_on_node_gui_input.bind(new_node))
 			new_node.dragged.connect(_mark_unsaved.unbind(2))
 			
-			if node_data.has("selected_index") and new_node.has_node("OptionButton"):
-				var dropdown = new_node.get_node("OptionButton")
+			# Ladda in vanliga rullgardinen
+			if node_data.has("selected_index") and new_node.has_node("OptionDropdown"):
+				var dropdown = new_node.get_node("OptionDropdown")
 				dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 				dropdown.selected = int(node_data["selected_index"])
+				
+			# --- NYTT: Ladda in färg-rullgardinen och uppdatera utseendet! ---
+			if node_data.has("color_choice") and new_node.has_node("ColorDropdown"):
+				var color_dropdown = new_node.get_node("ColorDropdown")
+				color_dropdown.item_selected.connect(func(_idx): _mark_unsaved())
+				color_dropdown.selected = int(node_data["color_choice"])
+				
+				# Tvinga Action-noden att dölja/visa färgmenyn baserat på vad som precis laddades
+				if new_node.has_method("_on_action_selected"):
+					var a_dropdown = new_node.get_node_or_null("OptionDropdown")
+					if a_dropdown:
+						new_node._on_action_selected(a_dropdown.selected)
 				
 			print("-> Lade till noden: ", new_node.name)
 		else:
@@ -497,9 +517,14 @@ func _load_ai_graph(file_name: String):
 	print("--- BÖRJAR DRA SLADDAR ---")
 	# 4. DRA ALLA SLADDAR
 	for conn in data["visual_data"]["connections"]:
-		var err = graph_edit.connect_node(StringName(conn["from_node"]), conn["from_port"], StringName(conn["to_node"]), conn["to_port"])
+		# Säkerhetstvätta sladdarna från gamla sparningar
+		var safe_from = String(conn["from_node"]).replace("@", "_")
+		var safe_to = String(conn["to_node"]).replace("@", "_")
+		
+		var err = graph_edit.connect_node(StringName(safe_from), conn["from_port"], StringName(safe_to), conn["to_port"])
 		if err != OK:
-			print("-> FEL: Kunde inte dra sladd från ", conn["from_node"], " till ", conn["to_node"])
+			print("-> FEL: Kunde inte dra sladd från ", safe_from, " till ", safe_to)
+			
 	print("Laddade in AI-trädet framgångsrikt!")
 
 func _on_test_match_selected(id: int):
@@ -608,30 +633,82 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 		
 	var result = {}
 	
-	# --- NYTT: Spara nodens namn i trädet så matchen vet vilken nod det är! ---
+	# --- Spara nodens namn i trädet så matchen vet vilken nod det är! ---
 	result["editor_node"] = current_node_name 
-	# ------------------------------------------------------------------------
 	
+	# ==========================================
+	# 1. OM NODEN ÄR EN HANDLING (ACTION)
+	# ==========================================
 	if "Action:" in node.title:
 		result["type"] = "action"
 		
 		if node.title == "Action: Draw Card":
 			result["name"] = "draw_card"
-		elif node.title == "Action: Play Card":
-			var dropdown = node.get_node("OptionButton")
-			if dropdown.selected == 0: result["name"] = "play_first_playable"
-			elif dropdown.selected == 1: result["name"] = "play_playable_attack_card"
-			elif dropdown.selected == 2: result["name"] = "play_color_card" 
 			
+		elif node.title == "Action: Play Card":
+			# Leta efter rullgardinen säkert
+			var dropdown = node.get_node_or_null("OptionDropdown")
+			if not dropdown: dropdown = node.get_node_or_null("OptionsDropdown")
+			if not dropdown: dropdown = node.get_node_or_null("OptionButton")
+			
+			if dropdown:
+				match dropdown.selected:
+					0: result["name"] = "play_first_playable"
+					1: result["name"] = "play_first_special_card"
+					2: result["name"] = "play_first_attack_card"
+					3: result["name"] = "play_wild"
+					4: result["name"] = "play_wild_draw_four"
+					5: result["name"] = "play_draw_two"
+					6: result["name"] = "play_skip"
+					7: result["name"] = "play_reverse"
+					8: result["name"] = "play_same_color"
+					9: result["name"] = "play_same_number"
+					
+				# Hämta färgvalet för BÅDA Wild-korten (Index 2 och 3)
+				if dropdown.selected == 2 or dropdown.selected == 3:
+					var color_drop = node.get_node_or_null("ColorDropdown")
+					if color_drop:
+						result["color_choice"] = color_drop.selected
+					else:
+						result["color_choice"] = 0 # Fallback till Most numerous
+			else:
+				result["name"] = "play_first_playable" # Fallback om noden saknas
+				
 		return result
 		
+	# ==========================================
+	# 2. OM NODEN ÄR ETT VILLKOR (CONDITION)
+	# ==========================================
 	elif "Condition:" in node.title:
 		result["type"] = "condition"
 		
-		var dropdown = node.get_node("OptionButton")
-		if dropdown.selected == 0: result["name"] = "can_play_any_card"
-		elif dropdown.selected == 1: result["name"] = "has_playable_attack_card"
+		# Leta efter rullgardinen med olika stavningar!
+		var dropdown = node.get_node_or_null("OptionDropdown")
+		if dropdown == null: 
+			dropdown = node.get_node_or_null("OptionsDropdown") # Med 's'
+		if dropdown == null: 
+			dropdown = node.get_node_or_null("OptionButton") # Det gamla namnet! (Rättade typot här)
+			
+		# Om vi faktiskt hittade den, läs av värdet
+		if dropdown != null:
+			match dropdown.selected:
+				0: result["name"] = "can_play_any_card"
+				1: result["name"] = "has_playable_special_card"
+				2: result["name"] = "has_playable_attack_card"
+				3: result["name"] = "can_play_same_color"
+				4: result["name"] = "can_play_same_number"
+				5: result["name"] = "has_uno"
+				6: result["name"] = "can_play_wild"
+				7: result["name"] = "can_play_wild_draw_four"
+				8: result["name"] = "can_play_draw_two"
+				9: result["name"] = "can_play_skip"
+				10: result["name"] = "can_play_reverse"
+		else:
+			# Om den VERKLIGEN inte finns, förhindra krasch och varna!
+			print("⚠️ SUPER-VARNING: Hittade ingen rullgardin i noden '", node.title, "'!")
+			result["name"] = "can_play_any_card" # Fallback
 		
+		# Gå vidare i trädet
 		var true_node_name = _get_connected_node(current_node_name, 0)
 		var false_node_name = _get_connected_node(current_node_name, 1)
 		
