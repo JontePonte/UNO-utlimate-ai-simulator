@@ -230,19 +230,11 @@ func _on_import_dialog_confirmed():
 	var new_name = import_name_input.text.strip_edges()
 	var pasted_code = import_code_input.text.strip_edges()
 	
-	# 1. Säkerhetskollar
-	if new_name == "":
-		_show_toast("Error: Please provide a name for the AI.")
-		return
-		
 	if pasted_code == "":
 		_show_toast("Error: No code pasted!")
 		return
 		
-	if not new_name.ends_with(".json"): 
-		new_name += ".json"
-		
-	# 2. Validera att koden faktiskt är fungerande JSON
+	# 1. Validera att koden faktiskt är fungerande JSON FÖRST
 	var json = JSON.new()
 	var error = json.parse(pasted_code)
 	
@@ -250,20 +242,43 @@ func _on_import_dialog_confirmed():
 		_show_toast("Error: The pasted code is invalid or corrupted.")
 		return
 		
-	# 3. Validera att det faktiskt är en AI-profil (och inte typ ett recept på pannkakor)
+	# 2. Hämta datan och kolla att det är en riktig AI-profil
 	var data = json.get_data()
 	if typeof(data) != TYPE_DICTIONARY or not data.has("visual_data"):
 		_show_toast("Error: The code doesn't look like a valid AI profile.")
 		return
 		
-	# 4. Spara ner filen
+	# 3. NYTT: Om de lämnade namnet tomt, sno det från JSON-filen!
+	if new_name == "":
+		if data.has("ai_name") and data["ai_name"] != "":
+			new_name = data["ai_name"]
+		else:
+			new_name = "Imported_AI" # En sista backup om JSON saknar namn
+			
+	# 4. Snygga till namnet och lägg till .json
+	new_name = new_name.replace(" ", "_") # Ta bort mellanslag
+	if not new_name.ends_with(".json"): 
+		new_name += ".json"
+		
+	# 5. SMART OVERWRITE-SKYDD: Kolla om filen redan finns
 	var dest_path = AiManager.AI_FOLDER_PATH + new_name
+	var file_count = 1
+	
+	while FileAccess.file_exists(dest_path):
+		var name_without_ext = new_name.replace(".json", "")
+		dest_path = AiManager.AI_FOLDER_PATH + name_without_ext + "_" + str(file_count) + ".json"
+		file_count += 1
+		
+	# 6. Spara ner filen
 	var new_file = FileAccess.open(dest_path, FileAccess.WRITE)
 	
 	if new_file:
 		new_file.store_string(pasted_code)
 		new_file.close()
-		_show_toast("Success! Imported '" + new_name.replace(".json", "") + "'")
+		
+		# Plocka ut det slutgiltiga namnet (ifall vi lade till en siffra) för toasten
+		var final_name = dest_path.get_file().replace(".json", "")
+		_show_toast("Success! Imported '" + final_name + "'")
 		populate_ai_list() # Ladda om listan så den nya AI:n dyker upp
 	else:
 		_show_toast("Error: Could not save the file.")
