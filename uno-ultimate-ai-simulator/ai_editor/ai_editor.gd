@@ -267,13 +267,13 @@ func _on_save_button_pressed():
 		"root": _build_logic_tree(first_logic_node) 
 	}
 	
-	# 1. SPARA ALLA SLADDAR (Godot gör det superenkelt för oss)
+# 1. SPARA ALLA SLADDAR (Byt ut @ mot _)
 	var all_connections = graph_edit.get_connection_list()
 	for conn in all_connections:
 		save_data["visual_data"]["connections"].append({
-			"from_node": String(conn["from_node"]),
+			"from_node": String(conn["from_node"]).replace("@", "_"), # NYTT!
 			"from_port": conn["from_port"],
-			"to_node": String(conn["to_node"]),
+			"to_node": String(conn["to_node"]).replace("@", "_"), # NYTT!
 			"to_port": conn["to_port"]
 		})
 	
@@ -281,16 +281,15 @@ func _on_save_button_pressed():
 	for child in graph_edit.get_children():
 		if child is GraphNode:
 			var node_info = {
-				"name": child.name, # Godots interna namn (viktigt för sladdarna)
-				"title": child.title, # Berättar för oss vilken TYP av nod det är
+				"name": child.name.replace("@", "_"), # NYTT: Tvätta namnet!
+				"title": child.title,
 				"pos_x": child.position_offset.x,
 				"pos_y": child.position_offset.y
 			}
 			
-			# Har denna nod en dropdown-meny (OptionButton)? I så fall, spara vad som är valt!
 			if child.has_node("OptionButton"):
 				var dropdown = child.get_node("OptionButton")
-				node_info["selected_index"] = dropdown.selected # Sparar siffran (0, 1, 2...)
+				node_info["selected_index"] = dropdown.selected
 				
 			save_data["visual_data"]["nodes"].append(node_info)
 			
