@@ -6,9 +6,11 @@ extends Control
 @export var action_play_node_scene: PackedScene
 
 @onready var back_button = $MarginContainer/HBoxContainer/BackToMenuButton
-@onready var save_button = $MarginContainer/HBoxContainer/SaveButton
+@onready var fullscreen_button = $MarginContainer/HBoxContainer/FullscreenButton
 @onready var rename_button = $MarginContainer/HBoxContainer/RenameButton
+@onready var save_button = $MarginContainer/HBoxContainer/SaveButton
 @onready var test_menu_button = $MarginContainer/HBoxContainer/TestButton
+
 @onready var graph_edit = $GraphEdit
 @onready var context_menu = $GraphContextMenu
 @onready var node_context_menu = $NodeContextMenu
@@ -29,6 +31,7 @@ var unsaved_dialog: ConfirmationDialog
 
 func _ready():
 	AiManager.ai_node_executing.connect(_on_ai_node_executing)
+	fullscreen_button.pressed.connect(_on_fullscreen_button_pressed)
 	back_button.pressed.connect(_on_back_button_pressed)
 	rename_button.pressed.connect(_on_rename_button_pressed)
 	save_button.pressed.connect(_on_save_button_pressed)
@@ -70,6 +73,14 @@ func _ready():
 	
 	_setup_rename_dialog()
 	_setup_unsaved_dialog()
+	
+	# Lyssna på F11-tryck från Autoloaden (Byt ut GlobalInputs om din autoload heter något annat!)
+	GlobalInputs.window_mode_changed.connect(_update_fullscreen_button_text)
+	
+	# Kolla vilket läge vi är i just nu och sätt rätt starttext
+	var main_id = DisplayServer.MAIN_WINDOW_ID
+	var is_full = DisplayServer.window_get_mode(main_id) != DisplayServer.WINDOW_MODE_WINDOWED
+	_update_fullscreen_button_text(is_full)
 
 func _on_connection_request(from_node: StringName, from_port: int, to_node: StringName, to_port: int):
 	# Godkänn sladden och be GraphEdit att rita den permanent!
@@ -86,6 +97,17 @@ func _on_back_button_pressed():
 		unsaved_dialog.popup_centered()
 	else:
 		get_tree().change_scene_to_file("res://menus/CreateAndEditAI.tscn")
+
+# Körs när man klickar på knappen med musen
+func _on_fullscreen_button_pressed():
+	GlobalInputs.toggle_window_mode()
+
+# Uppdaterar texten (Körs både vid musklick och F11-tryck)
+func _update_fullscreen_button_text(is_fullscreen: bool):
+	if is_fullscreen:
+		fullscreen_button.text = "Windowed (F11)"
+	else:
+		fullscreen_button.text = "Fullscreen (F11)"
 
 func _on_context_menu_id_pressed(id: int):
 	_mark_unsaved()
