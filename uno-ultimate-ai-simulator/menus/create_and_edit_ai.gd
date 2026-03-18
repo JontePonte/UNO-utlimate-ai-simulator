@@ -52,6 +52,7 @@ func _create_list_item(file_name: String):
 	item.delete_requested.connect(_on_ai_delete_requested)
 	item.edit_requested.connect(_on_ai_edit_requested)
 	item.copy_requested.connect(_on_ai_copy_requested)
+	item.export_requested.connect(_on_ai_export_requested)
 
 func _on_ai_delete_requested(file_name: String):
 	current_file_to_delete = file_name
@@ -155,3 +156,49 @@ func _on_exit_button_pressed():
 
 func _on_main_menu_button_pressed():
 	get_tree().change_scene_to_file("res://menus/MainMenu.tscn")
+
+func _on_ai_export_requested(file_name: String):
+	# Bygg stigen till filen
+	var file_path = AiManager.AI_FOLDER_PATH + file_name
+	
+	if FileAccess.file_exists(file_path):
+		var file = FileAccess.open(file_path, FileAccess.READ)
+		var json_string = file.get_as_text()
+		file.close()
+		
+		# Klistra in texten i datorns urklipp (Clipboard)
+		DisplayServer.clipboard_set(json_string)
+		
+		# Visa vår snygga notis
+		_show_toast("AI Code exported! Right-click and 'Paste' to share it.")
+	else:
+		_show_toast("Error: Could not find AI file!")
+
+# --- TOAST NOTIFICATION ---
+func _show_toast(message: String):
+	var toast = Label.new()
+	toast.text = message
+	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	toast.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.1, 0.1, 0.1, 0.9)
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_left = 8
+	style.corner_radius_bottom_right = 8
+	style.content_margin_left = 20
+	style.content_margin_right = 20
+	style.content_margin_top = 10
+	style.content_margin_bottom = 10
+	toast.add_theme_stylebox_override("normal", style)
+	
+	add_child(toast)
+	
+	toast.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	toast.position.y -= 120 
+	
+	var tween = create_tween()
+	tween.tween_interval(3.0) 
+	tween.tween_property(toast, "modulate:a", 0.0, 1.0) 
+	tween.tween_callback(toast.queue_free)

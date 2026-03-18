@@ -62,6 +62,10 @@ custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "Rename AI"
 
+[node name="CopyButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=1481445435]
+layout_mode = 2
+text = "Copy AI Code"
+
 [node name="TestButton" type="MenuButton" parent="MarginContainer/HBoxContainer" unique_id=2138379968]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2

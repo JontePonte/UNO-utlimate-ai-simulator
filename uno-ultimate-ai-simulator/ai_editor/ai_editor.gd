@@ -8,6 +8,7 @@ extends Control
 @onready var back_button = $MarginContainer/HBoxContainer/BackToMenuButton
 @onready var fullscreen_button = $MarginContainer/HBoxContainer/FullscreenButton
 @onready var rename_button = $MarginContainer/HBoxContainer/RenameButton
+@onready var copy_button = $MarginContainer/HBoxContainer/CopyButton
 @onready var save_button = $MarginContainer/HBoxContainer/SaveButton
 @onready var test_menu_button = $MarginContainer/HBoxContainer/TestButton
 
@@ -31,8 +32,9 @@ var unsaved_dialog: ConfirmationDialog
 
 func _ready():
 	AiManager.ai_node_executing.connect(_on_ai_node_executing)
-	fullscreen_button.pressed.connect(_on_fullscreen_button_pressed)
 	back_button.pressed.connect(_on_back_button_pressed)
+	fullscreen_button.pressed.connect(_on_fullscreen_button_pressed)
+	copy_button.pressed.connect(_on_copy_button_pressed)
 	rename_button.pressed.connect(_on_rename_button_pressed)
 	save_button.pressed.connect(_on_save_button_pressed)
 	
@@ -214,6 +216,59 @@ func _on_rename_button_pressed():
 	rename_input.text = AiManager.file_to_edit.replace(".json", "")
 	# Visa rutan i mitten av skärmen
 	rename_dialog.popup_centered(Vector2(300, 120))
+
+func _on_copy_button_pressed():
+	# Spara automatiskt om det behövs
+	if has_unsaved_changes:
+		_on_save_button_pressed()
+		
+	var file_path = AiManager.AI_FOLDER_PATH + AiManager.file_to_edit
+	
+	if FileAccess.file_exists(file_path):
+		var file = FileAccess.open(file_path, FileAccess.READ)
+		var json_string = file.get_as_text()
+		file.close()
+		
+		# Klistra in i urklipp
+		DisplayServer.clipboard_set(json_string)
+		
+		# Kalla på vår nya snygga popup!
+		_show_toast("AI Code copied! Right-click and select 'Paste' (or press Ctrl+V) to share it.")
+	else:
+		_show_toast("Error: Could not find AI file!")
+
+func _show_toast(message: String):
+	# 1. Skapa en ny Label i koden
+	var toast = Label.new()
+	toast.text = message
+	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	toast.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	
+	# 2. Designa en snygg bakgrundsböx (Mörkgrå med rundade hörn)
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.1, 0.1, 0.1, 0.9)
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_left = 8
+	style.corner_radius_bottom_right = 8
+	style.content_margin_left = 20
+	style.content_margin_right = 20
+	style.content_margin_top = 10
+	style.content_margin_bottom = 10
+	toast.add_theme_stylebox_override("normal", style)
+	
+	# 3. Lägg till den i scenen så den syns
+	add_child(toast)
+	
+	# 4. Placera den i mitten, en bit upp från botten
+	toast.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	toast.position.y -= 120 
+	
+	# 5. Animera bort den mjukt!
+	var tween = create_tween()
+	tween.tween_interval(3.0) # Vänta i 3 sekunder
+	tween.tween_property(toast, "modulate:a", 0.0, 1.0) # Tona ut genomskinligheten under 1 sekund
+	tween.tween_callback(toast.queue_free) # Radera noden när animationen är klar
 
 func _on_rename_confirmed():
 	var new_name = rename_input.text.strip_edges() # Ta bort onödiga mellanslag

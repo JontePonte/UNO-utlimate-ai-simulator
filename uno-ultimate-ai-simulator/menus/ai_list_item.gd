@@ -4,14 +4,16 @@ extends PanelContainer
 signal edit_requested(file_name: String)
 signal copy_requested(file_name: String)
 signal delete_requested(file_name: String)
+signal export_requested(file_name: String)
 
 @onready var action_buttons = $HBox/ActionButtons
 @onready var name_label = $HBox/LabelMargin/Label
 
 # Referenser till knapparna (Se till att namnen stämmer med ditt träd!)
 @onready var edit_btn = $HBox/ActionButtons/EditButton
-@onready var copy_btn = $HBox/ActionButtons/CopyButton
 @onready var delete_btn = $HBox/ActionButtons/RemoveButton
+@onready var duplicate_btn = $HBox/ActionButtons/DuplicateButton
+@onready var export_code_btn = $HBox/ActionButtons/ExportCodeButton
 
 var hover_tween: Tween
 var my_file_name: String
@@ -26,8 +28,9 @@ func _ready():
 			
 	# 2. Koppla knapparnas inbyggda "pressed"-signal till våra egna funktioner
 	edit_btn.pressed.connect(func(): edit_requested.emit(my_file_name))
-	copy_btn.pressed.connect(func(): copy_requested.emit(my_file_name))
 	delete_btn.pressed.connect(func(): delete_requested.emit(my_file_name))
+	duplicate_btn.pressed.connect(func(): copy_requested.emit(my_file_name))
+	export_code_btn.pressed.connect(func(): export_requested.emit(my_file_name))
 
 func setup_item(display_name: String, file_name: String, is_standard: bool = false):
 	my_file_name = file_name

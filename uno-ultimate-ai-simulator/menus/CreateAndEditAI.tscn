@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d2ovrpajj2brc" path="res://menus/create_and_edit_ai.gd" id="1_cak1p"]
 [ext_resource type="PackedScene" uid="uid://ddb185iuqanmp" path="res://menus/AIListItem.tscn" id="2_34lbw"]
-[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="3_5yo0l"]
+[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="3_5yo0l"]
 [ext_resource type="PackedScene" uid="uid://dbpqjh4q6aig4" path="res://menus/FullScreenButton.tscn" id="4_34lbw"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
@@ -110,7 +110,7 @@ custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 
 [node name="VBoxRightSide" type="VBoxContainer" parent="MarginContainer/MainVBox/MainHBox" unique_id=1829787602]
-custom_minimum_size = Vector2(700, 0)
+custom_minimum_size = Vector2(800, 0)
 layout_mode = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/MainVBox/MainHBox/VBoxRightSide" unique_id=526613411]
