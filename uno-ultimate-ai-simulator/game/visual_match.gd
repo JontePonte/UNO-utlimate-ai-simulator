@@ -23,6 +23,7 @@ extends Control
 @onready var game_over_back_button = $GameOverOverlay/VBoxContainer/BackToSetupButton
 @onready var game_over_main_menu_btn = $GameOverOverlay/VBoxContainer/MainMenu
 @onready var exit_button = $GameOverOverlay/VBoxContainer/ExitGame
+@onready var game_over_close_test_game = $GameOverOverlay/VBoxContainer/CloseTestGame
 
 @onready var pause_overlay = $PauseOverlay
 @onready var resume_button = $PauseOverlay/VBoxContainer/ResumeButton
@@ -32,6 +33,7 @@ extends Control
 @onready var quit_confirm_dialog = $PauseOverlay/VBoxContainer/BackToSetupButton/QuitConfirmationDialog
 @onready var main_menu_confirm_dialog = $PauseOverlay/VBoxContainer/MainMenu/MainMenuConfirmationDialog2
 @onready var pause_exit_confirm_dialog = $PauseOverlay/VBoxContainer/ExitGame/PauseExitGameConfirmationDialog
+@onready var pause_close_test_game = $PauseOverlay/VBoxContainer/CloseTestGame
 
 @onready var draw_choice_menu = $DrawChoiceMenu
 @onready var color_picker_menu = $ColorChoice
@@ -90,10 +92,12 @@ func _ready():
 	main_menu_confirm_dialog.confirmed.connect(_go_to_main_menu)
 	pause_exit_button.pressed.connect(_on_pause_exit_button_pressed)
 	pause_exit_confirm_dialog.confirmed.connect(_on_exit_pressed)
+	pause_close_test_game.pressed.connect(_on_close_test_pressed)
 	
 	# Koppla Game Over-menyns knappar
 	game_over_back_button.pressed.connect(_on_game_over_back_pressed)
 	game_over_main_menu_btn.pressed.connect(_go_to_main_menu)
+	game_over_close_test_game.pressed.connect(_on_close_test_pressed)
 	
 	if GameSettings.is_test_mode:
 		# Dölj knappar som vi inte vill ha i editorn
@@ -104,9 +108,12 @@ func _ready():
 		game_over_main_menu_btn.hide()
 		game_over_back_button.hide()
 		exit_button.hide()
-	# Many add a close test game button
+		
+		pause_close_test_game.show()
+		game_over_close_test_game.show()
 	else:
-		pass
+		pause_close_test_game.hide()
+		game_over_close_test_game.hide()
 	
 	_update_layout()
 	start_real_game()
@@ -731,6 +738,19 @@ func _on_restart_pressed():
 func _on_exit_pressed():
 	# Säger åt hela Godot-motorn att stänga ner fönstret och avsluta spelet
 	get_tree().quit()
+
+func _on_close_test_pressed():
+	# 1. Viktigt: Om vi stänger från pausmenyn är spelet fryst. 
+	# Vi måste tina upp det innan vi raderar noden för att undvika buggar!
+	get_tree().paused = false
+	
+	# 2. Hämta det flytande fönstret som matchen ligger inuti
+	var test_window = get_window()
+	
+	# 3. Säkerhetskoll: Se till att vi inte råkar stänga huvudspelet 
+	# (ifall funktionen av misstag skulle köras utanför testläget)
+	if test_window != get_tree().root:
+		test_window.queue_free()
 
 func _toggle_pause():
 	if game_over_overlay.visible:
