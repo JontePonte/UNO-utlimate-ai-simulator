@@ -157,16 +157,11 @@ func _evaluate_condition(condition_name: String, view: PlayerView, node: Diction
 					return true
 			return false
 		"compare_table_color":
-			# Hämta vilket val spelaren gjorde (0 = Most numerous ... 3 = Least numerous)
-			# Använder 0 som fallback om inget sparats
 			var target_rank = int(node.get("rank_choice", 0))
+			var tied_colors = _get_tied_color_ranking(view.own_hand)
 			
-			var ranked_colors = _get_color_ranking(view.own_hand)
-			
-			# Säkerhetskontroll att indexet finns
-			if target_rank >= 0 and target_rank < ranked_colors.size():
-				# Fråga: "Är färgen på bordet just nu Samma Färg som den på plats 'target_rank' i min hand?"
-				return view.current_color == ranked_colors[target_rank]
+			if target_rank >= 0 and target_rank < tied_colors.size():
+				return tied_colors[target_rank].has(view.current_color)
 				
 			return false
 	return false
@@ -270,3 +265,28 @@ func _get_color_ranking(hand: Array) -> Array:
 	var ranked_colors = counts.keys()
 	ranked_colors.sort_custom(func(a, b): return counts[a] > counts[b])
 	return ranked_colors
+
+func _get_tied_color_ranking(hand: Array) -> Array:
+	var counts = {
+		Card.CardColor.RED: 0, Card.CardColor.GREEN: 0,
+		Card.CardColor.BLUE: 0, Card.CardColor.YELLOW: 0
+	}
+	
+	for card in hand:
+		if card.color in counts:
+			counts[card.color] += 1
+			
+	var sorted_counts = counts.values()
+	sorted_counts.sort()
+	sorted_counts.reverse() 
+	
+	var tied_ranks = []
+	
+	for target_count in sorted_counts:
+		var colors_for_this_rank = []
+		for color in counts.keys():
+			if counts[color] == target_count:
+				colors_for_this_rank.append(color)
+		tied_ranks.append(colors_for_this_rank)
+		
+	return tied_ranks

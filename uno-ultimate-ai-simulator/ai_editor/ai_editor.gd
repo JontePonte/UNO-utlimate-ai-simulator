@@ -716,7 +716,7 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 			else:
 				result["name"] = "can_play_any_card" # Fallback
 				
-		elif node.title == "Condition: Table Color is":
+		elif node.title == "Condition: Table Color Is":
 			var dropdown = node.get_node_or_null("OptionDropdown")
 			if not dropdown: dropdown = node.get_node_or_null("OptionsDropdown")
 			if not dropdown: dropdown = node.get_node_or_null("OptionButton")
