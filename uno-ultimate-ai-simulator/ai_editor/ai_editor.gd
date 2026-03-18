@@ -39,9 +39,9 @@ func _ready():
 	# Hämta popup-menyn som tillhör knappen
 	var popup = test_menu_button.get_popup()
 	popup.clear()
-	popup.add_item("Testa: 2 Spelare") # Blir ID 0
-	popup.add_item("Testa: 3 Spelare") # Blir ID 1
-	popup.add_item("Testa: 4 Spelare") # Blir ID 2
+	popup.add_item("Test: 2 Players") # Blir ID 0
+	popup.add_item("Test: 3 Players") # Blir ID 1
+	popup.add_item("Test: 4 Players") # Blir ID 2
 	
 	# Koppla signalen när man klickar på ett alternativ i listan
 	popup.id_pressed.connect(_on_test_match_selected)
