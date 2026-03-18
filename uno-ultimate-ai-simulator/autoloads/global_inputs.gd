@@ -3,6 +3,7 @@ extends Node
 signal window_mode_changed(is_fullscreen: bool)
 
 func _ready():
+	# Set windowed att startup
 	toggle_window_mode()
 
 func _input(event):
