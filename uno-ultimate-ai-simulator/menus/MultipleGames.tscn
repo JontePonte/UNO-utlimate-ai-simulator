@@ -1,8 +1,9 @@
 [gd_scene format=3 uid="uid://71n7axrpl5e2"]
 
 [ext_resource type="Script" uid="uid://c67uugiivch2m" path="res://menus/multiple_games.gd" id="1_bhea4"]
-[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="2_atn1r"]
+[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="2_atn1r"]
 [ext_resource type="Theme" uid="uid://cd5glqoall5lu" path="res://ui/test_theme.tres" id="3_3hh3q"]
+[ext_resource type="PackedScene" uid="uid://dbpqjh4q6aig4" path="res://menus/FullScreenButton.tscn" id="4_atn1r"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
 font = ExtResource("2_atn1r")
@@ -314,3 +315,19 @@ horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 3
+
+[node name="FullScreenButtonCont" type="MarginContainer" parent="." unique_id=1455762664]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="FullScreenButton" parent="FullScreenButtonCont" unique_id=909762972 instance=ExtResource("4_atn1r")]
+layout_mode = 2
+size_flags_vertical = 4

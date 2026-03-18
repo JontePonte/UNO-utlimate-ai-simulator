@@ -2,7 +2,8 @@
 
 [ext_resource type="Script" uid="uid://d2ovrpajj2brc" path="res://menus/create_and_edit_ai.gd" id="1_cak1p"]
 [ext_resource type="PackedScene" uid="uid://ddb185iuqanmp" path="res://menus/AIListItem.tscn" id="2_34lbw"]
-[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="3_5yo0l"]
+[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="3_5yo0l"]
+[ext_resource type="PackedScene" uid="uid://dbpqjh4q6aig4" path="res://menus/FullScreenButton.tscn" id="4_34lbw"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
 font = ExtResource("3_5yo0l")
@@ -139,3 +140,20 @@ position = Vector2i(0, 36)
 size = Vector2i(313, 100)
 ok_button_text = "Delete AI"
 dialog_text = "Are you sure you want to delet this AI?"
+
+[node name="FullScreenButtonCont" type="MarginContainer" parent="." unique_id=850913356]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -164.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="FullScreenButton" parent="FullScreenButtonCont" unique_id=909762972 instance=ExtResource("4_34lbw")]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4

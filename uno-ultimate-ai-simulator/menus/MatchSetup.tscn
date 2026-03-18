@@ -3,6 +3,7 @@
 [ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="1_1nt5m"]
 [ext_resource type="Script" uid="uid://dxv1h51fadg5b" path="res://menus/match_setup.gd" id="1_nqpsq"]
 [ext_resource type="Theme" uid="uid://cd5glqoall5lu" path="res://ui/test_theme.tres" id="2_ouq10"]
+[ext_resource type="PackedScene" uid="uid://dbpqjh4q6aig4" path="res://menus/FullScreenButton.tscn" id="4_f8okd"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
 font = ExtResource("1_1nt5m")
@@ -413,3 +414,21 @@ theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 100
 text = "Start Game"
 flat = true
+
+[node name="FullScreenButtonCont" type="MarginContainer" parent="." unique_id=408173353]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -164.0
+offset_top = -39.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_bottom = 6
+
+[node name="FullScreenButton" parent="FullScreenButtonCont" unique_id=909762972 instance=ExtResource("4_f8okd")]
+layout_mode = 2
+size_flags_vertical = 10
