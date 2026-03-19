@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://dgq2r7se6fgs1"]
+[gd_scene format=3 uid="uid://buag0ihsrgb8a"]
 
-[ext_resource type="Script" uid="uid://c2bo160i7ivps" path="res://ai_editor/condition_table_color.gd" id="1_m2pbb"]
+[ext_resource type="Script" uid="uid://dxgk6k3o44lo7" path="res://ai_editor/condition_compare_card_count.gd" id="1_ewp3r"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ktnyg"]
 bg_color = Color(0.3137255, 0.078431375, 0.078431375, 1)
@@ -8,12 +8,13 @@ bg_color = Color(0.3137255, 0.078431375, 0.078431375, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cphd1"]
 bg_color = Color(0.627451, 0.15686275, 0.15686275, 1)
 
-[node name="ConditionTableColorIs" type="GraphNode" unique_id=1241447829]
+[node name="ConditionHandNode" type="GraphNode" unique_id=1241447829]
+custom_minimum_size = Vector2(260, 0)
 offset_right = 200.0
 offset_bottom = 95.0
 theme_override_styles/titlebar = SubResource("StyleBoxFlat_ktnyg")
 theme_override_styles/titlebar_selected = SubResource("StyleBoxFlat_cphd1")
-title = "Condition: Table Color Is"
+title = "Condition: Compare Card Count"
 slot/0/left_enabled = false
 slot/0/left_type = 0
 slot/0/left_color = Color(1, 1, 1, 1)
@@ -32,9 +33,21 @@ slot/1/right_type = 0
 slot/1/right_color = Color(1, 1, 1, 1)
 slot/1/right_icon = null
 slot/1/draw_stylebox = true
-script = ExtResource("1_m2pbb")
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+script = ExtResource("1_ewp3r")
 
-[node name="OptionDropdown" type="OptionButton" parent="." unique_id=132893815]
+[node name="OpponentDropdown" type="OptionButton" parent="." unique_id=305183506]
+layout_mode = 2
+
+[node name="OptionDropdown" type="OptionButton" parent="." unique_id=1647861707]
 layout_mode = 2
 
 [node name="Lable" type="Label" parent="." unique_id=1143163045]
