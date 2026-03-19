@@ -747,9 +747,6 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 				
 		elif node.title == "Condition: Table Color Is":
 			var dropdown = node.get_node_or_null("OptionDropdown")
-			if not dropdown: dropdown = node.get_node_or_null("OptionsDropdown")
-			if not dropdown: dropdown = node.get_node_or_null("OptionButton")
-			
 			if dropdown != null:
 				result["name"] = "compare_table_color"
 				result["rank_choice"] = dropdown.selected # Spara vilket index de valde (0-3)!
