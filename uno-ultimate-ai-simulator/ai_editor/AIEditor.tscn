@@ -34,7 +34,7 @@ condition_hand_node_scene = ExtResource("4_knltd")
 condition_table_color_node_scene = ExtResource("6_kgwxg")
 condition_opponent_card_count = ExtResource("7_p61oi")
 condition_player_count = ExtResource("8_gsrnu")
-condition_playable_card_cound = ExtResource("9_yd1mx")
+condition_playable_card_count = ExtResource("9_yd1mx")
 
 [node name="GraphEdit" type="GraphEdit" parent="." unique_id=1139485564]
 layout_mode = 1

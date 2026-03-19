@@ -511,7 +511,7 @@ func _load_ai_graph(file_name: String):
 				new_node = condition_hand_node_scene.instantiate()
 			"Condition: Compare Opponet Hand":
 				new_node = condition_opponent_card_count.instantiate()
-			"Condition: Playable Card Count":
+			"Condition: Playable Card Count Is":
 				new_node = condition_playable_card_count.instantiate()
 			"Condition: Table Color Is":
 				new_node = condition_table_color_node_scene.instantiate()
