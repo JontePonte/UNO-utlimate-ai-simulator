@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://r46b8sjlg7lb"]
+[gd_scene format=3 uid="uid://r46b8sjlg7lb"]
 
 [ext_resource type="Script" uid="uid://bu5eyjoc1ebc" path="res://tests/uno_turn_test.gd" id="1_oqsfk"]
 

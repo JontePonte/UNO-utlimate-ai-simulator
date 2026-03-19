@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://cv3ao5f6jgulq"]
+[gd_scene format=3 uid="uid://cv3ao5f6jgulq"]
 
 [ext_resource type="Script" uid="uid://hnpd58scbtfn" path="res://tests/ai_game_test.gd" id="1_220gp"]
 

@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://kneo6uskn1cq"]
 
-[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="1_1nt5m"]
+[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="1_1nt5m"]
 [ext_resource type="Script" uid="uid://dxv1h51fadg5b" path="res://menus/match_setup.gd" id="1_nqpsq"]
 [ext_resource type="Theme" uid="uid://cd5glqoall5lu" path="res://ui/test_theme.tres" id="2_ouq10"]
-[ext_resource type="PackedScene" uid="uid://dbpqjh4q6aig4" path="res://menus/FullScreenButton.tscn" id="4_f8okd"]
+[ext_resource type="PackedScene" uid="uid://dbpqjh4q6aig4" path="res://menus/FullScreenButton.tscn" id="4_nabl8"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
 font = ExtResource("1_1nt5m")
@@ -429,6 +429,6 @@ grow_vertical = 0
 mouse_filter = 2
 theme_override_constants/margin_bottom = 6
 
-[node name="FullScreenButton" parent="FullScreenButtonCont" unique_id=909762972 instance=ExtResource("4_f8okd")]
+[node name="FullScreenButton" parent="FullScreenButtonCont" unique_id=909762972 instance=ExtResource("4_nabl8")]
 layout_mode = 2
 size_flags_vertical = 10
