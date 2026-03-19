@@ -164,6 +164,80 @@ func _evaluate_condition(condition_name: String, view: PlayerView, node: Diction
 				return tied_colors[target_rank].has(view.current_color)
 				
 			return false
+		
+		"check_player_count":
+			# Valen var: 0="2", 1="3", 2="4"
+			var choice = int(node.get("player_count_choice", 0))
+			var target_count = choice + 2
+			return view.card_counts.size() == target_count
+		
+		"check_playable_card_count":
+			# Räkna hur många kort vi kan spela just nu
+			var playable_count = 0
+			for card in view.own_hand:
+				if card.is_playable_on(view.top_discard, view.current_color):
+					playable_count += 1
+			
+			var choice = int(node.get("card_count_choice", 0))
+			# Valen var: 0="Only One", 1="Multiple", 2="None"
+			if choice == 0: return playable_count == 1
+			elif choice == 1: return playable_count > 1
+			elif choice == 2: return playable_count == 0
+			return false
+		
+		"compare_opponent_hand":
+			var target = int(node.get("opponent_target", 0))
+			var condition = int(node.get("opponent_condition", 0))
+			
+			var my_count = view.own_hand.size()
+			var total_players = view.card_counts.size()
+			var opponents_to_check = []
+			
+			# 1. Bestäm VILKA motståndare vi ska titta på
+			if target == 0: # Next Player
+				# posmod hanterar minusvärden perfekt om play_direction är -1 (Reverse)
+				var next_idx = posmod(view.player_index + view.play_direction, total_players)
+				opponents_to_check.append(view.card_counts[next_idx])
+				
+			elif target == 1: # Previous Player
+				var prev_idx = posmod(view.player_index - view.play_direction, total_players)
+				opponents_to_check.append(view.card_counts[prev_idx])
+				
+			elif target == 2: # Any Player (Alla utom vi själva)
+				for i in range(total_players):
+					if i != view.player_index:
+						opponents_to_check.append(view.card_counts[i])
+						
+			elif target == 3: # Player with most cards
+				var max_cards = -1
+				for i in range(total_players):
+					if i != view.player_index and view.card_counts[i] > max_cards:
+						max_cards = view.card_counts[i]
+				opponents_to_check.append(max_cards)
+				
+			elif target == 4: # Player with least cards
+				var min_cards = 999
+				for i in range(total_players):
+					if i != view.player_index and view.card_counts[i] < min_cards:
+						min_cards = view.card_counts[i]
+				opponents_to_check.append(min_cards)
+				
+			# 2. Testa villkoret på de utvalda motståndarna
+			for opp_count in opponents_to_check:
+				var match_found = false
+				
+				# Valen var: 0="less", 1="more", 2="equal", 3="1 or 2", 4="UNO"
+				if condition == 0: match_found = (opp_count < my_count)
+				elif condition == 1: match_found = (opp_count > my_count)
+				elif condition == 2: match_found = (opp_count == my_count)
+				elif condition == 3: match_found = (opp_count <= 2)
+				elif condition == 4: match_found = (opp_count == 1)
+				
+				# Om vi hittar NÅGON som matchar (viktigt för "Any Player"), returnera True!
+				if match_found:
+					return true
+					
+			return false
 	return false
 
 # --- LOGIKEN FÖR HANDLINGAR (ACTIONS) ---

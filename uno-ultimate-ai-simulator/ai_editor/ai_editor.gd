@@ -400,8 +400,6 @@ func _on_save_button_pressed():
 			if child.has_node("ColorDropdown"):
 				var color_dropdown = child.get_node("ColorDropdown")
 				node_info["color_choice"] = color_dropdown.selected
-				
-			save_data["visual_data"]["nodes"].append(node_info)
 			
 			if child.has_node("OpponentDropdown"):
 				var opponent_dropdown = child.get_node("OpponentDropdown")
@@ -509,7 +507,7 @@ func _load_ai_graph(file_name: String):
 				new_node = root_node_scene.instantiate()
 			"Condition: Check Hand":
 				new_node = condition_hand_node_scene.instantiate()
-			"Condition: Compare Opponet Hand":
+			"Condition: Compare Opponent Hand":
 				new_node = condition_opponent_card_count.instantiate()
 			"Condition: Playable Card Count Is":
 				new_node = condition_playable_card_count.instantiate()
@@ -538,7 +536,7 @@ func _load_ai_graph(file_name: String):
 				var dropdown = new_node.get_node("OptionDropdown")
 				dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 				dropdown.selected = int(node_data["selected_index"])
-				
+			
 			# --- NYTT: Ladda in färg-rullgardinen och uppdatera utseendet! ---
 			if node_data.has("color_choice") and new_node.has_node("ColorDropdown"):
 				var color_dropdown = new_node.get_node("ColorDropdown")
@@ -550,8 +548,14 @@ func _load_ai_graph(file_name: String):
 					var a_dropdown = new_node.get_node_or_null("OptionDropdown")
 					if a_dropdown:
 						new_node._on_action_selected(a_dropdown.selected)
+			
+			if node_data.has("opponent_choice") and new_node.has_node("OpponentDropdown"):
+				var opp_dropdown = new_node.get_node("OpponentDropdown")
+				opp_dropdown.item_selected.connect(func(_idx): _mark_unsaved())
+				opp_dropdown.selected = int(node_data["opponent_choice"])
 				
 			print("-> Lade till noden: ", new_node.name)
+			
 		else:
 			print("-> FEL: new_node är null! Är dina @export-scener inlagda i Inspektorn?")
 
@@ -752,7 +756,40 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 				result["rank_choice"] = dropdown.selected # Spara vilket index de valde (0-3)!
 			else:
 				result["name"] = "compare_table_color"
-				result["rank_choice"] = 0 # Fallback till most numerous
+				result["rank_choice"] = 0 
+				
+		# --- DE TRE NYA NODERNA ---
+		elif node.title == "Condition: Player Count Is":
+			var dropdown = node.get_node_or_null("OptionDropdown")
+			if dropdown != null:
+				result["name"] = "check_player_count"
+				result["player_count_choice"] = dropdown.selected # (0=2, 1=3, 2=4)
+			else:
+				result["name"] = "check_player_count"
+				result["player_count_choice"] = 0
+				
+		elif node.title == "Condition: Playable Card Count Is":
+			var dropdown = node.get_node_or_null("OptionDropdown")
+			if dropdown != null:
+				result["name"] = "check_playable_card_count"
+				result["card_count_choice"] = dropdown.selected # (0=Only One, 1=Multiple, 2=None)
+			else:
+				result["name"] = "check_playable_card_count"
+				result["card_count_choice"] = 0
+				
+		elif node.title == "Condition: Compare Opponent Hand":
+			# Den här noden har TVÅ dropdowns!
+			var opp_dropdown = node.get_node_or_null("OpponentDropdown")
+			var opt_dropdown = node.get_node_or_null("OptionDropdown")
+			
+			result["name"] = "compare_opponent_hand"
+			
+			if opp_dropdown != null and opt_dropdown != null:
+				result["opponent_target"] = opp_dropdown.selected # Vem vi tittar på
+				result["opponent_condition"] = opt_dropdown.selected # Vad vi kollar efter
+			else:
+				result["opponent_target"] = 0
+				result["opponent_condition"] = 0
 		
 		# Gå vidare i trädet
 		var true_node_name = _get_connected_node(current_node_name, 0)
