@@ -9,7 +9,7 @@ extends Control
 @export var condition_table_color_node_scene: PackedScene
 @export var condition_opponent_card_count: PackedScene
 @export var condition_player_count: PackedScene
-@export var condition_playable_card_cound: PackedScene
+@export var condition_playable_card_count: PackedScene
 
 @onready var back_button = $MarginContainer/HBoxContainer/BackToMenuButton
 @onready var fullscreen_button = $MarginContainer/HBoxContainer/FullscreenButton
@@ -58,9 +58,9 @@ func _ready():
 	context_menu.add_item("Action: Play Card", 1)
 	context_menu.add_item("Condition: Check Hand", 2)
 	context_menu.add_item("Condition: Compare Opponent Hand", 3)
-	context_menu.add_item("Condition: Playable Card Count", 4)
-	context_menu.add_item("Condition: Table Color", 5)
-	context_menu.add_item("Condition: Player Count", 6)
+	context_menu.add_item("Condition: Playable Card Count Is", 4)
+	context_menu.add_item("Condition: Table Color Is", 5)
+	context_menu.add_item("Condition: Player Count Is", 6)
 	context_menu.id_pressed.connect(_on_context_menu_id_pressed)
 	context_menu.window_input.connect(_on_menu_window_input.bind(context_menu))
 	node_context_menu.window_input.connect(_on_menu_window_input.bind(node_context_menu))
@@ -136,7 +136,7 @@ func _on_context_menu_id_pressed(id: int):
 	elif id == 3:
 		new_node = condition_opponent_card_count.instantiate()
 	elif id == 4:
-		new_node = condition_playable_card_cound.instantiate()
+		new_node = condition_playable_card_count.instantiate()
 	elif id == 5:
 		new_node = condition_table_color_node_scene.instantiate()
 	elif id == 6:
@@ -161,6 +161,10 @@ func _on_context_menu_id_pressed(id: int):
 		
 		if dropdown:
 			dropdown.item_selected.connect(func(_idx): _mark_unsaved())
+		
+		var opponent_dropdown = new_node.get_node_or_null("OpponentDropdown")
+		if opponent_dropdown:
+			opponent_dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 			
 		var color_dropdown = new_node.get_node_or_null("ColorDropdown")
 		if color_dropdown:
@@ -393,10 +397,15 @@ func _on_save_button_pressed():
 				var dropdown = child.get_node("OptionDropdown")
 				node_info["selected_index"] = dropdown.selected
 				
-			# --- NYTT: Spara färg-rullgardinen (ColorDropdown) om den finns! ---
 			if child.has_node("ColorDropdown"):
 				var color_dropdown = child.get_node("ColorDropdown")
 				node_info["color_choice"] = color_dropdown.selected
+				
+			save_data["visual_data"]["nodes"].append(node_info)
+			
+			if child.has_node("OpponentDropdown"):
+				var opponent_dropdown = child.get_node("OpponentDropdown")
+				node_info["opponent_choice"] = opponent_dropdown.selected
 				
 			save_data["visual_data"]["nodes"].append(node_info)
 			
@@ -500,8 +509,14 @@ func _load_ai_graph(file_name: String):
 				new_node = root_node_scene.instantiate()
 			"Condition: Check Hand":
 				new_node = condition_hand_node_scene.instantiate()
+			"Condition: Compare Opponet Hand":
+				new_node = condition_opponent_card_count.instantiate()
+			"Condition: Playable Card Count":
+				new_node = condition_playable_card_count.instantiate()
 			"Condition: Table Color Is":
 				new_node = condition_table_color_node_scene.instantiate()
+			"Condition: Player Count Is":
+				new_node = condition_player_count.instantiate()
 			"Action: Play Card":
 				new_node = action_play_node_scene.instantiate()
 			"Action: Draw Card":
