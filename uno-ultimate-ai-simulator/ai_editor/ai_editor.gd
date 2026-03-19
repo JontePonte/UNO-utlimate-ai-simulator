@@ -1,10 +1,15 @@
 extends Control
 
 @export var root_node_scene: PackedScene
+
 @export var action_draw_node_scene: PackedScene
-@export var condition_hand_node_scene: PackedScene
 @export var action_play_node_scene: PackedScene
+
+@export var condition_hand_node_scene: PackedScene
 @export var condition_table_color_node_scene: PackedScene
+@export var condition_opponent_card_count: PackedScene
+@export var condition_player_count: PackedScene
+@export var condition_playable_card_cound: PackedScene
 
 @onready var back_button = $MarginContainer/HBoxContainer/BackToMenuButton
 @onready var fullscreen_button = $MarginContainer/HBoxContainer/FullscreenButton
@@ -52,7 +57,10 @@ func _ready():
 	context_menu.add_item("Action: Draw Card", 0)
 	context_menu.add_item("Action: Play Card", 1)
 	context_menu.add_item("Condition: Check Hand", 2)
-	context_menu.add_item("Condition: Table Color", 3)
+	context_menu.add_item("Condition: Compare Opponent Hand", 3)
+	context_menu.add_item("Condition: Playable Card Count", 4)
+	context_menu.add_item("Condition: Table Color", 5)
+	context_menu.add_item("Condition: Player Count", 6)
 	context_menu.id_pressed.connect(_on_context_menu_id_pressed)
 	context_menu.window_input.connect(_on_menu_window_input.bind(context_menu))
 	node_context_menu.window_input.connect(_on_menu_window_input.bind(node_context_menu))
@@ -125,8 +133,14 @@ func _on_context_menu_id_pressed(id: int):
 		new_node = action_play_node_scene.instantiate()
 	elif id == 2:
 		new_node = condition_hand_node_scene.instantiate()
-	elif id == 3: # --- HÄR ÄR DEN NYA NODEN ---
+	elif id == 3:
+		new_node = condition_opponent_card_count.instantiate()
+	elif id == 4:
+		new_node = condition_playable_card_cound.instantiate()
+	elif id == 5:
 		new_node = condition_table_color_node_scene.instantiate()
+	elif id == 6:
+		new_node = condition_player_count.instantiate()
 		
 	# 2. Om vi faktiskt skapade en nod, ställ in den!
 	if new_node != null:
