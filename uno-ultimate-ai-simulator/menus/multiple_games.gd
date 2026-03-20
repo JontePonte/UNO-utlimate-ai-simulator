@@ -1,18 +1,20 @@
 extends Control
 
-@onready var num_players_opt = $MarginContainer/MainVBox/HBoxCenter/VBoxL/NumberOfPlayers/OptionButton
-@onready var slot3 = $MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot3
-@onready var slot4 = $MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot4
+# Repeated Matchup
+@onready var num_players_opt = $MarginContainer/MainVBox/RepeatedMatchup/VBoxL/NumberOfPlayers/OptionButton
+@onready var slot3 = $MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot3
+@onready var slot4 = $MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot4
 
-@onready var match_count_spinbox = $MarginContainer/MainVBox/HBoxCenter/VBoxL/NumberOfMatches/SpinBox
-@onready var slot1_opt = $MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot1/OptionButton
-@onready var slot2_opt = $MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot2/OptionButton
-@onready var slot3_opt = $MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot3/OptionButton
-@onready var slot4_opt = $MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot4/OptionButton
+@onready var match_count_spinbox = $MarginContainer/MainVBox/RepeatedMatchup/VBoxL/NumberOfMatches/SpinBox
+@onready var slot1_opt = $MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot1/OptionButton
+@onready var slot2_opt = $MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot2/OptionButton
+@onready var slot3_opt = $MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot3/OptionButton
+@onready var slot4_opt = $MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot4/OptionButton
 
-@onready var max_turns_spinbox = $MarginContainer/MainVBox/HBoxCenter/VBoxL/MaxRounds2/SpinBox
-@onready var randomize_seats_checkbox = $MarginContainer/MainVBox/HBoxCenter/VBoxL/RandomizeSeats/CheckBox
+@onready var max_turns_spinbox = $MarginContainer/MainVBox/RepeatedMatchup/VBoxL/MaxRounds2/SpinBox
+@onready var randomize_seats_checkbox = $MarginContainer/MainVBox/RepeatedMatchup/VBoxL/RandomizeSeats/CheckBox
 
+# Bottom
 @onready var progress_bar = $MarginContainer/MainVBox/BottomHBox/HBoxSim/ProgressBar
 @onready var results_label = $MarginContainer/MainVBox/BottomHBox/ResultsLabel
 

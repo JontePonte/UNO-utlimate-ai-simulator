@@ -14,6 +14,18 @@ shadow_size = 21
 shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(-4, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_atn1r"]
+bg_color = Color(0.0627451, 0.1254902, 0.09411765, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [sub_resource type="LabelSettings" id="LabelSettings_bhea4"]
 font = ExtResource("2_atn1r")
 font_size = 40
@@ -75,42 +87,60 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Spacer" type="Control" parent="MarginContainer/MainVBox" unique_id=1722005637]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 
-[node name="HBoxCenter" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=950826926]
+[node name="MatchModeDropdown" type="OptionButton" parent="MarginContainer/MainVBox" unique_id=1838172709]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("3_3hh3q")
+theme_override_fonts/font = ExtResource("2_atn1r")
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_atn1r")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_atn1r")
+theme_override_styles/hover = SubResource("StyleBoxFlat_atn1r")
+alignment = 1
+clip_text = true
+selected = 0
+fit_to_longest_item = false
+item_count = 1
+popup/item_0/text = "test"
+popup/item_0/id = 0
+
+[node name="RepeatedMatchup" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=950826926]
 layout_mode = 2
 
-[node name="VBoxL" type="VBoxContainer" parent="MarginContainer/MainVBox/HBoxCenter" unique_id=2048965824]
+[node name="VBoxL" type="VBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup" unique_id=2048965824]
 layout_mode = 2
 
-[node name="NumberOfPlayers" type="HBoxContainer" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL" unique_id=253034386]
+[node name="NumberOfPlayers" type="HBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL" unique_id=253034386]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL/NumberOfPlayers" unique_id=1626866276]
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL/NumberOfPlayers" unique_id=1626866276]
 custom_minimum_size = Vector2(500, 60)
 layout_mode = 2
 text = "Number of Players: "
 label_settings = SubResource("LabelSettings_bhea4")
 vertical_alignment = 1
 
-[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL/NumberOfPlayers" unique_id=1193725151]
+[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL/NumberOfPlayers" unique_id=1193725151]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme = ExtResource("3_3hh3q")
 alignment = 1
 
-[node name="NumberOfMatches" type="HBoxContainer" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL" unique_id=1673027118]
+[node name="NumberOfMatches" type="HBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL" unique_id=1673027118]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL/NumberOfMatches" unique_id=1886100623]
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL/NumberOfMatches" unique_id=1886100623]
 custom_minimum_size = Vector2(500, 60)
 layout_mode = 2
 text = "Number of Matches: "
 label_settings = SubResource("LabelSettings_bhea4")
 vertical_alignment = 1
 
-[node name="SpinBox" type="SpinBox" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL/NumberOfMatches" unique_id=528588758]
+[node name="SpinBox" type="SpinBox" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL/NumberOfMatches" unique_id=528588758]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 min_value = 1.0
@@ -119,32 +149,32 @@ value = 100.0
 rounded = true
 alignment = 1
 
-[node name="Spacer3" type="Control" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL" unique_id=1434507868]
+[node name="Spacer3" type="Control" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL" unique_id=1434507868]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
-[node name="RandomizeSeats" type="HBoxContainer" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL" unique_id=2054199041]
+[node name="RandomizeSeats" type="HBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL" unique_id=2054199041]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL/RandomizeSeats" unique_id=156102621]
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL/RandomizeSeats" unique_id=156102621]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 text = "Randomize seating each match"
 label_settings = SubResource("LabelSettings_3hh3q")
 
-[node name="CheckBox" type="CheckBox" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL/RandomizeSeats" unique_id=1619749809]
+[node name="CheckBox" type="CheckBox" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL/RandomizeSeats" unique_id=1619749809]
 layout_mode = 2
 
-[node name="MaxRounds2" type="HBoxContainer" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL" unique_id=1397256098]
+[node name="MaxRounds2" type="HBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL" unique_id=1397256098]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL/MaxRounds2" unique_id=57400133]
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL/MaxRounds2" unique_id=57400133]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 text = "Max Game Rounds:"
 label_settings = SubResource("LabelSettings_3hh3q")
 
-[node name="SpinBox" type="SpinBox" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL/MaxRounds2" unique_id=1305760473]
+[node name="SpinBox" type="SpinBox" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL/MaxRounds2" unique_id=1305760473]
 layout_mode = 2
 theme = ExtResource("3_3hh3q")
 min_value = 1.0
@@ -152,25 +182,25 @@ max_value = 1000.0
 value = 500.0
 alignment = 1
 
-[node name="Spacer" type="Control" parent="MarginContainer/MainVBox/HBoxCenter" unique_id=790335761]
+[node name="Spacer" type="Control" parent="MarginContainer/MainVBox/RepeatedMatchup" unique_id=790335761]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 
-[node name="VBoxR" type="VBoxContainer" parent="MarginContainer/MainVBox/HBoxCenter" unique_id=1244399782]
+[node name="VBoxR" type="VBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup" unique_id=1244399782]
 custom_minimum_size = Vector2(0, 270)
 layout_mode = 2
 
-[node name="Slot1" type="HBoxContainer" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR" unique_id=1592767329]
+[node name="Slot1" type="HBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR" unique_id=1592767329]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot1" unique_id=616145995]
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot1" unique_id=616145995]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 text = "Player 1:"
 label_settings = SubResource("LabelSettings_bhea4")
 vertical_alignment = 1
 
-[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot1" unique_id=750972038]
+[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot1" unique_id=750972038]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 theme = ExtResource("3_3hh3q")
@@ -185,17 +215,17 @@ popup/item_1/id = 1
 popup/item_2/text = "Simple"
 popup/item_2/id = 2
 
-[node name="Slot2" type="HBoxContainer" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR" unique_id=1980760116]
+[node name="Slot2" type="HBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR" unique_id=1980760116]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot2" unique_id=1678171465]
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot2" unique_id=1678171465]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 text = "Player 2:"
 label_settings = SubResource("LabelSettings_bhea4")
 vertical_alignment = 1
 
-[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot2" unique_id=1029136076]
+[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot2" unique_id=1029136076]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 theme = ExtResource("3_3hh3q")
@@ -210,17 +240,17 @@ popup/item_1/id = 1
 popup/item_2/text = "Simple"
 popup/item_2/id = 2
 
-[node name="Slot3" type="HBoxContainer" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR" unique_id=1640616955]
+[node name="Slot3" type="HBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR" unique_id=1640616955]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot3" unique_id=511305359]
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot3" unique_id=511305359]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 text = "Player 3:"
 label_settings = SubResource("LabelSettings_bhea4")
 vertical_alignment = 1
 
-[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot3" unique_id=227450975]
+[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot3" unique_id=227450975]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 theme = ExtResource("3_3hh3q")
@@ -235,17 +265,17 @@ popup/item_1/id = 1
 popup/item_2/text = "Simple"
 popup/item_2/id = 2
 
-[node name="Slot4" type="HBoxContainer" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR" unique_id=700433897]
+[node name="Slot4" type="HBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR" unique_id=700433897]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot4" unique_id=630278498]
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot4" unique_id=630278498]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 text = "Player 4:"
 label_settings = SubResource("LabelSettings_bhea4")
 vertical_alignment = 1
 
-[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot4" unique_id=1881655851]
+[node name="OptionButton" type="OptionButton" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot4" unique_id=1881655851]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 theme = ExtResource("3_3hh3q")
@@ -260,13 +290,10 @@ popup/item_1/id = 1
 popup/item_2/text = "Simple"
 popup/item_2/id = 2
 
-[node name="Spacer2" type="Control" parent="MarginContainer/MainVBox" unique_id=73969272]
-custom_minimum_size = Vector2(0, 100)
-layout_mode = 2
-
 [node name="BottomHBox" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=1408743332]
 layout_mode = 2
 size_flags_horizontal = 0
+size_flags_vertical = 10
 
 [node name="HBoxSim" type="VBoxContainer" parent="MarginContainer/MainVBox/BottomHBox" unique_id=225372872]
 layout_mode = 2
@@ -287,7 +314,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 
 [node name="Spacer3" type="Control" parent="MarginContainer/MainVBox/BottomHBox/HBoxSim" unique_id=1696965799]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="HBoxBackExit" type="VBoxContainer" parent="MarginContainer/MainVBox/BottomHBox/HBoxSim" unique_id=1351352635]
@@ -312,6 +339,10 @@ text = "Exit Game
 "
 flat = true
 alignment = 0
+
+[node name="Spacer4" type="Control" parent="MarginContainer/MainVBox/BottomHBox/HBoxSim" unique_id=216174207]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
 
 [node name="Spacer4" type="Control" parent="MarginContainer/MainVBox/BottomHBox" unique_id=593074985]
 custom_minimum_size = Vector2(50, 0)
