@@ -318,7 +318,7 @@ popup/item_2/id = 2
 layout_mode = 2
 
 [node name="VBoxL" type="VBoxContainer" parent="MarginContainer/MainVBox/RoundRobin" unique_id=420920737]
-custom_minimum_size = Vector2(450, 0)
+custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 
 [node name="MatchTypeLabel" type="Label" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=641208000]
@@ -410,9 +410,60 @@ layout_mode = 2
 layout_mode = 2
 text = "Available AI:"
 label_settings = SubResource("LabelSettings_bdgv8")
+horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ItemList" type="ItemList" parent="MarginContainer/MainVBox/RoundRobin/AvailableAIList" unique_id=2032069683]
+layout_mode = 2
+
+[node name="Spacer1" type="Control" parent="MarginContainer/MainVBox/RoundRobin" unique_id=195113626]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+
+[node name="ListControButtons" type="VBoxContainer" parent="MarginContainer/MainVBox/RoundRobin" unique_id=1528644883]
+custom_minimum_size = Vector2(220, 400)
+layout_mode = 2
+
+[node name="Spacer" type="Label" parent="MarginContainer/MainVBox/RoundRobin/ListControButtons" unique_id=850600257]
+layout_mode = 2
+text = "  "
+label_settings = SubResource("LabelSettings_bdgv8")
+vertical_alignment = 1
+
+[node name="AddOne" type="Button" parent="MarginContainer/MainVBox/RoundRobin/ListControButtons" unique_id=1590796288]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("2_atn1r")
+theme_override_font_sizes/font_size = 18
+text = "Add One"
+
+[node name="AddFive" type="Button" parent="MarginContainer/MainVBox/RoundRobin/ListControButtons" unique_id=819009688]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("2_atn1r")
+theme_override_font_sizes/font_size = 18
+text = "Add Five"
+
+[node name="RemoveAllSelected" type="Button" parent="MarginContainer/MainVBox/RoundRobin/ListControButtons" unique_id=751124148]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("2_atn1r")
+theme_override_font_sizes/font_size = 18
+text = "Remove All Selected"
+
+[node name="ClearSelectedList" type="Button" parent="MarginContainer/MainVBox/RoundRobin/ListControButtons" unique_id=1786600796]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("2_atn1r")
+theme_override_font_sizes/font_size = 18
+text = "Clear Selected List"
+
+[node name="Spacer2" type="Control" parent="MarginContainer/MainVBox/RoundRobin" unique_id=190343866]
+custom_minimum_size = Vector2(30, 0)
 layout_mode = 2
 
 [node name="SelectedAIList" type="VBoxContainer" parent="MarginContainer/MainVBox/RoundRobin" unique_id=977073744]
@@ -423,6 +474,7 @@ layout_mode = 2
 layout_mode = 2
 text = "Selected AI:"
 label_settings = SubResource("LabelSettings_bdgv8")
+horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ItemList" type="ItemList" parent="MarginContainer/MainVBox/RoundRobin/SelectedAIList" unique_id=2023055842]
