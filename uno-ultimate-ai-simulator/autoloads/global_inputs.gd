@@ -2,6 +2,8 @@ extends Node
 
 signal window_mode_changed(is_fullscreen: bool)
 
+var SHOW_REPORT_BUG_BUTTON = true
+
 func _ready():
 	# Set windowed att startup
 	toggle_window_mode()

@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://buag0ihsrgb8a" path="res://ai_editor/ConditionCompareCardCount.tscn" id="7_p61oi"]
 [ext_resource type="PackedScene" uid="uid://cbt7ykanbrlqm" path="res://ai_editor/ConditionPlayerCount.tscn" id="8_gsrnu"]
 [ext_resource type="PackedScene" uid="uid://ue52gflie313" path="res://ai_editor/ConditionPlayableCardCountIs.tscn" id="9_yd1mx"]
+[ext_resource type="PackedScene" uid="uid://by4heu4eejx2q" path="res://menus/ReportBugButton.tscn" id="10_gsrnu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_045bj"]
 bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
@@ -90,3 +91,13 @@ text = "Save AI"
 
 [node name="NodeContextMenu" type="PopupMenu" parent="." unique_id=216108866]
 oversampling_override = 1.0
+
+[node name="ReportBugFeatureRequestButton" parent="." unique_id=1359224072 instance=ExtResource("10_gsrnu")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_bottom = 0.0
+offset_left = -272.0
+offset_bottom = 32.0
+grow_horizontal = 0
+grow_vertical = 1

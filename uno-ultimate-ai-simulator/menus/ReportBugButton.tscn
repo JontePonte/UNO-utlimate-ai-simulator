@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://by4heu4eejx2q"]
+
+[ext_resource type="Script" uid="uid://cs37e4ajlvjqk" path="res://menus/report_bug_button.gd" id="1_5afeg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2pb64"]
+bg_color = Color(0.041282404, 0.11263344, 0.21551168, 1)
+
+[node name="ReportBugFeatureRequestButton" type="MarginContainer" unique_id=1359224072]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+
+[node name="Button" type="Button" parent="." unique_id=1580764735]
+custom_minimum_size = Vector2(270, 30)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_2pb64")
+text = "Report Bug & Feature Request"
+script = ExtResource("1_5afeg")

@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dxv1h51fadg5b" path="res://menus/match_setup.gd" id="1_nqpsq"]
 [ext_resource type="Theme" uid="uid://cd5glqoall5lu" path="res://ui/test_theme.tres" id="2_ouq10"]
 [ext_resource type="PackedScene" uid="uid://dbpqjh4q6aig4" path="res://menus/FullScreenButton.tscn" id="4_nabl8"]
+[ext_resource type="PackedScene" uid="uid://by4heu4eejx2q" path="res://menus/ReportBugButton.tscn" id="5_2osk3"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
 font = ExtResource("1_1nt5m")
@@ -432,3 +433,13 @@ theme_override_constants/margin_bottom = 6
 [node name="FullScreenButton" parent="FullScreenButtonCont" unique_id=909762972 instance=ExtResource("4_nabl8")]
 layout_mode = 2
 size_flags_vertical = 10
+
+[node name="ReportBugFeatureRequestButton" parent="." unique_id=1359224072 instance=ExtResource("5_2osk3")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_bottom = 0.0
+offset_left = -272.0
+offset_bottom = 32.0
+grow_horizontal = 0
+grow_vertical = 1
