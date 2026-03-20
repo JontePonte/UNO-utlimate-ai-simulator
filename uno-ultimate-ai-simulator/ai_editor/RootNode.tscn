@@ -9,6 +9,7 @@ bg_color = Color(0.11764706, 0.15686275, 0.078431375, 1)
 bg_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
 
 [node name="RootNode" type="GraphNode" unique_id=1241447829]
+custom_minimum_size = Vector2(22, 0)
 offset_right = 200.0
 offset_bottom = 95.0
 theme_override_styles/titlebar = SubResource("StyleBoxFlat_ktnyg")
@@ -36,14 +37,16 @@ slot/1/draw_stylebox = true
 script = ExtResource("1_ktnyg")
 
 [node name="StartLabel" type="RichTextLabel" parent="." unique_id=1111965727]
+custom_minimum_size = Vector2(20, 25)
 layout_mode = 2
+size_flags_vertical = 4
 bbcode_enabled = true
 text = " [i]Executes every turn[/i]"
-fit_content = true
 
 [node name="FallbackLabel" type="RichTextLabel" parent="." unique_id=900247690]
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
+size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_akb84")
 bbcode_enabled = true
 text = "[color=orange]Fallback:[/color] Draw Card"
-fit_content = true

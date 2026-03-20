@@ -1,22 +1,17 @@
 {
-	"ai_name": "aggressive_ai",
+	"ai_name": "Standard AI",
 	"description": "En AI skapad i den visuella editorn.",
 	"root": {
+		"editor_node": "ConditionHandNode",
 		"false_branch": {
-			"false_branch": {
-				"name": "draw_card",
-				"type": "action"
-			},
-			"name": "can_play_any_card",
-			"true_branch": {
-				"name": "play_first_playable",
-				"type": "action"
-			},
-			"type": "condition"
+			"editor_node": "ActionDrawNode",
+			"name": "draw_card",
+			"type": "action"
 		},
-		"name": "has_playable_attack_card",
+		"name": "can_play_any_card",
 		"true_branch": {
-			"name": "play_playable_attack_card",
+			"editor_node": "ActionPlayNode",
+			"name": "play_first_playable",
 			"type": "action"
 		},
 		"type": "condition"
@@ -38,18 +33,6 @@
 			{
 				"from_node": "ConditionHandNode",
 				"from_port": 1,
-				"to_node": "@GraphNode@183",
-				"to_port": 0
-			},
-			{
-				"from_node": "@GraphNode@183",
-				"from_port": 0,
-				"to_node": "@GraphNode@195",
-				"to_port": 0
-			},
-			{
-				"from_node": "@GraphNode@183",
-				"from_port": 1,
 				"to_node": "ActionDrawNode",
 				"to_port": 0
 			}
@@ -59,40 +42,27 @@
 				"name": "RootNode",
 				"pos_x": 40.0,
 				"pos_y": 320.0,
-				"title": "AI Start"
+				"title": "Start: Choose a Card"
 			},
 			{
 				"name": "ConditionHandNode",
 				"pos_x": 340.0,
 				"pos_y": 320.0,
-				"selected_index": 1,
-				"title": "Condition: Check Hand"
-			},
-			{
-				"name": "ActionPlayNode",
-				"pos_x": 700.0,
-				"pos_y": 300.0,
-				"selected_index": 1,
-				"title": "Action: Play Card"
-			},
-			{
-				"name": "@GraphNode@183",
-				"pos_x": 700.0,
-				"pos_y": 460.0,
 				"selected_index": 0,
 				"title": "Condition: Check Hand"
 			},
 			{
-				"name": "@GraphNode@195",
-				"pos_x": 1080.0,
-				"pos_y": 420.0,
+				"color_choice": 0,
+				"name": "ActionPlayNode",
+				"pos_x": 700.0,
+				"pos_y": 300.0,
 				"selected_index": 0,
 				"title": "Action: Play Card"
 			},
 			{
 				"name": "ActionDrawNode",
-				"pos_x": 1080.0,
-				"pos_y": 560.0,
+				"pos_x": 700.0,
+				"pos_y": 420.0,
 				"title": "Action: Draw Card"
 			}
 		]

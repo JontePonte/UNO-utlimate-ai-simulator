@@ -1,7 +1,8 @@
 {
-	"ai_name": "allways_draw_card_ai",
+	"ai_name": "Allways Draw Card AI",
 	"description": "En AI skapad i den visuella editorn.",
 	"root": {
+		"editor_node": "ActionDrawNode",
 		"name": "draw_card",
 		"type": "action"
 	},
@@ -19,11 +20,11 @@
 				"name": "RootNode",
 				"pos_x": 40.0,
 				"pos_y": 320.0,
-				"title": "AI Start"
+				"title": "Start: Choose a Card"
 			},
 			{
 				"name": "ActionDrawNode",
-				"pos_x": 340.0,
+				"pos_x": 320.0,
 				"pos_y": 320.0,
 				"title": "Action: Draw Card"
 			}
