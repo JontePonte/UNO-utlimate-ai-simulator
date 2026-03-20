@@ -1,6 +1,8 @@
 extends Control
 
 @onready var match_mode_dropdown = $MarginContainer/MainVBox/MatchModeDropdown
+@onready var repeated_matchup_container = $MarginContainer/MainVBox/RepeatedMatchup
+@onready var round_robin_container = $MarginContainer/MainVBox/RoundRobin
 
 # Repeated Matchup
 @onready var num_players_opt = $MarginContainer/MainVBox/RepeatedMatchup/VBoxL/NumberOfPlayers/OptionButton
@@ -13,8 +15,26 @@ extends Control
 @onready var slot3_opt = $MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot3/OptionButton
 @onready var slot4_opt = $MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot4/OptionButton
 
-@onready var max_turns_spinbox = $MarginContainer/MainVBox/RepeatedMatchup/VBoxL/MaxRounds2/SpinBox
+@onready var repeated_max_turns_spinbox = $MarginContainer/MainVBox/RepeatedMatchup/VBoxL/MaxRounds2/SpinBox
 @onready var randomize_seats_checkbox = $MarginContainer/MainVBox/RepeatedMatchup/VBoxL/RandomizeSeats/CheckBox
+
+# Round Robin
+@onready var two_player_checkbox = $MarginContainer/MainVBox/RoundRobin/VBoxL/TwoPlayerCheckBox
+@onready var three_player_checkbox = $MarginContainer/MainVBox/RoundRobin/VBoxL/ThreePlayerCheckBox
+@onready var four_player_checkbox = $MarginContainer/MainVBox/RoundRobin/VBoxL/FourPlayerCheckBox
+@onready var no_selected_label = $MarginContainer/MainVBox/RoundRobin/VBoxL/NoSelectedLabel # Använd inte hide här utan mellanslag för att skriva tomt
+@onready var matchup_number_spin_box = $MarginContainer/MainVBox/RoundRobin/VBoxL/MatchupNumber/SpinBox
+@onready var total_match_number_label = $MarginContainer/MainVBox/RoundRobin/VBoxL/TotalMatchNumber
+
+@onready var available_ai_list = $MarginContainer/MainVBox/RoundRobin/AvailableAIList/ItemList
+@onready var selected_ai_list = $MarginContainer/MainVBox/RoundRobin/SelectedAIList/ItemList
+
+@onready var add_one_btn = $MarginContainer/MainVBox/RoundRobin/ListControButtons/AddOne
+@onready var add_five_btn = $MarginContainer/MainVBox/RoundRobin/ListControButtons/AddFive
+@onready var remove_all_selected_btn = $MarginContainer/MainVBox/RoundRobin/ListControButtons/RemoveAllSelected
+@onready var clear_selected_list_btn = $MarginContainer/MainVBox/RoundRobin/ListControButtons/ClearSelectedList
+
+@onready var round_robin_max_turns_spinbox = $MarginContainer/MainVBox/RoundRobin/VBoxL/MaxRounds2/SpinBox
 
 # Bottom
 @onready var progress_bar = $MarginContainer/MainVBox/BottomHBox/HBoxSim/ProgressBar
@@ -29,6 +49,13 @@ var available_ais = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	# Koppla signalen till bytar-funktionen
+	match_mode_dropdown.item_selected.connect(_on_match_mode_changed)
+	
+	# Kör bytet en gång manuellt direkt vid start, så att rätt meny syns från sekund 1
+	_on_match_mode_changed(match_mode_dropdown.selected)
+	#-------------------- Repeaded Matchup --------------------------
+	
 	# Koppla knappar
 	start_button.pressed.connect(_on_start_button_pressed)
 	exit_button.pressed.connect(_on_exit_button_pressed)
@@ -42,9 +69,33 @@ func _ready() -> void:
 	num_players_opt.selected = 2 
 	num_players_opt.item_selected.connect(_on_num_players_changed)
 	
-	_refresh_ai_lists()
 	# Kör en första uppdatering så rätt slots syns
 	_update_player_slots()
+	
+	#----------------------- Round Robin --------------------------
+	# Koppla listornas "någon klickade på en rad"-signal
+	available_ai_list.item_selected.connect(_on_available_list_selected)
+	selected_ai_list.item_selected.connect(_on_selected_list_selected)
+	
+	# Koppla listornas "dubbelklick"-signal (aktiverad)
+	available_ai_list.item_activated.connect(_on_available_list_activated)
+	selected_ai_list.item_activated.connect(_on_selected_list_activated)
+	
+	# Koppla knapparna i mitten
+	add_one_btn.pressed.connect(_on_add_one_pressed)
+	add_five_btn.pressed.connect(_on_add_five_pressed)
+	remove_all_selected_btn.pressed.connect(_on_remove_all_selected_pressed)
+	clear_selected_list_btn.pressed.connect(_on_clear_selected_list_pressed)
+	
+	# Koppla signaler för Round Robin-kalkylatorn (Vi skickar dem direkt till _update_math)
+	two_player_checkbox.pressed.connect(_update_math)
+	three_player_checkbox.pressed.connect(_update_math)
+	four_player_checkbox.pressed.connect(_update_math)
+	matchup_number_spin_box.value_changed.connect(func(_val): _update_math()) # value_changed skickar med ett värde vi måste fånga upp
+	match_mode_dropdown.item_selected.connect(func(_val): _update_math()) # Kör matten när vi byter flik så knappen låser/låser upp sig rätt
+	_update_math()
+	
+	_refresh_ai_lists()
 
 func _refresh_ai_lists():
 	available_ais.clear()
@@ -78,6 +129,33 @@ func _refresh_ai_lists():
 			menu.add_item(available_ais[i]["name"])
 			# Vi sparar INDEX till till vår lista istället för en filstig
 			menu.set_item_metadata(i, i)
+	
+	# Töm vänstra listan innan vi fyller på
+	available_ai_list.clear()
+	
+	for i in range(available_ais.size()):
+		available_ai_list.add_item(available_ais[i]["name"])
+		# Spara index som "metadata" så vi vet vilken AI detta är
+		available_ai_list.set_item_metadata(i, i)
+
+func _on_match_mode_changed(index: int):
+	if index == 0:
+		# --- REPEATED MATCHUP ---
+		repeated_matchup_container.show()
+		round_robin_container.hide()
+		
+		# I Repeated Matchup är det alltid okej att starta (om vi inte bygger in fler spärrar senare)
+		start_button.disabled = false 
+		
+	elif index == 1:
+		# --- ROUND ROBIN ---
+		repeated_matchup_container.hide()
+		round_robin_container.show()
+		
+	# Kör kalkylatorn varje gång vi byter vy! 
+	# Om vi precis bytte till Round Robin, kommer kalkylatorn kolla om 
+	# vi har giltiga inställningar, annars stänger den av Start-knappen.
+	_update_math()
 
 func _create_players_for_sim(num_players: int) -> Array[Player]:
 	var players: Array[Player] = []
@@ -115,8 +193,8 @@ func _on_start_button_pressed():
 	var num_matches = int(match_count_spinbox.value)
 	var num_players = num_players_opt.get_item_id(num_players_opt.selected)
 	
-	# NYTT: Hämta värdet från max_turns_spinbox
-	var max_turns = int(max_turns_spinbox.value) 
+	# NYTT: Hämta värdet från repeated_max_turns_spinbox
+	var max_turns = int(repeated_max_turns_spinbox.value) 
 	
 	# Gör i ordning UI:t för laddningen
 	progress_bar.max_value = num_matches
@@ -189,6 +267,122 @@ func _on_start_button_pressed():
 		
 	# Visa det snygga resultatet på skärmen!
 	results_label.text = final_text
+
+func _on_available_list_selected(_index: int):
+	selected_ai_list.deselect_all() # Klickar du till vänster, avmarkera till höger
+
+func _on_selected_list_selected(_index: int):
+	available_ai_list.deselect_all() # Klickar du till höger, avmarkera till vänster
+
+# En smart hjälp-funktion för att veta vilken AI som är vald just nu
+func _get_selected_ai_index() -> int:
+	# Kollar om något är valt i vänstra listan
+	if available_ai_list.get_selected_items().size() > 0:
+		var selected_row = available_ai_list.get_selected_items()[0]
+		return available_ai_list.get_item_metadata(selected_row)
+		
+	# Kollar om något är valt i högra listan
+	elif selected_ai_list.get_selected_items().size() > 0:
+		var selected_row = selected_ai_list.get_selected_items()[0]
+		return selected_ai_list.get_item_metadata(selected_row)
+		
+	return -1 # Inget var valt
+
+func _add_ai_to_roster(amount: int):
+	var ai_index = _get_selected_ai_index()
+	if ai_index == -1:
+		return # Avbryt om ingen AI är markerad
+		
+	var ai_name = available_ais[ai_index]["name"]
+	
+	for i in range(amount):
+		var new_row = selected_ai_list.add_item(ai_name)
+		selected_ai_list.set_item_metadata(new_row, ai_index)
+		
+	# Skrolla automatiskt ner till det vi just lade till!
+	selected_ai_list.ensure_current_is_visible()
+	_update_math()
+
+func _on_add_one_pressed():
+	_add_ai_to_roster(1)
+	_update_math()
+
+func _on_add_five_pressed():
+	_add_ai_to_roster(5)
+	_update_math()
+
+func _on_remove_all_selected_pressed():
+	var ai_index = _get_selected_ai_index()
+	if ai_index == -1:
+		return
+		
+	# När man tar bort saker ur en lista MÅSTE man loopa baklänges!
+	# Annars ändras indexen på raderna medan man tar bort dem.
+	for i in range(selected_ai_list.item_count - 1, -1, -1):
+		if selected_ai_list.get_item_metadata(i) == ai_index:
+			selected_ai_list.remove_item(i)
+	_update_math()
+
+func _on_clear_selected_list_pressed():
+	selected_ai_list.clear()
+	_update_math()
+
+# --- DOUBLE CLICK LOGIC ---
+
+func _on_available_list_activated(_index: int):
+	# Dubbelklick till vänster lägger till 1
+	_add_ai_to_roster(1)
+	_update_math()
+
+func _on_selected_list_activated(index: int):
+	# Dubbelklick till höger tar exakt BORT den raden man klickade på
+	selected_ai_list.remove_item(index)
+	_update_math()
+
+# --- ROUND ROBIN MATH CALCULATOR ---
+
+func _update_math():
+	# 1. Hur många deltagare ligger i turneringslistan just nu?
+	var n = selected_ai_list.item_count
+	var base_matchups = 0
+	
+	# 2. Kolla så att minst en matchtyp är vald
+	var is_any_type_selected = two_player_checkbox.button_pressed or three_player_checkbox.button_pressed or four_player_checkbox.button_pressed
+	
+	if not is_any_type_selected:
+		no_selected_label.text = "Please select at least one match type!"
+		no_selected_label.add_theme_color_override("font_color", Color(1, 0, 0)) # Gör texten röd
+	else:
+		no_selected_label.text = " " # Använd din geniala lösning för att behålla utrymmet!
+		
+	# 3. Räkna ut unika kombinationer baserat på antal spelare (n)
+	if two_player_checkbox.button_pressed and n >= 2:
+		base_matchups += (n * (n - 1)) / 2
+		
+	if three_player_checkbox.button_pressed and n >= 3:
+		base_matchups += (n * (n - 1) * (n - 2)) / 6
+		
+	if four_player_checkbox.button_pressed and n >= 4:
+		base_matchups += (n * (n - 1) * (n - 2) * (n - 3)) / 24
+		
+	# 4. Multiplicera med antalet upprepningar
+	var repetitions = int(matchup_number_spin_box.value)
+	var total_matches = base_matchups * repetitions
+	
+	# 5. Uppdatera texten på skärmen
+	total_match_number_label.text = "Total matches: " + str(total_matches) + " / 10000"
+	
+	# 6. Säkerhetsspärrar - Stäng av Startknappen om vi är i Round Robin och datan är ogiltig!
+	if match_mode_dropdown.selected == 1: # Kollar om vi befinner oss i Round Robin-läget
+		if total_matches == 0 or total_matches > 10000 or not is_any_type_selected:
+			start_button.disabled = true
+			if total_matches > 10000:
+				total_match_number_label.add_theme_color_override("font_color", Color(1, 0, 0)) # Röd varning
+			else:
+				total_match_number_label.remove_theme_color_override("font_color")
+		else:
+			start_button.disabled = false
+			total_match_number_label.remove_theme_color_override("font_color")
 
 func _on_exit_button_pressed():
 	get_tree().quit()

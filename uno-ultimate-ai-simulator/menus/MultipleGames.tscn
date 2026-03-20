@@ -327,7 +327,7 @@ text = "Select Match Types:"
 label_settings = SubResource("LabelSettings_bdgv8")
 vertical_alignment = 1
 
-[node name="2PlayerCheckBox" type="CheckBox" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1876797591]
+[node name="TwoPlayerCheckBox" type="CheckBox" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1876797591]
 layout_mode = 2
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("2_atn1r")
@@ -335,14 +335,14 @@ theme_override_font_sizes/font_size = 22
 button_pressed = true
 text = "2 Player Matches"
 
-[node name="3PlayerCheckBox" type="CheckBox" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1350440094]
+[node name="ThreePlayerCheckBox" type="CheckBox" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1350440094]
 layout_mode = 2
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 22
 text = "3 Player Matches"
 
-[node name="4PlayerCheckBox" type="CheckBox" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1506823649]
+[node name="FourPlayerCheckBox" type="CheckBox" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1506823649]
 layout_mode = 2
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("2_atn1r")
@@ -376,7 +376,7 @@ alignment = 1
 layout_mode = 2
 text = "times"
 
-[node name="Label3" type="Label" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=477532061]
+[node name="TotalMatchNumber" type="Label" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=477532061]
 layout_mode = 2
 text = "Total matches: 10000/10000"
 label_settings = SubResource("LabelSettings_4clst")
@@ -415,6 +415,7 @@ vertical_alignment = 1
 
 [node name="ItemList" type="ItemList" parent="MarginContainer/MainVBox/RoundRobin/AvailableAIList" unique_id=2032069683]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="Spacer1" type="Control" parent="MarginContainer/MainVBox/RoundRobin" unique_id=195113626]
 custom_minimum_size = Vector2(30, 0)
@@ -479,6 +480,7 @@ vertical_alignment = 1
 
 [node name="ItemList" type="ItemList" parent="MarginContainer/MainVBox/RoundRobin/SelectedAIList" unique_id=2023055842]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="BottomHBox" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=1408743332]
 layout_mode = 2
