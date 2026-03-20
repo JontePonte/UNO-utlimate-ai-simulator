@@ -23,9 +23,7 @@ shadow_size = 8
 shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(-2.5, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_4jroq"]
-font = ExtResource("2_atn1r")
-font_size = 28
+[sub_resource type="LabelSettings" id="LabelSettings_3hh3q"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_atn1r"]
 font = ExtResource("2_atn1r")
@@ -125,14 +123,26 @@ alignment = 1
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
+[node name="RandomizeSeats" type="HBoxContainer" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL" unique_id=2054199041]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL/RandomizeSeats" unique_id=156102621]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+text = "Randomize seating each match"
+label_settings = SubResource("LabelSettings_3hh3q")
+
+[node name="CheckBox" type="CheckBox" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL/RandomizeSeats" unique_id=1619749809]
+layout_mode = 2
+
 [node name="MaxRounds2" type="HBoxContainer" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL" unique_id=1397256098]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL/MaxRounds2" unique_id=57400133]
-custom_minimum_size = Vector2(220, 0)
+custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 text = "Max Game Rounds:"
-label_settings = SubResource("LabelSettings_4jroq")
+label_settings = SubResource("LabelSettings_3hh3q")
 
 [node name="SpinBox" type="SpinBox" parent="MarginContainer/MainVBox/HBoxCenter/VBoxL/MaxRounds2" unique_id=1305760473]
 layout_mode = 2

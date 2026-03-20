@@ -11,6 +11,7 @@ extends Control
 @onready var slot4_opt = $MarginContainer/MainVBox/HBoxCenter/VBoxR/Slot4/OptionButton
 
 @onready var max_turns_spinbox = $MarginContainer/MainVBox/HBoxCenter/VBoxL/MaxRounds2/SpinBox
+@onready var randomize_seats_checkbox = $MarginContainer/MainVBox/HBoxCenter/VBoxL/RandomizeSeats/CheckBox
 
 @onready var progress_bar = $MarginContainer/MainVBox/BottomHBox/HBoxSim/ProgressBar
 @onready var results_label = $MarginContainer/MainVBox/BottomHBox/ResultsLabel
@@ -130,20 +131,31 @@ func _on_start_button_pressed():
 	
 	# --- HUVUDLOOP ---
 	for i in range(num_matches):
+		# 1. Skapa spelarna
 		var players = _create_players_for_sim(num_players)
-		var sim_manager = SimulationManager.new(players)
 		
-		var result = await sim_manager.run_match(max_turns) 
+		# 2. Blanda stolarna om rutan är ikryssad
+		if randomize_seats_checkbox.button_pressed:
+			players.shuffle()
+		
+		# 3. Kör matchen
+		var sim_manager = SimulationManager.new(players)
+		var result = await sim_manager.run_match(max_turns)
 		
 		if i == 0:
 			sim_manager.save_debug_log("user://debug_match_log.txt")
 		
-		# Registrera vinsten
-		var winner = result["winner_name"]
-		if scoreboard.has(winner):
-			scoreboard[winner] += 1
+		# 4. Registrera vinsten
+		# Eftersom vi eventuellt har blandat spelarna, måste vi ge poängen till 
+		# det ORIGINAL-namn (Player 1, Player 2) de fick när vi skapade dem.
+		var winner_name = result["winner_name"]
+		
+		if winner_name == "Draw":
+			scoreboard["Draw"] += 1
 		else:
-			scoreboard[winner] = 1
+			# winner_name kommer vara t.ex. "Player 1", oavsett vilken stol de fick i just denna match
+			if scoreboard.has(winner_name):
+				scoreboard[winner_name] += 1
 			
 		# --- UI UPPDATERING OCH BATCHING ---
 		progress_bar.value = i + 1
