@@ -14,7 +14,7 @@ offset_bottom = 95.0
 theme_override_styles/titlebar = SubResource("StyleBoxFlat_ktnyg")
 draggable = false
 selectable = false
-title = "AI Start"
+title = "Start: Choose a Card"
 slot/0/left_enabled = false
 slot/0/left_type = 0
 slot/0/left_color = Color(1, 1, 1, 1)
@@ -35,11 +35,15 @@ slot/1/right_icon = null
 slot/1/draw_stylebox = true
 script = ExtResource("1_ktnyg")
 
-[node name="StartLabel" type="Label" parent="." unique_id=1143163045]
+[node name="StartLabel" type="RichTextLabel" parent="." unique_id=1111965727]
 layout_mode = 2
-text = "Evaluating Logic"
+bbcode_enabled = true
+text = " [i]Executes every turn[/i]"
+fit_content = true
 
-[node name="FallbackLabel" type="Label" parent="." unique_id=480970364]
+[node name="FallbackLabel" type="RichTextLabel" parent="." unique_id=900247690]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_akb84")
-text = "[Fallback: Draw Card]"
+bbcode_enabled = true
+text = "[color=orange]Fallback:[/color] Draw Card"
+fit_content = true

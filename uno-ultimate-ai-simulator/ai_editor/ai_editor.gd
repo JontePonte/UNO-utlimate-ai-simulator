@@ -175,7 +175,7 @@ func _on_node_gui_input(event: InputEvent, node: GraphNode):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		node.accept_event()
 		
-		if node.name == "RootNode" or node.title == "AI Start":
+		if node.name == "RootNode" or node.title == "Start: Choose a Card":
 			return # Hoppa ur funktionen direkt
 		
 		node_to_edit = node # Spara noden vi klickade på
@@ -185,7 +185,7 @@ func _on_node_gui_input(event: InputEvent, node: GraphNode):
 		node_context_menu.popup()
 		
 		# Säkerhetsspärr: Hindra eleverna från att radera Start-noden!
-		if node.name == "RootNode" or node.title == "AI Start":
+		if node.name == "RootNode" or node.title == "Start: Choose a Card":
 			node_context_menu.set_item_disabled(1, true) # Gråa ut "Remove"
 		else:
 			node_context_menu.set_item_disabled(1, false)
@@ -226,7 +226,7 @@ func _on_delete_nodes_request(nodes: Array[StringName]):
 			continue # Om noden redan är borta, hoppa till nästa
 			
 		# VÅRT SKYDDSNÄT: Radera ALDRIG startnoden!
-		if node_to_delete.name == "RootNode" or node_to_delete.title == "AI Start":
+		if node_to_delete.name == "RootNode" or node_to_delete.title == "Start: Choose a Card":
 			print("Nice try, men du får inte radera startnoden!")
 			continue 
 			
@@ -503,7 +503,7 @@ func _load_ai_graph(file_name: String):
 		print("Läser från JSON: Titel = '", node_title, "'")
 		
 		match node_title:
-			"AI Start":
+			"Start: Choose a Card":
 				new_node = root_node_scene.instantiate()
 			"Condition: Check Hand":
 				new_node = condition_hand_node_scene.instantiate()
