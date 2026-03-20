@@ -93,55 +93,49 @@ func _on_dropdown_changed(_index: int):
 	_update_ui_states()
 
 func _update_ui_states():
-	# --- BOTTEN ---
+	# --- BOTTEN (HUMAN/AI LOGIKEN) ---
+	var bottom_idx = bottom_type_opt.selected
+	
 	if bottom_human_check.button_pressed:
 		bottom_type_opt.disabled = true
 		bottom_visible_check.button_pressed = true
 		bottom_visible_check.disabled = true
-		bottom_name_label.text = "Bottom: You"
+		
+		# Byt ut texten på det valda alternativet till "You" medan menyn är låst
+		if bottom_idx != -1:
+			bottom_type_opt.set_item_text(bottom_idx, "You")
 	else:
 		bottom_type_opt.disabled = false
 		bottom_visible_check.disabled = false
-		# Hämta texten från det valda alternativet i dropdownen
-		var selected_text = bottom_type_opt.get_item_text(bottom_type_opt.selected)
-		bottom_name_label.text = "Bottom: " + selected_text
-		bottom_name_label.tooltip_text = selected_text # Visar hela namnet vid hover!
 		
+		# Återställ originalnamnet från vår sparade AI-lista!
+		if bottom_idx != -1 and bottom_idx < available_ais.size():
+			var original_name = available_ais[bottom_idx]["name"]
+			bottom_type_opt.set_item_text(bottom_idx, original_name)
+			
 	# --- VÄNSTER ---
 	if left_active_check.button_pressed:
 		left_type_opt.disabled = false
 		left_visible_check.disabled = false
-		var selected_text = left_type_opt.get_item_text(left_type_opt.selected)
-		left_name_label.text = "Left: " + selected_text
-		left_name_label.tooltip_text = selected_text # Visar hela namnet vid hover!
 	else:
 		left_type_opt.disabled = true
 		left_visible_check.disabled = true
-		left_name_label.text = "Left: Empty"
 
 	# --- TOPP ---
 	if top_active_check.button_pressed:
 		top_type_opt.disabled = false
 		top_visible_check.disabled = false
-		var selected_text = top_type_opt.get_item_text(top_type_opt.selected)
-		top_name_label.text = "Top: " + selected_text
-		top_name_label.tooltip_text = selected_text # Visar hela namnet vid hover!
 	else:
 		top_type_opt.disabled = true
 		top_visible_check.disabled = true
-		top_name_label.text = "Top: Empty"
 
 	# --- HÖGER ---
 	if right_active_check.button_pressed:
 		right_type_opt.disabled = false
 		right_visible_check.disabled = false
-		var selected_text = right_type_opt.get_item_text(right_type_opt.selected)
-		right_name_label.text = "Right: " + selected_text
-		right_name_label.tooltip_text = selected_text # Visar hela namnet vid hover!
 	else:
 		right_type_opt.disabled = true
 		right_visible_check.disabled = true
-		right_name_label.text = "Right: Empty"
 
 # --- SLIDER FUNKTIONER ---
 func _on_speed_slider_changed(value: float):
