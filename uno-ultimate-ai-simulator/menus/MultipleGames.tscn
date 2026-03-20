@@ -36,6 +36,25 @@ shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(-2.5, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_3hh3q"]
+font = ExtResource("2_atn1r")
+font_size = 22
+outline_size = 6
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_bdgv8"]
+font = ExtResource("2_atn1r")
+font_size = 30
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 8
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(-2.5, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_4clst"]
+font = ExtResource("2_atn1r")
+font_size = 26
+outline_size = 12
+outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_atn1r"]
 font = ExtResource("2_atn1r")
@@ -86,12 +105,12 @@ label_settings = SubResource("LabelSettings_ouq10")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Spacer" type="Control" parent="MarginContainer/MainVBox" unique_id=1722005637]
-custom_minimum_size = Vector2(0, 80)
+[node name="Spacer" type="Control" parent="MarginContainer/MainVBox" unique_id=284206615]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
 [node name="MatchModeDropdown" type="OptionButton" parent="MarginContainer/MainVBox" unique_id=1838172709]
-custom_minimum_size = Vector2(300, 0)
+custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 theme = ExtResource("3_3hh3q")
@@ -100,15 +119,20 @@ theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_atn1r")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_atn1r")
 theme_override_styles/hover = SubResource("StyleBoxFlat_atn1r")
-alignment = 1
 clip_text = true
 selected = 0
-fit_to_longest_item = false
-item_count = 1
-popup/item_0/text = "test"
+item_count = 2
+popup/item_0/text = "Repeated Matchup"
 popup/item_0/id = 0
+popup/item_1/text = "Round Robit"
+popup/item_1/id = 1
+
+[node name="Spacer1" type="Control" parent="MarginContainer/MainVBox" unique_id=1722005637]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
 
 [node name="RepeatedMatchup" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=950826926]
+visible = false
 layout_mode = 2
 
 [node name="VBoxL" type="VBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup" unique_id=2048965824]
@@ -157,7 +181,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL/RandomizeSeats" unique_id=156102621]
-custom_minimum_size = Vector2(250, 0)
+custom_minimum_size = Vector2(390, 0)
 layout_mode = 2
 text = "Randomize seating each match"
 label_settings = SubResource("LabelSettings_3hh3q")
@@ -169,7 +193,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL/MaxRounds2" unique_id=57400133]
-custom_minimum_size = Vector2(250, 0)
+custom_minimum_size = Vector2(370, 0)
 layout_mode = 2
 text = "Max Game Rounds:"
 label_settings = SubResource("LabelSettings_3hh3q")
@@ -289,6 +313,120 @@ popup/item_1/text = "Simple"
 popup/item_1/id = 1
 popup/item_2/text = "Simple"
 popup/item_2/id = 2
+
+[node name="RoundRobin" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=1830803528]
+layout_mode = 2
+
+[node name="VBoxL" type="VBoxContainer" parent="MarginContainer/MainVBox/RoundRobin" unique_id=420920737]
+custom_minimum_size = Vector2(450, 0)
+layout_mode = 2
+
+[node name="MatchTypeLabel" type="Label" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=641208000]
+layout_mode = 2
+text = "Select Match Types:"
+label_settings = SubResource("LabelSettings_bdgv8")
+vertical_alignment = 1
+
+[node name="2PlayerCheckBox" type="CheckBox" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1876797591]
+layout_mode = 2
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("2_atn1r")
+theme_override_font_sizes/font_size = 22
+button_pressed = true
+text = "2 Player Matches"
+
+[node name="3PlayerCheckBox" type="CheckBox" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1350440094]
+layout_mode = 2
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("2_atn1r")
+theme_override_font_sizes/font_size = 22
+text = "3 Player Matches"
+
+[node name="4PlayerCheckBox" type="CheckBox" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1506823649]
+layout_mode = 2
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("2_atn1r")
+theme_override_font_sizes/font_size = 22
+text = "4 Player Matches"
+
+[node name="NoSelectedLabel" type="Label" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1819268665]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.67058825, 0, 1)
+text = "Please select at least one match type!"
+
+[node name="Spacer1" type="Control" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1073747919]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="MatchupNumber" type="HBoxContainer" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1033339901]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/RoundRobin/VBoxL/MatchupNumber" unique_id=35457854]
+layout_mode = 2
+text = "Play each matchup "
+
+[node name="SpinBox" type="SpinBox" parent="MarginContainer/MainVBox/RoundRobin/VBoxL/MatchupNumber" unique_id=857458919]
+layout_mode = 2
+min_value = 1.0
+value = 1.0
+rounded = true
+alignment = 1
+
+[node name="Label2" type="Label" parent="MarginContainer/MainVBox/RoundRobin/VBoxL/MatchupNumber" unique_id=829304901]
+layout_mode = 2
+text = "times"
+
+[node name="Label3" type="Label" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=477532061]
+layout_mode = 2
+text = "Total matches: 10000/10000"
+label_settings = SubResource("LabelSettings_4clst")
+
+[node name="Spacer2" type="Control" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=1300121300]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="MaxRounds2" type="HBoxContainer" parent="MarginContainer/MainVBox/RoundRobin/VBoxL" unique_id=2059735475]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/RoundRobin/VBoxL/MaxRounds2" unique_id=171632010]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+text = "Max Game Rounds:"
+label_settings = SubResource("LabelSettings_3hh3q")
+
+[node name="SpinBox" type="SpinBox" parent="MarginContainer/MainVBox/RoundRobin/VBoxL/MaxRounds2" unique_id=1085391950]
+layout_mode = 2
+theme = ExtResource("3_3hh3q")
+min_value = 1.0
+max_value = 1000.0
+value = 500.0
+alignment = 1
+
+[node name="AvailableAIList" type="VBoxContainer" parent="MarginContainer/MainVBox/RoundRobin" unique_id=198805744]
+custom_minimum_size = Vector2(450, 400)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/RoundRobin/AvailableAIList" unique_id=322069777]
+layout_mode = 2
+text = "Available AI:"
+label_settings = SubResource("LabelSettings_bdgv8")
+vertical_alignment = 1
+
+[node name="ItemList" type="ItemList" parent="MarginContainer/MainVBox/RoundRobin/AvailableAIList" unique_id=2032069683]
+layout_mode = 2
+
+[node name="SelectedAIList" type="VBoxContainer" parent="MarginContainer/MainVBox/RoundRobin" unique_id=977073744]
+custom_minimum_size = Vector2(450, 400)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/MainVBox/RoundRobin/SelectedAIList" unique_id=925170918]
+layout_mode = 2
+text = "Selected AI:"
+label_settings = SubResource("LabelSettings_bdgv8")
+vertical_alignment = 1
+
+[node name="ItemList" type="ItemList" parent="MarginContainer/MainVBox/RoundRobin/SelectedAIList" unique_id=2023055842]
+layout_mode = 2
 
 [node name="BottomHBox" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=1408743332]
 layout_mode = 2

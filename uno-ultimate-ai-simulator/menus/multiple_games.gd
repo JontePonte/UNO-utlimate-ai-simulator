@@ -1,5 +1,7 @@
 extends Control
 
+@onready var match_mode_dropdown = $MarginContainer/MainVBox/MatchModeDropdown
+
 # Repeated Matchup
 @onready var num_players_opt = $MarginContainer/MainVBox/RepeatedMatchup/VBoxL/NumberOfPlayers/OptionButton
 @onready var slot3 = $MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot3
