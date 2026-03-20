@@ -56,15 +56,6 @@ font_size = 26
 outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_atn1r"]
-font = ExtResource("2_atn1r")
-font_size = 30
-outline_size = 8
-outline_color = Color(0, 0, 0, 1)
-shadow_size = 8
-shadow_color = Color(0, 0, 0, 1)
-shadow_offset = Vector2(-2.5, 1)
-
 [node name="MatchSetup" type="Control" unique_id=1779067515]
 layout_mode = 3
 anchors_preset = 15
@@ -537,17 +528,19 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
 [node name="Spacer4" type="Control" parent="MarginContainer/MainVBox/BottomHBox" unique_id=593074985]
-custom_minimum_size = Vector2(50, 0)
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 
-[node name="ResultsLabel" type="Label" parent="MarginContainer/MainVBox/BottomHBox" unique_id=1166881295]
-custom_minimum_size = Vector2(800, 60)
+[node name="VBoxRusults" type="VBoxContainer" parent="MarginContainer/MainVBox/BottomHBox" unique_id=560836354]
+custom_minimum_size = Vector2(800, 0)
 layout_mode = 2
-label_settings = SubResource("LabelSettings_atn1r")
-horizontal_alignment = 1
-vertical_alignment = 1
-clip_text = true
-text_overrun_behavior = 3
+
+[node name="Results" type="RichTextLabel" parent="MarginContainer/MainVBox/BottomHBox/VBoxRusults" unique_id=528453755]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
 
 [node name="FullScreenButtonCont" type="MarginContainer" parent="." unique_id=1455762664]
 layout_mode = 1

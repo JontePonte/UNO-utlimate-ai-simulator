@@ -38,7 +38,7 @@ extends Control
 
 # Bottom
 @onready var progress_bar = $MarginContainer/MainVBox/BottomHBox/HBoxSim/ProgressBar
-@onready var results_label = $MarginContainer/MainVBox/BottomHBox/ResultsLabel
+@onready var results_label = $MarginContainer/MainVBox/BottomHBox/VBoxRusults/Results
 
 @onready var start_button = $MarginContainer/MainVBox/BottomHBox/HBoxSim/Start
 @onready var exit_button = $MarginContainer/MainVBox/BottomHBox/HBoxSim/HBoxBackExit/ExitGame
@@ -186,10 +186,21 @@ func _update_player_slots():
 	slot3.visible = num_players >= 3
 	slot4.visible = num_players >= 4
 
-
 func _on_start_button_pressed():
 	print("--- STARTAR SIMULERING ---")
 	
+	# Nollställ UI
+	progress_bar.value = 0
+	progress_bar.show()
+	results_label.text = "Simulating matches...\nPlease Wait!"
+	
+	# Välj rätt motor!
+	if match_mode_dropdown.selected == 0:
+		await _run_repeated_matchup()
+	else:
+		await _run_round_robin()
+
+func _run_repeated_matchup():	
 	var num_matches = int(match_count_spinbox.value)
 	var num_players = num_players_opt.get_item_id(num_players_opt.selected)
 	
@@ -267,6 +278,174 @@ func _on_start_button_pressed():
 		
 	# Visa det snygga resultatet på skärmen!
 	results_label.text = final_text
+
+# --- ROUND ROBIN TOURNAMENT ENGINE ---
+
+# --- ROUND ROBIN TOURNAMENT ENGINE ---
+
+func _run_round_robin():
+	var n = selected_ai_list.item_count
+	
+	# 1. SAMLA IN LAGUPPSTÄLLNINGEN (Roster)
+	var roster_names = []
+	var roster_stats = {} 
+	
+	for i in range(n):
+		var ai_index = selected_ai_list.get_item_metadata(i)
+		var base_name = available_ais[ai_index]["name"]
+		
+		# Skapa ett unikt namn ("#1 AI: Standard") för att hantera dubbletter
+		var unique_name = "#" + str(i + 1) + " " + base_name
+		roster_names.append(unique_name)
+		
+		# NU TRACKAR VI ÄVEN SPECIFIKA MATCHTYPER!
+		roster_stats[unique_name] = {
+			"ai_index": ai_index,
+			"wins_total": 0, "matches_total": 0,
+			"wins_2": 0, "matches_2": 0,
+			"wins_3": 0, "matches_3": 0,
+			"wins_4": 0, "matches_4": 0
+		}
+		
+	# 2. GENERERA MATCH-SCHEMAT
+	var match_queue = []
+	var active_types = [] # Håller koll på VILKA matchtyper som faktiskt valdes
+	
+	if two_player_checkbox.button_pressed and n >= 2:
+		match_queue.append_array(_generate_matchups(roster_names, 2))
+		active_types.append(2)
+	if three_player_checkbox.button_pressed and n >= 3:
+		match_queue.append_array(_generate_matchups(roster_names, 3))
+		active_types.append(3)
+	if four_player_checkbox.button_pressed and n >= 4:
+		match_queue.append_array(_generate_matchups(roster_names, 4))
+		active_types.append(4)
+		
+	var repetitions = int(matchup_number_spin_box.value)
+	var full_queue = []
+	for i in range(repetitions):
+		full_queue.append_array(match_queue)
+		
+	var total_matches = full_queue.size()
+	progress_bar.max_value = total_matches
+	
+	var draws = 0
+	var max_turns = int(round_robin_max_turns_spinbox.value)
+	var start_time = Time.get_ticks_msec()
+	
+	# 3. SPELA ALLA MATCHER
+	for i in range(total_matches):
+		var current_match_names = full_queue[i].duplicate() 
+		current_match_names.shuffle() 
+		
+		# Hämta matchtypen direkt från listans storlek! (Kommer vara 2, 3 eller 4)
+		var match_type = current_match_names.size() 
+		var players: Array[Player] = []
+		
+		for p_idx in range(current_match_names.size()):
+			var p_name = current_match_names[p_idx]
+			var ai_index = roster_stats[p_name]["ai_index"]
+			
+			var cached_ai_data = available_ais[ai_index]["brain_data"]
+			var ai_strategy = AIInterpreter.new()
+			ai_strategy.load_from_data(cached_ai_data)
+			
+			var player = Player.new(p_idx, p_name, false, ai_strategy)
+			players.append(player)
+			
+			# Registrera att denna AI spelat en match (både totalt och för matchtypen)
+			roster_stats[p_name]["matches_total"] += 1
+			roster_stats[p_name]["matches_" + str(match_type)] += 1
+			
+		var sim_manager = SimulationManager.new(players)
+		var result = await sim_manager.run_match(max_turns)
+		
+		if result["winner_name"] == "Draw":
+			draws += 1
+		else:
+			var winner = result["winner_name"]
+			# Registrera vinst (både totalt och för matchtypen)
+			roster_stats[winner]["wins_total"] += 1
+			roster_stats[winner]["wins_" + str(match_type)] += 1
+			
+		progress_bar.value = i + 1
+		if i % 50 == 0:
+			await get_tree().process_frame
+			
+	# 4. SAMMANSTÄLL LEADERBOARD
+	var end_time = Time.get_ticks_msec()
+	var time_taken = (end_time - start_time) / 1000.0
+	
+	var leaderboard = []
+	for p_name in roster_stats.keys():
+		leaderboard.append({
+			"name": p_name,
+			"stats": roster_stats[p_name] # Flyttade hela datan in hit för att göra matten renare nedan
+		})
+		
+	# Sortera listan efter flest vinster totalt!
+	leaderboard.sort_custom(func(a, b): return a["stats"]["wins_total"] > b["stats"]["wins_total"])
+	
+	# 5. SKRIV UT DEN DYNAMISKA POÄNGTAVLAN
+	var text = "[center][b]--- TOURNAMENT LEADERBOARD ---[/b][/center]\n"
+	text += "Total Matches: " + str(total_matches) + " | Time: " + str(time_taken).pad_decimals(2) + "s | Draws: " + str(draws) + "\n\n"
+	
+	# Räkna ut hur många kolumner tabellen behöver
+	var num_cols = 4
+	var show_details = active_types.size() > 1
+	if show_details:
+		num_cols += active_types.size()
+		
+	text += "[table=" + str(num_cols) + "]\n"
+	text += "[cell][b] Rank [/b][/cell][cell][b] AI Profile [/b][/cell][cell][b] Wins [/b][/cell][cell][b] Total Win % [/b][/cell]"
+	
+	# Lägg till extra rubriker om vi kör flera matchtyper
+	if show_details:
+		if 2 in active_types: text += "[cell][b] 2-Player % [/b][/cell]"
+		if 3 in active_types: text += "[cell][b] 3-Player % [/b][/cell]"
+		if 4 in active_types: text += "[cell][b] 4-Player % [/b][/cell]"
+		
+	# Smart mini-funktion (Lambda) som räknar ut procent och undviker division med noll
+	var get_rate = func(wins, matches): 
+		if matches == 0: return "-"
+		return str((float(wins) / float(matches)) * 100.0).pad_decimals(1) + "%"
+	
+	for i in range(leaderboard.size()):
+		var p = leaderboard[i]
+		var s = p["stats"]
+		
+		# Fyll i grund-datan
+		text += "[cell]" + str(i + 1) + ". [/cell]"
+		text += "[cell]" + p["name"] + "   [/cell]"
+		text += "[cell]" + str(s["wins_total"]) + "   [/cell]"
+		text += "[cell]" + get_rate.call(s["wins_total"], s["matches_total"]) + "[/cell]"
+		
+		# Fyll i extradatat om det finns
+		if show_details:
+			if 2 in active_types: text += "[cell]" + get_rate.call(s["wins_2"], s["matches_2"]) + "[/cell]"
+			if 3 in active_types: text += "[cell]" + get_rate.call(s["wins_3"], s["matches_3"]) + "[/cell]"
+			if 4 in active_types: text += "[cell]" + get_rate.call(s["wins_4"], s["matches_4"]) + "[/cell]"
+			
+	text += "[/table]"
+	
+	results_label.text = text
+
+# Den här funktionen bygger hela match-kön!
+func _generate_matchups(ai_indices: Array, players_per_match: int) -> Array:
+	var matchups = []
+	_combine_helper(ai_indices, players_per_match, 0, [], matchups)
+	return matchups
+
+# Detta är en rekursiv algoritm (matematik-magi) som hittar alla unika kombinationer
+func _combine_helper(arr: Array, k: int, start_idx: int, current_combo: Array, result: Array):
+	if current_combo.size() == k:
+		result.append(current_combo.duplicate())
+		return
+		
+	for i in range(start_idx, arr.size()):
+		current_combo.append(arr[i])
+		_combine_helper(arr, k, i + 1, current_combo, result)
+		current_combo.pop_back()
 
 func _on_available_list_selected(_index: int):
 	selected_ai_list.deselect_all() # Klickar du till vänster, avmarkera till höger
