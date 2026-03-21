@@ -71,6 +71,9 @@ var player_uis: Array[PlayerHandUI] = []
 func _ready():
 	add_to_group("visual_match")
 	await get_tree().process_frame
+	if OS.has_feature("web"):
+		exit_button.hide()
+		pause_exit_button.hide()
 	
 	Engine.time_scale = GameSettings.game_speed
 	

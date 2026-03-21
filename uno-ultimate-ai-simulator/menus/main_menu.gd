@@ -7,6 +7,9 @@ extends Control
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	if OS.has_feature("web"):
+		exit_game_button.hide()
+	
 	play_single_game_button.pressed.connect(_on_single_game_burron_pressed)
 	multiple_ai_games_button.pressed.connect(_on_multiple_ai_games_button_pressed)
 	create_new_ai_button.pressed.connect(_on_create_new_ai_button_pressed)

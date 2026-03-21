@@ -49,13 +49,16 @@ var available_ais = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	if OS.has_feature("web"):
+		exit_button.hide()
+	
 	# Koppla signalen till bytar-funktionen
 	match_mode_dropdown.item_selected.connect(_on_match_mode_changed)
-	
+
 	# Kör bytet en gång manuellt direkt vid start, så att rätt meny syns från sekund 1
 	_on_match_mode_changed(match_mode_dropdown.selected)
-	#-------------------- Repeaded Matchup --------------------------
 	
+	#-------------------- Repeaded Matchup --------------------------
 	# Koppla knappar
 	start_button.pressed.connect(_on_start_button_pressed)
 	exit_button.pressed.connect(_on_exit_button_pressed)

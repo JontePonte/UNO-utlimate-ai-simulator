@@ -24,6 +24,9 @@ var current_file_to_delete: String = "" # NY! Minns vilken fil som ska raderas
 var dialog_mode: String = ""
 
 func _ready():
+	if OS.has_feature("web"):
+		exit_game_button.hide()
+	
 	populate_ai_list()
 	main_menu_button.pressed.connect(_on_main_menu_button_pressed)
 	exit_game_button.pressed.connect(_on_exit_button_pressed)

@@ -34,6 +34,8 @@ extends Control
 var available_ais = []
 
 func _ready():
+	if OS.has_feature("web"):
+		exit_button.hide()
 	# Koppla knappar
 	start_button.pressed.connect(_on_start_button_pressed)
 	exit_button.pressed.connect(_on_exit_button_pressed)
