@@ -17,11 +17,13 @@ extends Control
 @onready var left_skip = $Base/InnerColor/LeftCornerSkip
 @onready var right_skip = $Base/InnerColor/RightCornerSkip
 
+@onready var center_rev = $Base/InnerColor/CenterRev
+@onready var left_rev = $Base/InnerColor/LeftCornerRev
+@onready var right_rev = $Base/InnerColor/RightCornerRev
+
 @onready var card_back = $CardBack
 
 @onready var base_node = $Base
-
-const FALLBACK_FONT = preload("res://ui/fonts/Roboto-VariableFont_wdth,wght.ttf")
 
 var is_interactable: bool = false
 var is_in_pile: bool = false
@@ -96,20 +98,6 @@ func set_card_data(card: Card):
 		top_left_text.label_settings.font_size = corner_small_size
 		bottom_right_text.label_settings.font_size = corner_small_size
 		wild_icon.visible = true
-	elif is_reverse_card:
-		center_text.label_settings.font_size = center_reverse_size
-		center_text.rotation_degrees = -50
-		center_text.position = Vector2(0,40)
-		top_left_text.label_settings.font_size = corner_small_size
-		top_left_text.rotation_degrees = -50
-		top_left_text.position = Vector2(-20,20)
-		bottom_right_text.label_settings.font_size = corner_small_size
-		bottom_right_text.rotation_degrees = -50
-		bottom_right_text.position = Vector2(80, 192)
-		
-		center_text.label_settings.font = FALLBACK_FONT
-		top_left_text.label_settings.font = FALLBACK_FONT
-		bottom_right_text.label_settings.font = FALLBACK_FONT
 	else:
 		center_text.label_settings.font_size = center_normal_size
 		top_left_text.label_settings.font_size = corner_normal_size
@@ -121,6 +109,16 @@ func set_card_data(card: Card):
 		center_skip.visible = true
 		left_skip.visible = true
 		right_skip.visible = true
+		
+		center_text.visible = false
+		top_left_text.visible = false
+		bottom_right_text.visible = false
+	
+	var is_rev = (card.value == Card.CardValue.REVERSE)
+	if is_rev:
+		center_rev.visible = true
+		left_rev.visible = true
+		right_rev.visible = true
 		
 		center_text.visible = false
 		top_left_text.visible = false

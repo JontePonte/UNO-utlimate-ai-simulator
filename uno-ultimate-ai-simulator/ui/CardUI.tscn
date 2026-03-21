@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://b6vumjxowbqjd" path="res://ui/card_ui.gd" id="1_5b3sr"]
 [ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="2_4yc6j"]
 [ext_resource type="Texture2D" uid="uid://bkxr8kv2jmi8j" path="res://ui/assets/unoSkipWhite.svg" id="3_ey4q1"]
+[ext_resource type="Texture2D" uid="uid://7tlldtj2tnsd" path="res://ui/assets/arrows.png" id="4_1uok3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ey4q1"]
 bg_color = Color(1, 1, 1, 1)
@@ -422,6 +423,36 @@ offset_right = 499.0
 offset_bottom = 350.0
 texture = ExtResource("3_ey4q1")
 expand_mode = 1
+
+[node name="CenterRev" type="TextureRect" parent="Base/InnerColor" unique_id=1710336527]
+visible = false
+layout_mode = 0
+offset_left = 27.0
+offset_top = 56.0
+offset_right = 475.0
+offset_bottom = 612.0
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("4_1uok3")
+
+[node name="LeftCornerRev" type="TextureRect" parent="Base/InnerColor" unique_id=1711261945]
+visible = false
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 450.0
+offset_bottom = 558.0
+scale = Vector2(0.07, 0.07)
+texture = ExtResource("4_1uok3")
+
+[node name="RightCornerRev" type="TextureRect" parent="Base/InnerColor" unique_id=1360785360]
+visible = false
+layout_mode = 0
+offset_left = 107.0
+offset_top = 179.0
+offset_right = 555.0
+offset_bottom = 735.0
+scale = Vector2(0.07, 0.07)
+texture = ExtResource("4_1uok3")
 
 [node name="CardBack" type="Panel" parent="." unique_id=1831795617]
 visible = false

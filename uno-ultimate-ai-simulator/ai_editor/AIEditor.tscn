@@ -11,7 +11,6 @@
 [ext_resource type="PackedScene" uid="uid://ue52gflie313" path="res://ai_editor/ConditionPlayableCardCountIs.tscn" id="9_yd1mx"]
 [ext_resource type="PackedScene" uid="uid://by4heu4eejx2q" path="res://menus/ReportBugButton.tscn" id="10_gsrnu"]
 [ext_resource type="PackedScene" uid="uid://0rw7cqkf8lbm" path="res://ai_editor/ConditionLastMoveWas.tscn" id="10_yd1mx"]
-[ext_resource type="FontFile" uid="uid://y1vgdfqsumjx" path="res://ui/fonts/Roboto-VariableFont_wdth,wght.ttf" id="11_2v3sd"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_045bj"]
 bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
@@ -62,41 +61,35 @@ layout_mode = 2
 
 [node name="BackToMenuButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=567928158]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("11_2v3sd")
 theme_override_font_sizes/font_size = 18
 text = "<- Back to Menu"
 
 [node name="FullscreenButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=640398283]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("11_2v3sd")
 theme_override_font_sizes/font_size = 18
 text = "Windowed (F11)"
 
 [node name="RenameButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=804307129]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("11_2v3sd")
 theme_override_font_sizes/font_size = 18
 text = "Rename AI"
 
 [node name="CopyButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=1481445435]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("11_2v3sd")
 theme_override_font_sizes/font_size = 18
 text = "Copy AI Code"
 
 [node name="TestButton" type="MenuButton" parent="MarginContainer/HBoxContainer" unique_id=2138379968]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("11_2v3sd")
 theme_override_font_sizes/font_size = 18
-text = "Test AI ▼"
+text = "Test AI"
 
 [node name="SaveButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=798030839]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("11_2v3sd")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_2maqe")
 theme_override_styles/hover = SubResource("StyleBoxFlat_kgwxg")
