@@ -73,12 +73,10 @@ func set_card_data(card: Card):
 	var is_plus_two_card = card.value == Card.CardValue.DRAW_TWO
 	var is_wild_card = card.value == Card.CardValue.WILD
 	var is_wild_four_card = card.value == Card.CardValue.WILD_DRAW_FOUR
-	var is_reverse_card = card.value == Card.CardValue.REVERSE
 	
 	# Byt ut dessa mot de värden du använder i din UI-editor!
 	var center_normal_size = 120
 	var center_small_size = 105
-	var center_reverse_size = 110
 	
 	var corner_normal_size = 48
 	var corner_wild_size = 45
@@ -170,7 +168,6 @@ func get_value_string(val: Card.CardValue) -> String:
 		Card.CardValue.EIGHT: return "8"
 		Card.CardValue.NINE: return "9"
 		Card.CardValue.SKIP: return ""
-		Card.CardValue.REVERSE: return "⇄"
 		Card.CardValue.DRAW_TWO: return "+2"
 		Card.CardValue.WILD: return "W"
 		Card.CardValue.WILD_DRAW_FOUR: return "+4"
