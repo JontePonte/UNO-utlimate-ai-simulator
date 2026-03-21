@@ -459,6 +459,8 @@ func _spawn_discard_card(card_data: Card, source_ui_card: Control = null, start_
 	visual_card.set_card_data(card_data)
 	visual_card.set_face_up(true)
 	
+	visual_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
 	var normal_size = visual_card.size
 	var center_offset = -normal_size / 2.0
 	var randomness_translate = 5.0
@@ -524,6 +526,7 @@ func _update_draw_pile_visual():
 		
 		visual_card.set_interactable(false)
 		visual_card.set_face_up(false) 
+		visual_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		
 		var center_offset = -visual_card.size / 2.0
 		# Tätare mellanrum (0.2) så en lek med 80 kort inte blir onaturligt hög
