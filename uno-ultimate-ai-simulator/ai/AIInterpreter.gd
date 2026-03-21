@@ -238,6 +238,78 @@ func _evaluate_condition(condition_name: String, view: PlayerView, node: Diction
 					return true
 					
 			return false
+		
+		"check_last_move":
+			var target_player = int(node.get("player_target", 0))
+			var target_action = int(node.get("action_target", 0))
+			
+			var total_players = view.card_counts.size()
+			var players_to_check = []
+			
+			# 1. Vem ska vi kolla?
+			if target_player == 0: # My
+				players_to_check.append(view.player_index)
+			elif target_player == 1: # Next Player
+				var next_idx = posmod(view.player_index + view.play_direction, total_players)
+				players_to_check.append(next_idx)
+			elif target_player == 2: # Previous Player
+				var prev_idx = posmod(view.player_index - view.play_direction, total_players)
+				players_to_check.append(prev_idx)
+			elif target_player == 3: # Any Player (Alla utom vi själva)
+				for i in range(total_players):
+					if i != view.player_index:
+						players_to_check.append(i)
+						
+			# 2. Hitta det SENASTE draget för de valda spelarna
+			for check_idx in players_to_check:
+				var last_move = null
+				
+				# Loopa baklänges genom historiken (-1 är sista indexet, vi går ner till 0)
+				for i in range(view.move_history.size() - 1, -1, -1):
+					var move = view.move_history[i]
+					if move.player_index == check_idx:
+						last_move = move
+						break # Stanna loopen, vi har hittat deras senaste drag!
+						
+				# Om vi hittade ett drag, matchar det vad eleven letar efter?
+				if last_move != null:
+					var match_found = false
+					var is_two_player = total_players == 2
+					
+					# Valen i Editorn var:
+					# 0: Play special card (Skip, Rev, +2, +4, Wild)
+					# 1: Play attack card (Skip, +2, +4) (Och Rev i 2p!)
+					# 2: Play Wild Card (Wild, +4)
+					# 3: Play +4 Wild Card
+					# 4: Play +2 Card
+					# 5: Play Skip Card
+					# 6: Play Reverse Card
+					# 7: Play Same Color Card
+					# 8: Play Same Number Card
+					# 9: Draw Card
+					
+					if target_action == 9: # Draw Card
+						match_found = (last_move.move_type == Move.MoveType.DRAW_CARD)
+					elif last_move.move_type == Move.MoveType.PLAY_CARD and last_move.card != null:
+						var c = last_move.card
+						var is_special = c.value in [Card.CardValue.SKIP, Card.CardValue.REVERSE, Card.CardValue.DRAW_TWO, Card.CardValue.WILD_DRAW_FOUR] or c.color == Card.CardColor.WILD
+						var is_attack = c.value in [Card.CardValue.SKIP, Card.CardValue.DRAW_TWO, Card.CardValue.WILD_DRAW_FOUR] or (is_two_player and c.value == Card.CardValue.REVERSE)
+						
+						if target_action == 0: match_found = is_special
+						elif target_action == 1: match_found = is_attack
+						elif target_action == 2: match_found = (c.color == Card.CardColor.WILD)
+						elif target_action == 3: match_found = (c.value == Card.CardValue.WILD_DRAW_FOUR)
+						elif target_action == 4: match_found = (c.value == Card.CardValue.DRAW_TWO)
+						elif target_action == 5: match_found = (c.value == Card.CardValue.SKIP)
+						elif target_action == 6: match_found = (c.value == Card.CardValue.REVERSE)
+						elif target_action == 7: match_found = (c.color != Card.CardColor.WILD) # Behöver bara veta att det var en färg
+						elif target_action == 8: match_found = (c.value >= 0 and c.value <= 9) # Behöver bara veta att det var en siffra
+						
+					if match_found:
+						return true # Om vi hittar en match (viktigt för "Any Player"), returnera True direkt!
+						
+			return false
+			
 	return false
 
 # --- LOGIKEN FÖR HANDLINGAR (ACTIONS) ---

@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://cbt7ykanbrlqm" path="res://ai_editor/ConditionPlayerCount.tscn" id="8_gsrnu"]
 [ext_resource type="PackedScene" uid="uid://ue52gflie313" path="res://ai_editor/ConditionPlayableCardCountIs.tscn" id="9_yd1mx"]
 [ext_resource type="PackedScene" uid="uid://by4heu4eejx2q" path="res://menus/ReportBugButton.tscn" id="10_gsrnu"]
+[ext_resource type="PackedScene" uid="uid://0rw7cqkf8lbm" path="res://ai_editor/ConditionLastMoveWas.tscn" id="10_yd1mx"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_045bj"]
 bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
@@ -36,6 +37,7 @@ condition_table_color_node_scene = ExtResource("6_kgwxg")
 condition_opponent_card_count = ExtResource("7_p61oi")
 condition_player_count = ExtResource("8_gsrnu")
 condition_playable_card_count = ExtResource("9_yd1mx")
+condition_last_move_node_scene = ExtResource("10_yd1mx")
 
 [node name="GraphEdit" type="GraphEdit" parent="." unique_id=1139485564]
 layout_mode = 1

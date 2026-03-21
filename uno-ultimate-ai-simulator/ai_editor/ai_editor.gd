@@ -10,6 +10,7 @@ extends Control
 @export var condition_opponent_card_count: PackedScene
 @export var condition_player_count: PackedScene
 @export var condition_playable_card_count: PackedScene
+@export var condition_last_move_node_scene: PackedScene
 
 @onready var back_button = $MarginContainer/HBoxContainer/BackToMenuButton
 @onready var fullscreen_button = $MarginContainer/HBoxContainer/FullscreenButton
@@ -61,6 +62,7 @@ func _ready():
 	context_menu.add_item("Condition: Playable Card Count Is", 4)
 	context_menu.add_item("Condition: Table Color Is", 5)
 	context_menu.add_item("Condition: Player Count Is", 6)
+	context_menu.add_item("Condition: Last Move Was", 7)
 	context_menu.id_pressed.connect(_on_context_menu_id_pressed)
 	context_menu.window_input.connect(_on_menu_window_input.bind(context_menu))
 	node_context_menu.window_input.connect(_on_menu_window_input.bind(node_context_menu))
@@ -141,6 +143,8 @@ func _on_context_menu_id_pressed(id: int):
 		new_node = condition_table_color_node_scene.instantiate()
 	elif id == 6:
 		new_node = condition_player_count.instantiate()
+	elif id == 7:
+		new_node = condition_last_move_node_scene.instantiate()
 		
 	# 2. Om vi faktiskt skapade en nod, ställ in den!
 	if new_node != null:
@@ -169,6 +173,14 @@ func _on_context_menu_id_pressed(id: int):
 		var color_dropdown = new_node.get_node_or_null("ColorDropdown")
 		if color_dropdown:
 			color_dropdown.item_selected.connect(func(_idx): _mark_unsaved())
+		
+		var player_dropdown = new_node.get_node_or_null("HBoxContainer/PlayerDropdown")
+		if player_dropdown:
+			player_dropdown.item_selected.connect(func(_idx): _mark_unsaved())
+			
+		var action_dropdown = new_node.get_node_or_null("ActionDropdown")
+		if action_dropdown:
+			action_dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 
 func _on_node_gui_input(event: InputEvent, node: GraphNode):
 	# Koll om det är ett högerklick!
@@ -404,6 +416,10 @@ func _on_save_button_pressed():
 			if child.has_node("OpponentDropdown"):
 				var opponent_dropdown = child.get_node("OpponentDropdown")
 				node_info["opponent_choice"] = opponent_dropdown.selected
+			if child.has_node("HBoxContainer/PlayerDropdown"):
+				node_info["player_target"] = child.get_node("HBoxContainer/PlayerDropdown").selected
+			if child.has_node("ActionDropdown"):
+				node_info["action_target"] = child.get_node("ActionDropdown").selected
 				
 			save_data["visual_data"]["nodes"].append(node_info)
 			
@@ -515,6 +531,8 @@ func _load_ai_graph(file_name: String):
 				new_node = condition_table_color_node_scene.instantiate()
 			"Condition: Player Count Is":
 				new_node = condition_player_count.instantiate()
+			"Condition: Last Move Was":
+				new_node = condition_last_move_node_scene.instantiate()
 			"Action: Play Card":
 				new_node = action_play_node_scene.instantiate()
 			"Action: Draw Card":
@@ -553,6 +571,16 @@ func _load_ai_graph(file_name: String):
 				var opp_dropdown = new_node.get_node("OpponentDropdown")
 				opp_dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 				opp_dropdown.selected = int(node_data["opponent_choice"])
+			
+			if node_data.has("player_target") and new_node.has_node("HBoxContainer/PlayerDropdown"):
+				var p_drop = new_node.get_node("HBoxContainer/PlayerDropdown")
+				p_drop.item_selected.connect(func(_idx): _mark_unsaved())
+				p_drop.selected = int(node_data["player_target"])
+				
+			if node_data.has("action_target") and new_node.has_node("ActionDropdown"):
+				var a_drop = new_node.get_node("ActionDropdown")
+				a_drop.item_selected.connect(func(_idx): _mark_unsaved())
+				a_drop.selected = int(node_data["action_target"])
 				
 			print("-> Lade till noden: ", new_node.name)
 			
@@ -790,6 +818,19 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 			else:
 				result["opponent_target"] = 0
 				result["opponent_condition"] = 0
+		
+		elif node.title == "Condition: Last Move Was":
+			var p_drop = node.get_node_or_null("HBoxContainer/PlayerDropdown")
+			var a_drop = node.get_node_or_null("ActionDropdown")
+			
+			result["name"] = "check_last_move"
+			
+			if p_drop != null and a_drop != null:
+				result["player_target"] = p_drop.selected
+				result["action_target"] = a_drop.selected
+			else:
+				result["player_target"] = 0
+				result["action_target"] = 0
 		
 		# Gå vidare i trädet
 		var true_node_name = _get_connected_node(current_node_name, 0)
