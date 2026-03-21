@@ -20,8 +20,13 @@ extends Control
 @onready var card_back = $CardBack
 
 @onready var base_node = $Base
-var base_start_y: float = 0.0
 
+const FALLBACK_FONT = preload("res://ui/fonts/Roboto-VariableFont_wdth,wght.ttf")
+
+var is_interactable: bool = false
+var is_in_pile: bool = false
+
+var base_start_y: float = 0.0
 signal card_clicked(card_node: Control)
 var my_card: Card
 
@@ -32,8 +37,10 @@ func _ready() -> void:
 	# Koppla mus-händelserna till funktioner via kod
 	mouse_entered.connect(_on_hover_enter)
 	mouse_exited.connect(_on_hover_exit)
-	
 	gui_input.connect(_on_gui_input)
+	
+	set_interactable(false)
+	
 	# Klipp banden! Ge detta specifika kort unika kopior av textinställningarna
 	if center_text.label_settings:
 		center_text.label_settings = center_text.label_settings.duplicate()
@@ -90,7 +97,6 @@ func set_card_data(card: Card):
 		bottom_right_text.label_settings.font_size = corner_small_size
 		wild_icon.visible = true
 	elif is_reverse_card:
-		center_text.label_settings.font = 
 		center_text.label_settings.font_size = center_reverse_size
 		center_text.rotation_degrees = -50
 		center_text.position = Vector2(0,40)
@@ -100,6 +106,10 @@ func set_card_data(card: Card):
 		bottom_right_text.label_settings.font_size = corner_small_size
 		bottom_right_text.rotation_degrees = -50
 		bottom_right_text.position = Vector2(80, 192)
+		
+		center_text.label_settings.font = FALLBACK_FONT
+		top_left_text.label_settings.font = FALLBACK_FONT
+		bottom_right_text.label_settings.font = FALLBACK_FONT
 	else:
 		center_text.label_settings.font_size = center_normal_size
 		top_left_text.label_settings.font_size = corner_normal_size
@@ -173,38 +183,22 @@ func set_face_up(is_face_up: bool):
 	card_back.visible = !is_face_up
 
 func _on_hover_enter():
-	# 1. Tvinga detta kort att ritas OVANPÅ alla andra i handen
-	if not card_back.visible:
+	# Hoppa upp om framsidan syns OCH kortet inte ligger i en hög på bordet!
+	if not is_in_pile and not card_back.visible:
 		z_index = 10 
-		
-		# 2. Skapa en mjuk animation (Tween) som flyttar Base-noden uppåt (-40 pixlar)
 		var tween = create_tween()
-		# Sätt animationen till att ta 0.1 sekunder för en snabb, snärtig känsla
 		tween.tween_property(base_node, "position:y", base_start_y - 40, 0.1)
-	else:
-		pass
 
 func _on_hover_exit():
-	# 1. Återställ Z-index så det smälter in i handen igen
-	if not card_back.visible:
+	if not is_in_pile and not card_back.visible:
 		z_index = 0
-		
-		# 2. Animera tillbaka Base-noden till sin startposition
 		var tween = create_tween()
 		tween.tween_property(base_node, "position:y", base_start_y, 0.1)
-	else:
-		pass
 
 func _on_gui_input(event: InputEvent):
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		# Skicka med 'self' (hela Control-noden) istället för bara datan
+	# Dubbel säkerhetskoll: Släpp bara igenom klicket om dörrvakten säger ja!
+	if is_interactable and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		card_clicked.emit(self)
 
-# Slår av eller på möjligheten att interagera med kortet
 func set_interactable(is_active: bool):
-	if is_active:
-		# Låter musen passera igenom till skriptet (samma som vi ställde in i Editorn)
-		mouse_filter = Control.MOUSE_FILTER_PASS 
-	else:
-		# Kortet blir helt "genomskinligt" för musen
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
+	is_interactable = is_active # Spara statusen i vår dörrvakt.

@@ -85,8 +85,8 @@ func play_flex_animation():
 func test_hand():
 	var dummy_hand = []
 	# Kasta in 15 kort för att se magin jobba!
-	for i in range(50):
-		dummy_hand.append(Card.new(Card.CardColor.RED, Card.CardValue.SIX))
+	for i in range(2):
+		dummy_hand.append(Card.new(Card.CardColor.RED, Card.CardValue.REVERSE))
 	
 	update_hand(dummy_hand)
 	

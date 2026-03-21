@@ -318,6 +318,7 @@ func update_all_visuals():
 	# 3. Kolla om hjärnan precis har blandat om kasthögen!
 	if discard_pile_node.get_child_count() > game_manager.state.discard_pile.size():
 		_cleanup_discard_pile_visual()
+	_refresh_human_cards()
 
 
 # --- SIGNAL MOTTAGARE ---
@@ -334,6 +335,7 @@ func _on_card_drawn(player_index: int, card: Card):
 	
 	var flying_card = card_ui_scene.instantiate()
 	add_child(flying_card)
+	flying_card.is_in_pile = true
 	flying_card.z_index = 30
 	flying_card.set_card_data(card)
 	flying_card.set_face_up(show_face)
@@ -444,6 +446,7 @@ func _on_card_played(player_index: int, card: Card, declared_color: Card.CardCol
 func _spawn_discard_card(card_data: Card, source_ui_card: Control = null, start_rot: float = 0.0) -> Tween:
 	var visual_card = card_ui_scene.instantiate()
 	discard_pile_node.add_child(visual_card)
+	visual_card.is_in_pile = true
 	
 	visual_card.z_index = 20
 	visual_card.z_as_relative = false
@@ -514,6 +517,7 @@ func _update_draw_pile_visual():
 	for i in range(cards_left):
 		var visual_card = card_ui_scene.instantiate()
 		draw_pile_node.add_child(visual_card)
+		visual_card.is_in_pile = true
 		
 		visual_card.set_interactable(false)
 		visual_card.set_face_up(false) 
@@ -666,7 +670,11 @@ func _show_uno_animation(player_index: int):
 	fade_tween.tween_callback(uno_label.queue_free) # Städa bort!
 
 # En variabel för att hålla koll på om det är din tur att klicka
-var human_can_play: bool = false
+var human_can_play: bool = false:
+	set(value):
+		human_can_play = value
+		_refresh_human_cards()
+
 signal human_card_selected(card_data: Card)
 
 func _on_card_ui_clicked(card_node: Control):
@@ -908,3 +916,9 @@ func _on_ai_profile_updated(saved_file_name: String, _new_data: Dictionary):
 	tween.tween_property(label, "modulate:a", 0.0, 2.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 	
 	tween.chain().tween_callback(canvas.queue_free)
+
+func _refresh_human_cards():
+	if bottom_hand and bottom_hand.container:
+		for card_ui in bottom_hand.container.get_children():
+			if card_ui.has_method("set_interactable"):
+				card_ui.set_interactable(human_can_play)
