@@ -96,6 +96,7 @@ func _ready() -> void:
 	_update_math()
 	
 	_refresh_ai_lists()
+	_load_sim_settings()
 
 func _refresh_ai_lists():
 	available_ais.clear()
@@ -188,6 +189,7 @@ func _update_player_slots():
 
 func _on_start_button_pressed():
 	print("--- STARTAR SIMULERING ---")
+	_save_sim_settings()
 	
 	# Nollställ UI
 	progress_bar.value = 0
@@ -563,8 +565,93 @@ func _update_math():
 			start_button.disabled = false
 			total_match_number_label.remove_theme_color_override("font_color")
 
+# --- SETTINGS SAVE/LOAD LOGIC ---
+
+func _save_sim_settings():
+	GameSettings.sim_settings["match_mode"] = match_mode_dropdown.selected
+	
+	# Spara Repeated Matchup
+	GameSettings.sim_settings["repeated"]["num_players_idx"] = num_players_opt.selected
+	GameSettings.sim_settings["repeated"]["num_matches"] = match_count_spinbox.value
+	GameSettings.sim_settings["repeated"]["max_turns"] = repeated_max_turns_spinbox.value
+	GameSettings.sim_settings["repeated"]["randomize_seats"] = randomize_seats_checkbox.button_pressed
+	
+	var slots = [slot1_opt, slot2_opt, slot3_opt, slot4_opt]
+	for i in range(4):
+		var menu = slots[i]
+		if menu.selected != -1 and available_ais.size() > 0:
+			var ai_index = menu.get_item_metadata(menu.selected)
+			GameSettings.sim_settings["repeated"]["slots"][i] = available_ais[ai_index]["name"]
+			
+	# Spara Round Robin
+	GameSettings.sim_settings["round_robin"]["types"] = [
+		two_player_checkbox.button_pressed,
+		three_player_checkbox.button_pressed,
+		four_player_checkbox.button_pressed
+	]
+	GameSettings.sim_settings["round_robin"]["repetitions"] = matchup_number_spin_box.value
+	GameSettings.sim_settings["round_robin"]["max_turns"] = round_robin_max_turns_spinbox.value
+	
+	var selected_ai_names = []
+	for i in range(selected_ai_list.item_count):
+		var ai_index = selected_ai_list.get_item_metadata(i)
+		selected_ai_names.append(available_ais[ai_index]["name"])
+	GameSettings.sim_settings["round_robin"]["selected_ais"] = selected_ai_names
+
+func _load_sim_settings():
+	# Ladda Match Mode
+	match_mode_dropdown.selected = GameSettings.sim_settings["match_mode"]
+	_on_match_mode_changed( GameSettings.sim_settings["match_mode"])
+	
+	# Ladda Repeated Matchup
+	num_players_opt.selected = GameSettings.sim_settings["repeated"]["num_players_idx"]
+	match_count_spinbox.value = GameSettings.sim_settings["repeated"]["num_matches"]
+	repeated_max_turns_spinbox.value = GameSettings.sim_settings["repeated"]["max_turns"]
+	randomize_seats_checkbox.button_pressed = GameSettings.sim_settings["repeated"]["randomize_seats"]
+	
+	var slots = [slot1_opt, slot2_opt, slot3_opt, slot4_opt]
+	for i in range(4):
+		var saved_name = GameSettings.sim_settings["repeated"]["slots"][i]
+		if saved_name != "":
+			_select_option_by_name(slots[i], saved_name)
+			
+	# Ladda Round Robin
+	var types = GameSettings.sim_settings["round_robin"]["types"]
+	two_player_checkbox.button_pressed = types[0]
+	three_player_checkbox.button_pressed = types[1]
+	four_player_checkbox.button_pressed = types[2]
+	
+	matchup_number_spin_box.value = GameSettings.sim_settings["round_robin"]["repetitions"]
+	round_robin_max_turns_spinbox.value = GameSettings.sim_settings["round_robin"]["max_turns"]
+	
+	# Ladda Turneringslistan SÄKERT
+	selected_ai_list.clear()
+	for saved_name in GameSettings.sim_settings["round_robin"]["selected_ais"]:
+		var ai_index = _get_ai_index_by_name(saved_name)
+		# Lägg bara till den i listan om filen faktiskt fortfarande finns!
+		if ai_index != -1:
+			var new_row = selected_ai_list.add_item(saved_name)
+			selected_ai_list.set_item_metadata(new_row, ai_index)
+	_update_math()
+
+# Smarta hjälpfunktioner för att leta upp AI baserat på Namn istället för id-nummer
+func _select_option_by_name(menu: OptionButton, ai_name: String):
+	for i in range(menu.item_count):
+		var ai_index = menu.get_item_metadata(i)
+		if available_ais[ai_index]["name"] == ai_name:
+			menu.selected = i
+			return
+	menu.selected = 0 # Fallback om den raderats
+
+func _get_ai_index_by_name(ai_name: String) -> int:
+	for i in range(available_ais.size()):
+		if available_ais[i]["name"] == ai_name:
+			return i
+	return -1 # Betyder att AI:n blivit raderad/omdöpt
+
 func _on_exit_button_pressed():
 	get_tree().quit()
 
 func _on_main_menu_button_pressed():
 	get_tree().change_scene_to_file("res://menus/MainMenu.tscn")
+	_save_sim_settings()

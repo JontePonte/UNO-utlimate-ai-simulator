@@ -20,3 +20,21 @@ func get_active_player_count() -> int:
 	for s in slots.values():
 		if s.active: count += 1
 	return count
+
+# --- MULTIPLE GAMES (SIMULATION) SETTINGS ---
+var sim_settings = {
+	"match_mode": 0,
+	"repeated": {
+		"num_players_idx": 2, # Index 2 = 4 players
+		"num_matches": 100,
+		"max_turns": 500,
+		"randomize_seats": false,
+		"slots": ["", "", "", ""] # Här sparar vi AI-namnen
+	},
+	"round_robin": {
+		"types": [false, false, true], # 2, 3, 4 player checkboxar
+		"repetitions": 1,
+		"max_turns": 500,
+		"selected_ais": [] # Här sparar vi en lista med AI-namn
+	}
+}
