@@ -90,6 +90,7 @@ func set_card_data(card: Card):
 		bottom_right_text.label_settings.font_size = corner_small_size
 		wild_icon.visible = true
 	elif is_reverse_card:
+		center_text.label_settings.font = 
 		center_text.label_settings.font_size = center_reverse_size
 		center_text.rotation_degrees = -50
 		center_text.position = Vector2(0,40)
