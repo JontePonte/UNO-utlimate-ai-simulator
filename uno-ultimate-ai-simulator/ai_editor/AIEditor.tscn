@@ -81,11 +81,17 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Copy AI Code"
 
+[node name="SubmitToFolder" type="Button" parent="MarginContainer/HBoxContainer" unique_id=168802917]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Submit To Teacher"
+
 [node name="TestButton" type="MenuButton" parent="MarginContainer/HBoxContainer" unique_id=2138379968]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Test AI"
+flat = false
 
 [node name="SaveButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=798030839]
 custom_minimum_size = Vector2(100, 0)
@@ -109,3 +115,5 @@ offset_left = -272.0
 offset_bottom = 32.0
 grow_horizontal = 0
 grow_vertical = 1
+
+[node name="DriveUploader" type="HTTPRequest" parent="." unique_id=1327682334]

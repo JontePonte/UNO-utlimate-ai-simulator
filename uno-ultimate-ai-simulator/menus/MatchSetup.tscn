@@ -105,6 +105,8 @@ layout_mode = 2
 [node name="Active" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotTop" unique_id=260179966]
 layout_mode = 2
 size_flags_horizontal = 4
+tooltip_text = "Checked = ai player
+Unchecked = no player"
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 20
@@ -125,6 +127,9 @@ text_overrun_behavior = 3
 custom_minimum_size = Vector2(450, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+tooltip_text = "Pick ai from list
+Built in (Standard) or
+Player made"
 theme = ExtResource("2_ouq10")
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 32
@@ -143,6 +148,7 @@ popup/item_1/id = 1
 [node name="VisableCards" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotTop" unique_id=1970412406]
 layout_mode = 2
 size_flags_horizontal = 4
+tooltip_text = "Open or hidden cards"
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 20
@@ -160,6 +166,8 @@ layout_mode = 2
 [node name="Active" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotLeft" unique_id=119377110]
 layout_mode = 2
 size_flags_horizontal = 4
+tooltip_text = "Checked = ai player
+Unchecked = no player"
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 20
@@ -180,6 +188,9 @@ text_overrun_behavior = 3
 custom_minimum_size = Vector2(450, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+tooltip_text = "Pick ai from list
+Built in (Standard) or
+Player made"
 theme = ExtResource("2_ouq10")
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 32
@@ -199,6 +210,7 @@ popup/item_1/id = 1
 [node name="VisableCards" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotLeft" unique_id=1485842165]
 layout_mode = 2
 size_flags_horizontal = 4
+tooltip_text = "Open or hidden cards"
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 20
@@ -216,6 +228,8 @@ layout_mode = 2
 [node name="Active" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotRight" unique_id=2116373163]
 layout_mode = 2
 size_flags_horizontal = 4
+tooltip_text = "Checked = ai player
+Unchecked = no player"
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 20
@@ -236,6 +250,9 @@ text_overrun_behavior = 3
 custom_minimum_size = Vector2(450, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+tooltip_text = "Pick ai from list
+Built in (Standard) or
+Player made"
 theme = ExtResource("2_ouq10")
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 32
@@ -254,6 +271,7 @@ popup/item_1/id = 1
 [node name="VisableCards" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotRight" unique_id=1328074162]
 layout_mode = 2
 size_flags_horizontal = 4
+tooltip_text = "Open or hidden cards"
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 20
@@ -270,6 +288,8 @@ layout_mode = 2
 [node name="Human" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotBottom" unique_id=2090311813]
 layout_mode = 2
 size_flags_horizontal = 4
+tooltip_text = "Checked = human player (you)
+Unchecked = ai player"
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 20
@@ -291,6 +311,9 @@ text_overrun_behavior = 3
 custom_minimum_size = Vector2(450, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+tooltip_text = "Pick ai from list
+Built in (Standard) or
+Player made"
 theme = ExtResource("2_ouq10")
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 32
@@ -309,6 +332,7 @@ popup/item_1/id = 1
 [node name="VisableCards" type="CheckBox" parent="MarginContainer/MainVBox/BoardGrid/SlotBottom" unique_id=683011156]
 layout_mode = 2
 size_flags_horizontal = 4
+tooltip_text = "Open or hidden cards"
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("1_1nt5m")
 theme_override_font_sizes/font_size = 20
@@ -340,6 +364,8 @@ label_settings = SubResource("LabelSettings_1nt5m")
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 size_flags_vertical = 1
+tooltip_text = "Speed up match.
+Most useful when watching ai:s play"
 min_value = 0.1
 max_value = 5.0
 step = 0.1
@@ -360,6 +386,8 @@ label_settings = SubResource("LabelSettings_1nt5m")
 [node name="SpinBox" type="SpinBox" parent="MarginContainer/MainVBox/SmallOptions/MaxRounds/LabelInput" unique_id=951221630]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
+tooltip_text = "Numer of turns until match 
+is declared a draw"
 theme = ExtResource("2_ouq10")
 min_value = 1.0
 max_value = 1000.0

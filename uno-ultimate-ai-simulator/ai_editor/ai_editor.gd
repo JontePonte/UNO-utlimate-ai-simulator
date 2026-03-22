@@ -16,8 +16,11 @@ extends Control
 @onready var fullscreen_button = $MarginContainer/HBoxContainer/FullscreenButton
 @onready var rename_button = $MarginContainer/HBoxContainer/RenameButton
 @onready var copy_button = $MarginContainer/HBoxContainer/CopyButton
+@onready var drive_uploader_button = $MarginContainer/HBoxContainer/SubmitToFolder
 @onready var save_button = $MarginContainer/HBoxContainer/SaveButton
 @onready var test_menu_button = $MarginContainer/HBoxContainer/TestButton
+
+@onready var drive_uploader = $DriveUploader
 
 @onready var graph_edit = $GraphEdit
 @onready var context_menu = $GraphContextMenu
@@ -46,6 +49,9 @@ func _ready():
 	copy_button.pressed.connect(_on_copy_button_pressed)
 	rename_button.pressed.connect(_on_rename_button_pressed)
 	save_button.pressed.connect(_on_save_button_pressed)
+	drive_uploader_button.pressed.connect(_on_submit_to_teacher_pressed)
+	
+	drive_uploader.request_completed.connect(_on_upload_completed)
 	
 	# Hämta popup-menyn som tillhör knappen
 	var popup = test_menu_button.get_popup()
@@ -888,3 +894,51 @@ func _on_graph_edit_gui_input(event: InputEvent):
 		if has_panned:
 			graph_edit.scroll_offset -= event.relative / graph_edit.zoom
 			graph_edit.accept_event()
+
+func _on_submit_to_teacher_pressed():
+	# 1. Tvinga en lokal sparning först, så vi vet att läraren får den absolut senaste versionen!
+	_on_save_button_pressed()
+	
+	# 2. Hämta filnamnet från vår AiManager
+	var file_name = AiManager.file_to_edit
+	var file_path = AiManager.AI_FOLDER_PATH + file_name
+	
+	# 3. Läs in filens innehåll direkt från hårddisken
+	var json_content = ""
+	if FileAccess.file_exists(file_path):
+		var file = FileAccess.open(file_path, FileAccess.READ)
+		json_content = file.get_as_text()
+		file.close()
+	else:
+		_show_toast("Error: Could not read file!")
+		return
+	
+	# 4. Packa ihop datan som ska skickas till Google
+	var data_to_send = {
+		"filename": file_name,
+		"content": json_content
+	}
+	var json_payload = JSON.stringify(data_to_send)
+	
+	# 5. Klistra in din Web App URL från Googles Steg 2 HÄR INNAN DU EXPORTERAR!
+	var url = "https://script.google.com/macros/s/AKfycbwdFbSmJ9CLwK8UStbKhUWz9Lk-6xYESp9oPK22XTK4emAYy_OpTn6iCt1Wc9Oi5W_xOw/exec"
+	var headers = ["Content-Type: text/plain"]
+	
+	# 6. Skicka iväg den och ge lite feedback i UI:t
+	drive_uploader.request(url, headers, HTTPClient.METHOD_POST, json_payload)
+	drive_uploader_button.text = "Sending..." # Visuell feedback på knappen!
+	drive_uploader_button.disabled = true
+
+func _on_upload_completed(_result, response_code, _headers, _body):
+	# Återställ knappen oavsett hur det gick
+	drive_uploader_button.text = "Submit to Teacher" 
+	drive_uploader_button.disabled = false
+	
+	# Vi accepterar 200 (OK), men även 302 och 400 eftersom Googles 
+	# redirect-system ofta ger felkoder EFTER att filen redan är sparad!
+	if response_code == 200 or response_code == 302 or response_code == 400:
+		print("Uppladdning lyckades (med Google-quirk ", response_code, ")!")
+		_show_toast("Success! Your AI has been submitted.") 
+	else:
+		print("Något gick fel på riktigt: ", response_code)
+		_show_toast("Error submitting AI! Please try again. Code: " + str(response_code))
