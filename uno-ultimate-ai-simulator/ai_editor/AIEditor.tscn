@@ -78,17 +78,25 @@ text = "Rename AI"
 
 [node name="CopyButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=1481445435]
 layout_mode = 2
+tooltip_text = "Copy ai-code to
+clipboard. You can
+retriev it with Ctrl + v"
 theme_override_font_sizes/font_size = 18
 text = "Copy AI Code"
 
 [node name="SubmitToFolder" type="Button" parent="MarginContainer/HBoxContainer" unique_id=168802917]
 layout_mode = 2
+tooltip_text = "Send ai-code to
+John Nordstrand
+drive folder"
 theme_override_font_sizes/font_size = 18
 text = "Submit To Teacher"
 
 [node name="TestButton" type="MenuButton" parent="MarginContainer/HBoxContainer" unique_id=2138379968]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+tooltip_text = "Play against your
+ai with open cards"
 theme_override_font_sizes/font_size = 18
 text = "Test AI"
 flat = false

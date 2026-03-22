@@ -139,6 +139,7 @@ custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="RepeatedMatchup" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=950826926]
+visible = false
 layout_mode = 2
 
 [node name="VBoxL" type="VBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup" unique_id=2048965824]
@@ -328,7 +329,6 @@ popup/item_2/text = "Simple"
 popup/item_2/id = 2
 
 [node name="RoundRobin" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=1830803528]
-visible = false
 layout_mode = 2
 
 [node name="VBoxL" type="VBoxContainer" parent="MarginContainer/MainVBox/RoundRobin" unique_id=420920737]
@@ -422,6 +422,9 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/MainVBox/RoundRobin/AvailableAIList" unique_id=322069777]
 layout_mode = 2
+tooltip_text = "All ai:s found in
+your library"
+mouse_filter = 0
 text = "Available AI:"
 label_settings = SubResource("LabelSettings_bdgv8")
 horizontal_alignment = 1
@@ -487,6 +490,9 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/MainVBox/RoundRobin/SelectedAIList" unique_id=925170918]
 layout_mode = 2
+tooltip_text = "These ai:s will fight
+each other"
+mouse_filter = 0
 text = "Selected AI:"
 label_settings = SubResource("LabelSettings_bdgv8")
 horizontal_alignment = 1
