@@ -42,6 +42,16 @@ font_size = 22
 outline_size = 6
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="LabelSettings" id="LabelSettings_gikom"]
+font = ExtResource("2_atn1r")
+font_size = 27
+font_color = Color(0.6666667, 0.6666667, 0.6666667, 1)
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 8
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(-2.5, 1)
+
 [sub_resource type="LabelSettings" id="LabelSettings_bdgv8"]
 font = ExtResource("2_atn1r")
 font_size = 30
@@ -105,6 +115,11 @@ layout_mode = 2
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 size_flags_horizontal = 0
+tooltip_text = "Repeated Matchup:
+Play the same player setut multiple times
+
+Round Robin:
+Everyone face everyone multiple times"
 theme = ExtResource("3_3hh3q")
 theme_override_fonts/font = ExtResource("2_atn1r")
 theme_override_font_sizes/font_size = 32
@@ -124,7 +139,6 @@ custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="RepeatedMatchup" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=950826926]
-visible = false
 layout_mode = 2
 
 [node name="VBoxL" type="VBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup" unique_id=2048965824]
@@ -231,6 +245,13 @@ popup/item_1/id = 1
 popup/item_2/text = "Simple"
 popup/item_2/id = 2
 
+[node name="Label2" type="Label" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot1" unique_id=734447756]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+text = " (starting player)"
+label_settings = SubResource("LabelSettings_gikom")
+vertical_alignment = 1
+
 [node name="Slot2" type="HBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxR" unique_id=1980760116]
 layout_mode = 2
 
@@ -307,6 +328,7 @@ popup/item_2/text = "Simple"
 popup/item_2/id = 2
 
 [node name="RoundRobin" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=1830803528]
+visible = false
 layout_mode = 2
 
 [node name="VBoxL" type="VBoxContainer" parent="MarginContainer/MainVBox/RoundRobin" unique_id=420920737]

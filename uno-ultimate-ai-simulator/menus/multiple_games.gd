@@ -18,6 +18,8 @@ extends Control
 @onready var repeated_max_turns_spinbox = $MarginContainer/MainVBox/RepeatedMatchup/VBoxL/MaxRounds2/SpinBox
 @onready var randomize_seats_checkbox = $MarginContainer/MainVBox/RepeatedMatchup/VBoxL/RandomizeSeats/CheckBox
 
+@onready var starting_player_label = $MarginContainer/MainVBox/RepeatedMatchup/VBoxR/Slot1/Label2
+
 # Round Robin
 @onready var two_player_checkbox = $MarginContainer/MainVBox/RoundRobin/VBoxL/TwoPlayerCheckBox
 @onready var three_player_checkbox = $MarginContainer/MainVBox/RoundRobin/VBoxL/ThreePlayerCheckBox
@@ -63,6 +65,7 @@ func _ready() -> void:
 	start_button.pressed.connect(_on_start_button_pressed)
 	exit_button.pressed.connect(_on_exit_button_pressed)
 	main_menu_button.pressed.connect(_on_main_menu_button_pressed)
+	randomize_seats_checkbox.pressed.connect(_on_randomize_seats_checkbox_pressed)
 	
 	num_players_opt.add_item("2", 2) # Texten är "2", ID:t är 2
 	num_players_opt.add_item("3", 3)
@@ -708,6 +711,12 @@ func _get_ai_index_by_name(ai_name: String) -> int:
 		if available_ais[i]["name"] == ai_name:
 			return i
 	return -1 # Betyder att AI:n blivit raderad/omdöpt
+
+func _on_randomize_seats_checkbox_pressed():
+	if randomize_seats_checkbox.button_pressed:
+		starting_player_label.hide()
+	else:
+		starting_player_label.show()
 
 func _on_exit_button_pressed():
 	get_tree().quit()
