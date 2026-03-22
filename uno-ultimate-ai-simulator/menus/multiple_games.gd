@@ -312,20 +312,48 @@ func _run_round_robin():
 			"wins_4": 0, "matches_4": 0
 		}
 		
-	# 2. GENERERA MATCH-SCHEMAT
+# 2. GENERERA MATCH-SCHEMAT (Nu med dynamisk balansering!)
 	var match_queue = []
-	var active_types = [] # Håller koll på VILKA matchtyper som faktiskt valdes
+	var active_types = []
+	
+	# Vi sparar köerna temporärt för att kunna jämföra dem innan vi slår ihop dem
+	var temp_queues = []
+	var max_matches_per_ai = 0
 	
 	if two_player_checkbox.button_pressed and n >= 2:
-		match_queue.append_array(_generate_matchups(roster_names, 2))
+		var q2 = _generate_matchups(roster_names, 2)
+		# Räkna ut hur många matcher EN specifik AI spelar i denna kö: (Totalt antal matcher * 2 spelare) / Antal AI
+		var ai_matches = (q2.size() * 2) / n
+		temp_queues.append({"type": 2, "queue": q2, "ai_matches": ai_matches})
+		max_matches_per_ai = max(max_matches_per_ai, ai_matches)
 		active_types.append(2)
+		
 	if three_player_checkbox.button_pressed and n >= 3:
-		match_queue.append_array(_generate_matchups(roster_names, 3))
+		var q3 = _generate_matchups(roster_names, 3)
+		var ai_matches = (q3.size() * 3) / n
+		temp_queues.append({"type": 3, "queue": q3, "ai_matches": ai_matches})
+		max_matches_per_ai = max(max_matches_per_ai, ai_matches)
 		active_types.append(3)
+		
 	if four_player_checkbox.button_pressed and n >= 4:
-		match_queue.append_array(_generate_matchups(roster_names, 4))
+		var q4 = _generate_matchups(roster_names, 4)
+		var ai_matches = (q4.size() * 4) / n
+		temp_queues.append({"type": 4, "queue": q4, "ai_matches": ai_matches})
+		max_matches_per_ai = max(max_matches_per_ai, ai_matches)
 		active_types.append(4)
 		
+	# Nu applicerar vi multiplikatorn och bygger den slutgiltiga match_queue
+	for q_data in temp_queues:
+		var multiplier = 1
+		if q_data["ai_matches"] > 0:
+			# Räkna ut hur många gånger denna kö måste repeteras för att komma ikapp max-kön
+			multiplier = round(float(max_matches_per_ai) / float(q_data["ai_matches"]))
+			multiplier = max(1, multiplier) # Säkerhetsspärr så den alltid körs minst 1 gång
+			
+		for i in range(multiplier):
+			match_queue.append_array(q_data["queue"])
+			
+	# Lägg på användarens egna "Tournament Repetitions" ovanpå allt
 	var repetitions = int(matchup_number_spin_box.value)
 	var full_queue = []
 	for i in range(repetitions):
@@ -524,50 +552,79 @@ func _on_selected_list_activated(index: int):
 	_update_math()
 
 # --- ROUND ROBIN MATH CALCULATOR ---
-
 func _update_math():
-	# 1. Hur många deltagare ligger i turneringslistan just nu?
+	# 1. Inställningar och grundkoll
 	var n = selected_ai_list.item_count
-	var base_matchups = 0
+	var total_matches = 0
+	var max_limit = 15000 # NYTT: Ändra maxgränsen enkelt här!
 	
-	# 2. Kolla så att minst en matchtyp är vald
 	var is_any_type_selected = two_player_checkbox.button_pressed or three_player_checkbox.button_pressed or four_player_checkbox.button_pressed
 	
 	if not is_any_type_selected:
 		no_selected_label.text = "Please select at least one match type!"
-		no_selected_label.add_theme_color_override("font_color", Color(1, 0, 0)) # Gör texten röd
+		no_selected_label.add_theme_color_override("font_color", Color(1, 0, 0))
 	else:
-		no_selected_label.text = " " # Använd din geniala lösning för att behålla utrymmet!
+		no_selected_label.text = " " 
 		
-	# 3. Räkna ut unika kombinationer baserat på antal spelare (n)
-	if two_player_checkbox.button_pressed and n >= 2:
-		base_matchups += (n * (n - 1)) / 2
+	# 2. Räkna ut bas-matcherna och simulera multiplikatorn!
+	if is_any_type_selected and n >= 2:
+		var q2_size = 0
+		var q3_size = 0
+		var q4_size = 0
 		
-	if three_player_checkbox.button_pressed and n >= 3:
-		base_matchups += (n * (n - 1) * (n - 2)) / 6
+		var ai_matches_2 = 0.0
+		var ai_matches_3 = 0.0
+		var ai_matches_4 = 0.0
+		var max_matches_per_ai = 0.0
 		
-	if four_player_checkbox.button_pressed and n >= 4:
-		base_matchups += (n * (n - 1) * (n - 2) * (n - 3)) / 24
-		
-	# 4. Multiplicera med antalet upprepningar
-	var repetitions = int(matchup_number_spin_box.value)
-	var total_matches = base_matchups * repetitions
+		# A: Hitta hur stora köerna är och hur mycket en enskild AI spelar i dem
+		if two_player_checkbox.button_pressed and n >= 2:
+			q2_size = (n * (n - 1)) / 2
+			ai_matches_2 = float(q2_size * 2) / float(n)
+			max_matches_per_ai = max(max_matches_per_ai, ai_matches_2)
+			
+		if three_player_checkbox.button_pressed and n >= 3:
+			q3_size = (n * (n - 1) * (n - 2)) / 6
+			ai_matches_3 = float(q3_size * 3) / float(n)
+			max_matches_per_ai = max(max_matches_per_ai, ai_matches_3)
+			
+		if four_player_checkbox.button_pressed and n >= 4:
+			q4_size = (n * (n - 1) * (n - 2) * (n - 3)) / 24
+			ai_matches_4 = float(q4_size * 4) / float(n)
+			max_matches_per_ai = max(max_matches_per_ai, ai_matches_4)
+			
+		# B: Applicera multiplikatorn (exakt som turneringen gör!)
+		var base_matchups = 0
+		if q2_size > 0:
+			var mult2 = max(1, round(max_matches_per_ai / ai_matches_2))
+			base_matchups += q2_size * mult2
+			
+		if q3_size > 0:
+			var mult3 = max(1, round(max_matches_per_ai / ai_matches_3))
+			base_matchups += q3_size * mult3
+			
+		if q4_size > 0:
+			var mult4 = max(1, round(max_matches_per_ai / ai_matches_4))
+			base_matchups += q4_size * mult4
+			
+		# C: Lägg på användarens egna repetitioner
+		var repetitions = int(matchup_number_spin_box.value)
+		total_matches = base_matchups * repetitions
 	
-	# 5. Uppdatera texten på skärmen
-	total_match_number_label.text = "Total matches: " + str(total_matches) + " / 10000"
+	# 3. Uppdatera texten på skärmen dynamiskt
+	total_match_number_label.text = "Total matches: " + str(total_matches) + " / " + str(max_limit)
 	
-	# 6. Säkerhetsspärrar - Stäng av Startknappen om vi är i Round Robin och datan är ogiltig!
+	# 4. Säkerhetsspärrar
 	if match_mode_dropdown.selected == 1: # Kollar om vi befinner oss i Round Robin-läget
-		if total_matches == 0 or total_matches > 10000 or not is_any_type_selected:
+		if total_matches == 0 or total_matches > max_limit or not is_any_type_selected:
 			start_button.disabled = true
-			if total_matches > 10000:
+			if total_matches > max_limit:
 				total_match_number_label.add_theme_color_override("font_color", Color(1, 0, 0)) # Röd varning
 			else:
 				total_match_number_label.remove_theme_color_override("font_color")
 		else:
 			start_button.disabled = false
 			total_match_number_label.remove_theme_color_override("font_color")
-
 # --- SETTINGS SAVE/LOAD LOGIC ---
 
 func _save_sim_settings():
