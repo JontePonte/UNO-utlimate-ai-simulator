@@ -390,11 +390,6 @@ func _on_rename_confirmed():
 			
 			# 1. Uppdatera vår globala variabel
 			AiManager.file_to_edit = new_filename
-			
-			# 2. Det absolut smartaste tricket: Vi sparar om filen direkt!
-			# Eftersom filen precis fick ett nytt namn, och vår _on_save_button_pressed
-			# använder AiManager.file_to_edit för att sätta "ai_name" inuti JSON-filen,
-			# så kommer ett snabbt spara-anrop här att uppdatera allt perfekt!
 			_on_save_button_pressed()
 		else:
 			print("Kunde inte byta namn på filen. Felkod: ", error)
