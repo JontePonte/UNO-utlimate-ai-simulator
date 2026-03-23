@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://c1mkdkiiydmwl"]
 
 [ext_resource type="Script" uid="uid://d2ovrpajj2brc" path="res://menus/create_and_edit_ai.gd" id="1_cak1p"]
-[ext_resource type="PackedScene" uid="uid://ddb185iuqanmp" path="res://menus/AIListItem.tscn" id="2_34lbw"]
-[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="3_5yo0l"]
+[ext_resource type="PackedScene" uid="uid://ddb185iuqanmp" path="res://menus/AIListItem.tscn" id="2_6pt71"]
+[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="3_5yo0l"]
 [ext_resource type="PackedScene" uid="uid://dbpqjh4q6aig4" path="res://menus/FullScreenButton.tscn" id="4_34lbw"]
 [ext_resource type="PackedScene" uid="uid://by4heu4eejx2q" path="res://menus/ReportBugButton.tscn" id="5_5yo0l"]
 
@@ -23,7 +23,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_cak1p")
-ai_list_item_scene = ExtResource("2_34lbw")
+ai_list_item_scene = ExtResource("2_6pt71")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1416727137]
 layout_mode = 1
