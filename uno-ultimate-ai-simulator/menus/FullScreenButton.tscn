@@ -3,7 +3,25 @@
 [ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="1_f8tpw"]
 [ext_resource type="Script" uid="uid://4tnmlx3ggp64" path="res://menus/full_screen_button.gd" id="2_pg0de"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pg0de"]
+bg_color = Color(0.11764706, 0.12941177, 0.11764706, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hcpha"]
+bg_color = Color(0.039215688, 0.047058824, 0.039215688, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3p261"]
+bg_color = Color(0.47058824, 0.50980395, 0.47058824, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [node name="FullScreenButton" type="Button" unique_id=909762972]
+custom_minimum_size = Vector2(180, 30)
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -13,7 +31,11 @@ offset_left = -164.0
 offset_top = -29.0
 grow_horizontal = 0
 grow_vertical = 0
+theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("1_f8tpw")
 theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_pg0de")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_hcpha")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3p261")
 text = "Fullscreen (F11)"
 script = ExtResource("2_pg0de")
