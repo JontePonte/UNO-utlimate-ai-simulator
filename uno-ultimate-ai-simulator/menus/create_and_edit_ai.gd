@@ -17,6 +17,9 @@ extends Control
 @onready var import_dialog = $ImportDialog
 @onready var import_name_input = $ImportDialog/VBoxContainer/ImportNameInput
 @onready var import_code_input = $ImportDialog/VBoxContainer/ImportCodeInput
+@onready var import_code_button = $ImportDialog/VBoxContainer/ImportButtonLabel/Button
+@onready var import_code_label_web = $ImportDialog/VBoxContainer/ImportButtonLabel
+@onready var import_code_label_non_web = $ImportDialog/VBoxContainer/CodeLabelNonWeb
 
 # -- VARIABLER FÖR ATT MINNAS VAD VI KLICKADE PÅ --
 var current_file_to_copy: String = ""
@@ -25,7 +28,14 @@ var dialog_mode: String = ""
 
 func _ready():
 	if OS.has_feature("web"):
+		import_code_label_web.show()
+		
 		exit_game_button.hide()
+		import_code_label_non_web.hide()
+	else:
+		import_code_label_non_web.show()
+		
+		import_code_label_web.hide()
 	
 	populate_ai_list()
 	main_menu_button.pressed.connect(_on_main_menu_button_pressed)
@@ -38,6 +48,7 @@ func _ready():
 	
 	import_ai_btn.pressed.connect(_on_import_ai_pressed)
 	import_dialog.confirmed.connect(_on_import_dialog_confirmed)
+	import_code_button.pressed.connect(_on_web_paste_button_pressed)
 
 func populate_ai_list():
 	for child in ai_list_container.get_children():
@@ -285,3 +296,13 @@ func _on_import_dialog_confirmed():
 		populate_ai_list() # Ladda om listan så den nya AI:n dyker upp
 	else:
 		_show_toast("Error: Could not save the file.")
+func _on_web_paste_button_pressed():
+	# Dubbelkoll för säkerhets skull
+	if OS.has_feature("web"):
+		# Ropa på webbläsarens inbyggda, stela prompt-ruta
+		var js_code = "prompt('Klistra in din JSON-kod (Ctrl+V eller Högerklick) i rutan nedan och tryck OK:');"
+		var pasted_text = JavaScriptBridge.eval(js_code)
+		
+		# Om eleven faktiskt klistrade in något (och inte tryckte Avbryt)
+		if pasted_text != null and str(pasted_text).strip_edges() != "":
+			import_code_input.text = str(pasted_text)

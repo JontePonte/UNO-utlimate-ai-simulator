@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d2ovrpajj2brc" path="res://menus/create_and_edit_ai.gd" id="1_cak1p"]
 [ext_resource type="PackedScene" uid="uid://ddb185iuqanmp" path="res://menus/AIListItem.tscn" id="2_34lbw"]
-[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="3_5yo0l"]
+[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="3_5yo0l"]
 [ext_resource type="PackedScene" uid="uid://dbpqjh4q6aig4" path="res://menus/FullScreenButton.tscn" id="4_34lbw"]
 [ext_resource type="PackedScene" uid="uid://by4heu4eejx2q" path="res://menus/ReportBugButton.tscn" id="5_5yo0l"]
 
@@ -151,14 +151,14 @@ offset_bottom = 51.0
 oversampling_override = 1.0
 title = "Import AI"
 position = Vector2i(0, 36)
-size = Vector2i(300, 346)
+size = Vector2i(300, 358)
 ok_button_text = "Import"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ImportDialog" unique_id=227326654]
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 292.0
-offset_bottom = 297.0
+offset_bottom = 309.0
 
 [node name="NameLabel" type="Label" parent="ImportDialog/VBoxContainer" unique_id=382375642]
 layout_mode = 2
@@ -168,9 +168,22 @@ text = "AI Name:"
 layout_mode = 2
 placeholder_text = "empty will use stored name"
 
-[node name="CodeLabel" type="Label" parent="ImportDialog/VBoxContainer" unique_id=237655954]
+[node name="CodeLabelNonWeb" type="Label" parent="ImportDialog/VBoxContainer" unique_id=1136832452]
 layout_mode = 2
 text = "Paste AI Code Here:"
+
+[node name="ImportButtonLabel" type="HBoxContainer" parent="ImportDialog/VBoxContainer" unique_id=430404995]
+visible = false
+layout_mode = 2
+
+[node name="Button" type="Button" parent="ImportDialog/VBoxContainer/ImportButtonLabel" unique_id=2075865832]
+layout_mode = 2
+theme_override_font_sizes/font_size = 19
+text = "Paste"
+
+[node name="CodeLabelWeb" type="Label" parent="ImportDialog/VBoxContainer/ImportButtonLabel" unique_id=237655954]
+layout_mode = 2
+text = "AI Code Here:"
 
 [node name="ImportCodeInput" type="TextEdit" parent="ImportDialog/VBoxContainer" unique_id=68635808]
 custom_minimum_size = Vector2(200, 200)
