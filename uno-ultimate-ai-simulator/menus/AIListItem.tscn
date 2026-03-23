@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ddb185iuqanmp"]
 
 [ext_resource type="Script" uid="uid://ckm58gta3xw06" path="res://menus/ai_list_item.gd" id="1_ifv5m"]
-[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="1_io2pl"]
+[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="1_io2pl"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ifv5m"]
 font = ExtResource("1_io2pl")

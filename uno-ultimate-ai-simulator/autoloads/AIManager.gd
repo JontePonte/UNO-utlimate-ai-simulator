@@ -1,9 +1,11 @@
 extends Node
 
 # --- MEGAFONEN ---
+@warning_ignore("unused_signal")
 signal ai_node_executing(node_name: String)
 
 # --- NY MEGAFON: Hjärntransplantation! ---
+@warning_ignore("unused_signal")
 signal ai_profile_saved(file_name: String, new_data: Dictionary)
 
 const AI_FOLDER_PATH = "user://ai_profiles/"

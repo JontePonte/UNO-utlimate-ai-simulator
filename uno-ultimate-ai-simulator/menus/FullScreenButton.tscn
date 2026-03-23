@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dbpqjh4q6aig4"]
 
-[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="1_f8tpw"]
+[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="1_f8tpw"]
 [ext_resource type="Script" uid="uid://4tnmlx3ggp64" path="res://menus/full_screen_button.gd" id="2_pg0de"]
 
 [node name="FullScreenButton" type="Button" unique_id=909762972]

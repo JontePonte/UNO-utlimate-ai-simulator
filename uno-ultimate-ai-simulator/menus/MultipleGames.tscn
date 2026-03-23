@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://71n7axrpl5e2"]
 
 [ext_resource type="Script" uid="uid://c67uugiivch2m" path="res://menus/multiple_games.gd" id="1_bhea4"]
-[ext_resource type="FontFile" uid="uid://j5lavwxruma1" path="res://ui/fonts/Helvetica Bold.ttf" id="2_atn1r"]
+[ext_resource type="FontFile" uid="uid://3rggrs2v4gle" path="res://ui/fonts/Helvetica Bold.ttf" id="2_atn1r"]
 [ext_resource type="Theme" uid="uid://cd5glqoall5lu" path="res://ui/test_theme.tres" id="3_3hh3q"]
-[ext_resource type="PackedScene" uid="uid://dbpqjh4q6aig4" path="res://menus/FullScreenButton.tscn" id="4_atn1r"]
+[ext_resource type="PackedScene" uid="uid://dbpqjh4q6aig4" path="res://menus/FullScreenButton.tscn" id="4_1qmyp"]
 [ext_resource type="PackedScene" uid="uid://by4heu4eejx2q" path="res://menus/ReportBugButton.tscn" id="5_3hh3q"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ouq10"]
@@ -583,7 +583,7 @@ offset_top = -40.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="FullScreenButton" parent="FullScreenButtonCont" unique_id=909762972 instance=ExtResource("4_atn1r")]
+[node name="FullScreenButton" parent="FullScreenButtonCont" unique_id=909762972 instance=ExtResource("4_1qmyp")]
 layout_mode = 2
 size_flags_vertical = 4
 
