@@ -215,15 +215,57 @@ func _on_node_context_menu_id_pressed(id: int):
 	_mark_unsaved()
 	
 	if id == 0: # COPY (Kopiera)
-		# duplicate() skapar en exakt kopia av noden vi klickade på
-		var duplicate_node = node_to_edit.duplicate()
-		graph_edit.add_child(duplicate_node)
+		# Istället för duplicate() skapar vi en helt ny, ren nod för att 
+		# undvika Godots inbyggda GraphEdit-buggar!
+		var new_node: GraphNode = null
 		
-		# Flytta den lite neråt och åt höger så de inte hamnar exakt på varandra
-		duplicate_node.position_offset = node_to_edit.position_offset + Vector2(30, 30)
-		
-		# Vi måste se till att den nya kopian OCKSÅ lyssnar på musklick!
-		duplicate_node.gui_input.connect(_on_node_gui_input.bind(duplicate_node))
+		# Hitta rätt scen att instansiera baserat på originalets titel
+		match node_to_edit.title:
+			"Start: Choose a Card":
+				return # Man får (och kan) inte kopiera startnoden!
+			"Condition: Check Hand":
+				new_node = condition_hand_node_scene.instantiate()
+			"Condition: Compare Opponent Hand":
+				new_node = condition_opponent_card_count.instantiate()
+			"Condition: Playable Card Count Is":
+				new_node = condition_playable_card_count.instantiate()
+			"Condition: Table Color Is":
+				new_node = condition_table_color_node_scene.instantiate()
+			"Condition: Player Count Is":
+				new_node = condition_player_count.instantiate()
+			"Condition: Last Move Was":
+				new_node = condition_last_move_node_scene.instantiate()
+			"Action: Play Card":
+				new_node = action_play_node_scene.instantiate()
+			"Action: Draw Card":
+				new_node = action_draw_node_scene.instantiate()
+				
+		if new_node != null:
+			graph_edit.add_child(new_node)
+			
+			# Flytta den lite neråt och åt höger
+			new_node.position_offset = node_to_edit.position_offset + Vector2(30, 30)
+			
+			# --- KOPIERA INSTÄLLNINGAR OCH KOPPLA SIGNALER ---
+			var dropdowns = ["OptionDropdown", "OptionsDropdown", "OptionButton", "ColorDropdown", "OpponentDropdown", "ActionDropdown"]
+			for d in dropdowns:
+				if node_to_edit.has_node(d) and new_node.has_node(d):
+					new_node.get_node(d).selected = node_to_edit.get_node(d).selected
+					new_node.get_node(d).item_selected.connect(func(_idx): _mark_unsaved())
+					
+			if node_to_edit.has_node("HBoxContainer/PlayerDropdown") and new_node.has_node("HBoxContainer/PlayerDropdown"):
+				new_node.get_node("HBoxContainer/PlayerDropdown").selected = node_to_edit.get_node("HBoxContainer/PlayerDropdown").selected
+				new_node.get_node("HBoxContainer/PlayerDropdown").item_selected.connect(func(_idx): _mark_unsaved())
+				
+			# Tvinga uppdatering av UI (t.ex. visa färg-väljaren på kopian om originalet var ett Wild-kort)
+			if new_node.has_method("_on_action_selected"):
+				var a_dropdown = new_node.get_node_or_null("OptionDropdown")
+				if a_dropdown:
+					new_node._on_action_selected(a_dropdown.selected)
+			
+			# Koppla grundsignalerna så att den nya noden kan flyttas och högerklickas på
+			new_node.gui_input.connect(_on_node_gui_input.bind(new_node))
+			new_node.dragged.connect(_mark_unsaved.unbind(2))
 		
 	elif id == 1: # REMOVE (Radera)
 		# MYCKET VIKTIGT: Om vi bara raderar noden medan sladdar är inkopplade, kraschar spelet!
