@@ -16,22 +16,27 @@ func _input(event):
 		get_viewport().set_input_as_handled()
 
 func toggle_window_mode():
-	var main_id = DisplayServer.MAIN_WINDOW_ID
-	
 	# --- 1. WEBB-VERSIONEN ---
 	if OS.has_feature("web"):
-		# På webben fungerar det vanliga FULLSCREEN-läget bäst med webbläsarens inbyggda API
-		var is_currently_full = DisplayServer.window_get_mode(main_id) == DisplayServer.WINDOW_MODE_FULLSCREEN
+		# Vi rundgår Godot helt och ber webbläsaren fixa helskärmen direkt
+		var js_code = """
+			if (!document.fullscreenElement) {
+				document.documentElement.requestFullscreen().catch(err => {
+					console.log("Kunde inte starta helskärm: " + err.message);
+				});
+			} else {
+				if (document.exitFullscreen) {
+					document.exitFullscreen();
+				}
+			}
+		"""
+		JavaScriptBridge.eval(js_code)
 		
-		if not is_currently_full:
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN, main_id)
-			window_mode_changed.emit(true)
-		else:
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED, main_id)
-			window_mode_changed.emit(false)
+		# (Vi struntar i att skrika i megafonen på webben, webbläsaren sköter sig själv)
 			
 	# --- 2. PC / MAC / EDITORN (Din beprövade specialkod!) ---
 	else:
+		var main_id = DisplayServer.MAIN_WINDOW_ID
 		var is_currently_full = DisplayServer.window_get_mode(main_id) != DisplayServer.WINDOW_MODE_WINDOWED
 		
 		if not is_currently_full:
