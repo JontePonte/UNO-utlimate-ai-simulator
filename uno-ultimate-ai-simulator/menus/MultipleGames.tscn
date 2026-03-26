@@ -69,6 +69,13 @@ outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3hh3q"]
 bg_color = Color(0.09019608, 0.12156863, 0.105882354, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_color = Color(0.09019608, 0.12156863, 0.105882354, 1)
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
 
 [node name="MatchSetup" type="Control" unique_id=1779067515]
 layout_mode = 3
@@ -142,7 +149,6 @@ custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="RepeatedMatchup" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=950826926]
-visible = false
 layout_mode = 2
 
 [node name="VBoxL" type="VBoxContainer" parent="MarginContainer/MainVBox/RepeatedMatchup" unique_id=2048965824]
@@ -191,7 +197,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/MainVBox/RepeatedMatchup/VBoxL/RandomizeSeats" unique_id=156102621]
-custom_minimum_size = Vector2(390, 0)
+custom_minimum_size = Vector2(370, 0)
 layout_mode = 2
 text = "Randomize seating each match"
 label_settings = SubResource("LabelSettings_3hh3q")
@@ -332,6 +338,7 @@ popup/item_2/text = "Simple"
 popup/item_2/id = 2
 
 [node name="RoundRobin" type="HBoxContainer" parent="MarginContainer/MainVBox" unique_id=1830803528]
+visible = false
 layout_mode = 2
 
 [node name="VBoxL" type="VBoxContainer" parent="MarginContainer/MainVBox/RoundRobin" unique_id=420920737]
