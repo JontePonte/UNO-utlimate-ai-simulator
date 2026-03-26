@@ -320,13 +320,13 @@ func _execute_action(node: Dictionary, view: PlayerView) -> PlayerAction:
 		"play_first_playable":
 			for card in view.own_hand:
 				if card.is_playable_on(view.top_discard, view.current_color):
-					return _create_action_with_color(card, view, 0)
+					return _create_action_with_color(card, view, -1)
 		"play_first_special_card":
 			for card in view.own_hand:
 				if card.is_playable_on(view.top_discard, view.current_color):
 					if card.value in [Card.CardValue.SKIP, Card.CardValue.REVERSE, Card.CardValue.DRAW_TWO, Card.CardValue.WILD_DRAW_FOUR] or card.color == Card.CardColor.WILD:
-						# Om det råkar vara ett Wild-kort, låter vi spelet automatiskt välja vår bästa färg (0)
-						return _create_action_with_color(card, view, 0)
+						# Om det råkar vara ett Wild-kort, låter vi spelet automatiskt välja random färg
+						return _create_action_with_color(card, view, -1)
 						
 		"play_first_attack_card":
 			var is_two_player = view.card_counts.size() == 2
@@ -337,8 +337,7 @@ func _execute_action(node: Dictionary, view: PlayerView) -> PlayerAction:
 						is_attack = true
 						
 					if is_attack:
-						# Om det råkar vara en +4, låter vi spelet automatiskt välja vår bästa färg
-						return _create_action_with_color(card, view, 0)		
+						return _create_action_with_color(card, view, -1)
 		
 		"play_wild":
 			for card in view.own_hand:
@@ -389,13 +388,19 @@ func _create_action_with_color(card: Card, view: PlayerView, color_rank: int) ->
 	var color = card.color
 	
 	if card.color == Card.CardColor.WILD:
-		var ranked_colors = _get_color_ranking(view.own_hand)
-		
-		# Kolla så att rankingen är giltig (0 till 3)
-		if color_rank >= 0 and color_rank < ranked_colors.size():
-			color = ranked_colors[color_rank]
+		if color_rank == -1:
+			# INGEN OSYNLIG HJÄLP! Slumpa en färg helt blint.
+			var all_colors = [Card.CardColor.RED, Card.CardColor.GREEN, Card.CardColor.BLUE, Card.CardColor.YELLOW]
+			color = all_colors.pick_random()
 		else:
-			color = ranked_colors[0] # Fallback till bästa färgen
+			# Eleven har valt en specifik ranking (t.ex. i Play Wild-noden)
+			var ranked_colors = _get_color_ranking(view.own_hand)
+			
+			# Kolla så att rankingen är giltig (0 till 3)
+			if color_rank >= 0 and color_rank < ranked_colors.size():
+				color = ranked_colors[color_rank]
+			else:
+				color = ranked_colors[0] # Säkerhetsnät om dropdownen buggar
 			
 	return PlayerAction.new(card, color)
 
