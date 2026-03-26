@@ -1,8 +1,8 @@
 extends Button
 
 func _ready():
-	if OS.has_feature("web"):
-		hide()
+	#if OS.has_feature("web"):
+		#hide()
 	# 1. Lyssna på när knappen klickas
 	pressed.connect(_on_pressed)
 	
