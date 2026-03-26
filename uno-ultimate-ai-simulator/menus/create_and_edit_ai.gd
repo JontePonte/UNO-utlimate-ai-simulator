@@ -188,11 +188,11 @@ func _on_ai_export_requested(file_name: String):
 		var json_string = file.get_as_text()
 		file.close()
 		
-		# Klistra in texten i datorns urklipp (Clipboard)
-		DisplayServer.clipboard_set(json_string)
+		# Klistra in texten i datorns urklipp med JS-hacket!
+		_copy_to_system_clipboard(json_string)
 		
 		# Visa vår snygga notis
-		_show_toast("AI Code exported! Right-click and 'Paste' to share it.")
+		_show_toast("AI Code exported! Right-click and 'Paste' (or Ctrl+V) to share it.")
 	else:
 		_show_toast("Error: Could not find AI file!")
 
@@ -306,3 +306,21 @@ func _on_web_paste_button_pressed():
 		# Om eleven faktiskt klistrade in något (och inte tryckte Avbryt)
 		if pasted_text != null and str(pasted_text).strip_edges() != "":
 			import_code_input.text = str(pasted_text)
+
+func _copy_to_system_clipboard(text_to_copy: String):
+	if OS.has_feature("web"):
+		var window = JavaScriptBridge.get_interface("window")
+		window.godot_clipboard_text = text_to_copy
+		var js_code = """
+			var ta = document.createElement('textarea');
+			ta.value = window.godot_clipboard_text;
+			ta.style.position = 'absolute';
+			ta.style.left = '-9999px';
+			document.body.appendChild(ta);
+			ta.select();
+			document.execCommand('copy');
+			document.body.removeChild(ta);
+		"""
+		JavaScriptBridge.eval(js_code)
+	else:
+		DisplayServer.clipboard_set(text_to_copy)

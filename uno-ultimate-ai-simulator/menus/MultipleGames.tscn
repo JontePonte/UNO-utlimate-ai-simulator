@@ -131,7 +131,7 @@ selected = 0
 item_count = 2
 popup/item_0/text = "Repeated Matchup"
 popup/item_0/id = 0
-popup/item_1/text = "Round Robit"
+popup/item_1/text = "Round Robin"
 popup/item_1/id = 1
 
 [node name="Spacer1" type="Control" parent="MarginContainer/MainVBox" unique_id=1722005637]
@@ -382,6 +382,7 @@ text = "Play each matchup "
 [node name="SpinBox" type="SpinBox" parent="MarginContainer/MainVBox/RoundRobin/VBoxL/MatchupNumber" unique_id=857458919]
 layout_mode = 2
 min_value = 1.0
+max_value = 1000.0
 value = 1.0
 rounded = true
 alignment = 1

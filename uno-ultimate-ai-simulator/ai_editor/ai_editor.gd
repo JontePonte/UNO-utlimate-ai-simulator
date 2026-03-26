@@ -319,8 +319,9 @@ func _on_copy_button_pressed():
 		var json_string = file.get_as_text()
 		file.close()
 		
-		# Klistra in i urklipp
-		DisplayServer.clipboard_set(json_string)
+		# --- ÄNDRINGEN ÄR HÄR ---
+		# Klistra in i OS-urklippet med vår nya magiska funktion!
+		_copy_to_system_clipboard(json_string)
 		
 		# Kalla på vår nya snygga popup!
 		_show_toast("AI Code copied! Right-click and select 'Paste' (or press Ctrl+V) to share it.")
@@ -979,3 +980,26 @@ func _on_upload_completed(_result, response_code, _headers, _body):
 	else:
 		print("Något gick fel på riktigt: ", response_code)
 		_show_toast("Error submitting AI! Please try again. Code: " + str(response_code))
+
+
+func _copy_to_system_clipboard(text_to_copy: String):
+	if OS.has_feature("web"):
+		# 1. Skicka texten till en variabel i webbläsarens fönster
+		var window = JavaScriptBridge.get_interface("window")
+		window.godot_clipboard_text = text_to_copy
+		
+		# 2. Ett osynligt JavaScript som tvingar webbläsaren att kopiera texten
+		var js_code = """
+			var ta = document.createElement('textarea');
+			ta.value = window.godot_clipboard_text;
+			ta.style.position = 'absolute';
+			ta.style.left = '-9999px';
+			document.body.appendChild(ta);
+			ta.select();
+			document.execCommand('copy');
+			document.body.removeChild(ta);
+		"""
+		JavaScriptBridge.eval(js_code)
+	else:
+		# Om vi kör Editorn/PC-versionen funkar Godots inbyggda system perfekt
+		DisplayServer.clipboard_set(text_to_copy)
