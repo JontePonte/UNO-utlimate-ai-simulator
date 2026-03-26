@@ -1,17 +1,15 @@
 # UNO Ultimate AI Simulator
 
-A scalable UNO game engine and AI research and education platform built in Godot 4.
+A UNO simulator with the ultimate goal of answering the question:
+*"Is there a perfect UNO strategy?"*
 
-## Goals
-- Correct UNO rules engine
-- Pluggable AI strategies
-- Tournament simulation
-- Graphical decision tree editor for students
+The game features graphical interfaces that allow for the creation and testing of UNO-playing agents, quick simulation of thousands of matches between agents, and a solid visual UNO game to watch them play. 
+The UNO AIs can easily be copied, pasted, and shared as `.json` code between players to finally select the strongest, most powerful AI.
 
-## Tech
-- Godot 4.5.x
-- GDScript
-- GitHub
+### Upcoming features:
+- [ ] Custom splash screen
+- [ ] Majestic game trailer
+- [ ] More editor choices (PLEASE COME WITH SUGGESTIONS!)
 
 ## License
 TBD
