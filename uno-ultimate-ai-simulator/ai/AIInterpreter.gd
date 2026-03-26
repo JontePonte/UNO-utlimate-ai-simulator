@@ -320,13 +320,14 @@ func _execute_action(node: Dictionary, view: PlayerView) -> PlayerAction:
 		"play_first_playable":
 			for card in view.own_hand:
 				if card.is_playable_on(view.top_discard, view.current_color):
+					# Om det råkar vara ett Wild-kort, låter vi spelet automatiskt välja random färg
 					return _create_action_with_color(card, view, -1)
 		"play_first_special_card":
 			for card in view.own_hand:
 				if card.is_playable_on(view.top_discard, view.current_color):
 					if card.value in [Card.CardValue.SKIP, Card.CardValue.REVERSE, Card.CardValue.DRAW_TWO, Card.CardValue.WILD_DRAW_FOUR] or card.color == Card.CardColor.WILD:
-						# Om det råkar vara ett Wild-kort, låter vi spelet automatiskt välja random färg
-						return _create_action_with_color(card, view, -1)
+						# Här tar den den bästa färgen
+						return _create_action_with_color(card, view, 0)
 						
 		"play_first_attack_card":
 			var is_two_player = view.card_counts.size() == 2
@@ -337,7 +338,7 @@ func _execute_action(node: Dictionary, view: PlayerView) -> PlayerAction:
 						is_attack = true
 						
 					if is_attack:
-						return _create_action_with_color(card, view, -1)
+						return _create_action_with_color(card, view, 0)
 		
 		"play_wild":
 			for card in view.own_hand:
