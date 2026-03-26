@@ -67,6 +67,9 @@ font_size = 26
 outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3hh3q"]
+bg_color = Color(0.09019608, 0.12156863, 0.105882354, 1)
+
 [node name="MatchSetup" type="Control" unique_id=1779067515]
 layout_mode = 3
 anchors_preset = 15
@@ -570,6 +573,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_font_sizes/normal_font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_3hh3q")
 bbcode_enabled = true
 
 [node name="FullScreenButtonCont" type="MarginContainer" parent="." unique_id=1455762664]

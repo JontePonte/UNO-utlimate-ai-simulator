@@ -41,8 +41,8 @@ var has_unsaved_changes: bool = false
 var unsaved_dialog: ConfirmationDialog
 
 func _ready():
-	if OS.has_feature("web"):
-		fullscreen_button.hide()
+	#if OS.has_feature("web"):
+		#fullscreen_button.hide()
 	AiManager.ai_node_executing.connect(_on_ai_node_executing)
 	back_button.pressed.connect(_on_back_button_pressed)
 	fullscreen_button.pressed.connect(_on_fullscreen_button_pressed)
