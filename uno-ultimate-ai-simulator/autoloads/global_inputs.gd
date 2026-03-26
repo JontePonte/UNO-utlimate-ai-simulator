@@ -17,26 +17,38 @@ func _input(event):
 
 func toggle_window_mode():
 	var main_id = DisplayServer.MAIN_WINDOW_ID
-	var is_currently_full = DisplayServer.window_get_mode(main_id) != DisplayServer.WINDOW_MODE_WINDOWED
 	
-	if not is_currently_full:
-		# GÅ TILL FULLSCREEN
-		DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true, main_id)
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED, main_id)
+	# --- 1. WEBB-VERSIONEN ---
+	if OS.has_feature("web"):
+		# På webben fungerar det vanliga FULLSCREEN-läget bäst med webbläsarens inbyggda API
+		var is_currently_full = DisplayServer.window_get_mode(main_id) == DisplayServer.WINDOW_MODE_FULLSCREEN
 		
-		# SKRIK I MEGAFONEN!
-		window_mode_changed.emit(true)
+		if not is_currently_full:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN, main_id)
+			window_mode_changed.emit(true)
+		else:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED, main_id)
+			window_mode_changed.emit(false)
+			
+	# --- 2. PC / MAC / EDITORN (Din beprövade specialkod!) ---
 	else:
-		# GÅ TILL FÖNSTERLÄGE
-		DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false, main_id)
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED, main_id)
+		var is_currently_full = DisplayServer.window_get_mode(main_id) != DisplayServer.WINDOW_MODE_WINDOWED
 		
-		await get_tree().process_frame
-		DisplayServer.window_set_size(Vector2i(1600, 900), main_id)
-		
-		var screen_rect = DisplayServer.screen_get_usable_rect()
-		var center_pos = screen_rect.position + (screen_rect.size / 2) - (Vector2i(1600*0.5, 900*0.5))
-		DisplayServer.window_set_position(center_pos, main_id)
-		
-		# SKRIK I MEGAFONEN!
-		window_mode_changed.emit(false)
+		if not is_currently_full:
+			# GÅ TILL FULLSCREEN (Maximized + Borderless hack)
+			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true, main_id)
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED, main_id)
+			window_mode_changed.emit(true)
+		else:
+			# GÅ TILL FÖNSTERLÄGE
+			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false, main_id)
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED, main_id)
+			
+			await get_tree().process_frame
+			DisplayServer.window_set_size(Vector2i(1600, 900), main_id)
+			
+			var screen_rect = DisplayServer.screen_get_usable_rect()
+			var center_pos = screen_rect.position + (screen_rect.size / 2) - (Vector2i(1600*0.5, 900*0.5))
+			DisplayServer.window_set_position(center_pos, main_id)
+			
+			window_mode_changed.emit(false)
