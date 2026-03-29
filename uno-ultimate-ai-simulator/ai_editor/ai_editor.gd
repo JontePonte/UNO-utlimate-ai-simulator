@@ -530,6 +530,13 @@ func _on_save_and_exit():
 # Körs om man trycker på vår egna "Exit without saving"-knapp
 func _on_unsaved_custom_action(action: StringName):
 	if action == "exit_no_save":
+		# 1. Göm rutan så det ser snabbt ut för användaren
+		unsaved_dialog.hide() 
+		
+		# 2. Låt Godot bearbeta klart musklicket i bakgrunden (tar ca 0.016 sekunder)
+		await get_tree().process_frame
+		
+		# 3. NU är det säkert att byta scen och radera världen!
 		get_tree().change_scene_to_file("res://menus/CreateAndEditAI.tscn")
 
 func _load_ai_graph(file_name: String):
