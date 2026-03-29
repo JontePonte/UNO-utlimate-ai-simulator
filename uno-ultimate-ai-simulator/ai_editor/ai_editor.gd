@@ -105,7 +105,20 @@ func _ready():
 	_update_fullscreen_button_text(is_full)
 
 func _on_connection_request(from_node: StringName, from_port: int, to_node: StringName, to_port: int):
-	# Godkänn sladden och be GraphEdit att rita den permanent!
+	# Innan vi drar den nya sladden, måste vi städa bort eventuella gamla!
+	for conn in graph_edit.get_connection_list():
+		
+		# 1. Klipp sladden om UT-porten redan används 
+		# (T.ex. någon försöker dra två sladdar från samma "True"-utgång)
+		if conn["from_node"] == from_node and conn["from_port"] == from_port:
+			graph_edit.disconnect_node(conn["from_node"], conn["from_port"], conn["to_node"], conn["to_port"])
+			
+		# 2. Klipp sladden om IN-porten redan används 
+		# (T.ex. någon försöker koppla tre olika villkor till EXAKT samma "Draw Card"-nod)
+		if conn["to_node"] == to_node and conn["to_port"] == to_port:
+			graph_edit.disconnect_node(conn["from_node"], conn["from_port"], conn["to_node"], conn["to_port"])
+
+	# Nu när portarna garanterat är lediga: Dra den nya sladden!
 	_mark_unsaved()
 	graph_edit.connect_node(from_node, from_port, to_node, to_port)
 
