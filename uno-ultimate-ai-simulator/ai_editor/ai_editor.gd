@@ -910,11 +910,26 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 	return {"type": "action", "name": "draw_card"}
 
 func _input(event):
-	# Kolla Ctrl+S (Spara)
 	if event is InputEventKey and event.pressed and not event.echo:
+		
+		# 1. Kolla Ctrl+S (Spara)
 		if event.keycode == KEY_S and event.is_command_or_control_pressed():
 			_on_save_button_pressed()
 			get_viewport().set_input_as_handled()
+			
+		# 2. Kolla Backspace (Radera noder)
+		elif event.keycode == KEY_BACKSPACE:
+			var nodes_to_delete: Array[StringName] = []
+			
+			# Leta igenom duken efter noder som användaren har klickat/markerat
+			for child in graph_edit.get_children():
+				if child is GraphNode and child.selected:
+					nodes_to_delete.append(child.name)
+					
+			# Om vi hittade några markerade noder, skicka dem till raderings-funktionen!
+			if nodes_to_delete.size() > 0:
+				_on_delete_nodes_request(nodes_to_delete)
+				get_viewport().set_input_as_handled()
 
 func _on_menu_window_input(event: InputEvent, menu: PopupMenu):
 	# Fick menyn ett högerklick tagit på sig?
