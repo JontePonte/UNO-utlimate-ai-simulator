@@ -103,9 +103,9 @@ Then find out whose AI is stronger.
 
 ## Upcoming Features
 
-- [ ] Custom splash screen
+- [x] Custom splash screen
 - [ ] Majestic game trailer
-- [ ] More AI editor options
+- [ ] Even more AI editor options
 - [ ] **PLEASE COME WITH SUGGESTIONS!**
 
 ---
