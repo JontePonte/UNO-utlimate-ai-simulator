@@ -32,7 +32,7 @@ func _ready():
 
 func _on_action_selected(index: int):
 	# Index 2 (Wild) och Index 3 (+4) behöver båda ett färgval!
-	if index == 2 or index == 3:
+	if index == 2 or index == 3 or index == 4:
 		color_dropdown.show()
 	else:
 		color_dropdown.hide()
