@@ -472,6 +472,10 @@ func _on_save_button_pressed():
 				var color_dropdown = child.get_node("ColorDropdown")
 				node_info["color_choice"] = color_dropdown.selected
 			
+			if child.has_node("SameNumberDropdown"):
+				var num_dropdown = child.get_node("SameNumberDropdown")
+				node_info["same_number_choice"] = num_dropdown.selected
+			
 			if child.has_node("OpponentDropdown"):
 				var opponent_dropdown = child.get_node("OpponentDropdown")
 				node_info["opponent_choice"] = opponent_dropdown.selected
@@ -621,17 +625,24 @@ func _load_ai_graph(file_name: String):
 				dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 				dropdown.selected = int(node_data["selected_index"])
 			
-			# --- NYTT: Ladda in färg-rullgardinen och uppdatera utseendet! ---
+			# Ladda in färg-rullgardinen
 			if node_data.has("color_choice") and new_node.has_node("ColorDropdown"):
 				var color_dropdown = new_node.get_node("ColorDropdown")
 				color_dropdown.item_selected.connect(func(_idx): _mark_unsaved())
 				color_dropdown.selected = int(node_data["color_choice"])
 				
-				# Tvinga Action-noden att dölja/visa färgmenyn baserat på vad som precis laddades
-				if new_node.has_method("_on_action_selected"):
-					var a_dropdown = new_node.get_node_or_null("OptionDropdown")
-					if a_dropdown:
-						new_node._on_action_selected(a_dropdown.selected)
+			# --- NYTT: Ladda in valet för Samma Nummer ---
+			if node_data.has("same_number_choice") and new_node.has_node("SameNumberDropdown"):
+				var num_dropdown = new_node.get_node("SameNumberDropdown")
+				num_dropdown.item_selected.connect(func(_idx): _mark_unsaved())
+				num_dropdown.selected = int(node_data["same_number_choice"])
+				
+			# --- VIKTIG FIX: Flyttade ut denna så den alltid körs för Action-noden ---
+			# Tvinga Action-noden att dölja/visa rätt menyer baserat på vad som precis laddades
+			if new_node.has_method("_on_action_selected"):
+				var a_dropdown = new_node.get_node_or_null("OptionDropdown")
+				if a_dropdown:
+					new_node._on_action_selected(a_dropdown.selected)
 			
 			if node_data.has("opponent_choice") and new_node.has_node("OpponentDropdown"):
 				var opp_dropdown = new_node.get_node("OpponentDropdown")
@@ -803,13 +814,20 @@ func _build_logic_tree(current_node_name: String) -> Dictionary:
 					8: result["name"] = "play_same_color"
 					9: result["name"] = "play_same_number"
 					
-				# --- RÄTTAD: Hämta färgvalet för Wild-korten (som nu är Index 3 och 4!) ---
+				# Hämta färgvalet för Wild-korten (som nu är Index 3 och 4!) ---
 				if dropdown.selected == 3 or dropdown.selected == 4:
 					var color_drop = node.get_node_or_null("ColorDropdown")
 					if color_drop:
 						result["color_choice"] = color_drop.selected
 					else:
 						result["color_choice"] = 0 # Fallback till Most numerous
+				# Hämta valet för Samma Nummer (Index 9) ---
+				elif dropdown.selected == 9:
+					var num_drop = node.get_node_or_null("SameNumberDropdown")
+					if num_drop:
+						result["same_number_choice"] = num_drop.selected
+					else:
+						result["same_number_choice"] = 0 # Fallback
 			else:
 				result["name"] = "play_first_playable" # Fallback om noden saknas
 				

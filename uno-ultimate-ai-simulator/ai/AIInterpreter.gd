@@ -374,11 +374,48 @@ func _execute_action(node: Dictionary, view: PlayerView) -> PlayerAction:
 						return _create_action_with_color(card, view, 0)
 						
 		"play_same_number":
-			for card in view.own_hand:
-				if view.top_discard.color != Card.CardColor.WILD:
-					if card.value == view.top_discard.value:
-						if card.is_playable_on(view.top_discard, view.current_color):
-							return _create_action_with_color(card, view, 0)
+			# Man kan inte matcha siffror om det översta kortet är en Wild
+			if view.top_discard.color == Card.CardColor.WILD:
+				pass # Hoppa ur och låt fallbacken ta över
+			else:
+				var valid_cards = []
+				
+				# 1. Samla in ALLA kort på handen som har rätt siffra och får spelas
+				for card in view.own_hand:
+					if card.value == view.top_discard.value and card.is_playable_on(view.top_discard, view.current_color):
+						valid_cards.append(card)
+				
+				# 2. Har vi hittat några kort? Då väljer vi det bästa!
+				if valid_cards.size() > 0:
+					var choice = int(node.get("same_number_choice", 0))
+					var chosen_card = valid_cards[0] # Standard: ta bara det första vi hittar
+					
+					# Val 0: Prioritize Current Color (Behåll färgen)
+					if choice == 0:
+						for c in valid_cards:
+							if c.color == view.current_color:
+								chosen_card = c
+								break # Hittade en perfekt match, sluta leta
+								
+					# Val 1: Prioritize Most Common Color (Byt till vår vanligaste färg)
+					elif choice == 1:
+						var ranked_colors = _get_color_ranking(view.own_hand)
+						var best_rank = 999
+						for c in valid_cards:
+							var rank = ranked_colors.find(c.color)
+							if rank != -1 and rank < best_rank:
+								best_rank = rank
+								chosen_card = c
+								
+					# Val 2: Prioritize Color Change (Tvinga fram ett färgbyte)
+					elif choice == 2:
+						for c in valid_cards:
+							if c.color != view.current_color:
+								chosen_card = c
+								break
+					
+					# Kasta iväg det valda kortet! (Nollan på slutet kvittar, för det är ju inte ett Wild-kort)
+					return _create_action_with_color(chosen_card, view, 0)
 							
 		"draw_card":
 			return PlayerAction.new(null)

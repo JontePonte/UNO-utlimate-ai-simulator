@@ -1,11 +1,13 @@
 extends GraphNode
 
-@onready var action_dropdown = $OptionDropdown # (eller vad den nu heter hos dig!)
+@onready var action_dropdown = $OptionDropdown
 @onready var color_dropdown = $ColorDropdown
+@onready var same_number_dropdown = $SameNumberDropdown
 
 func _ready():
 	action_dropdown.clear()
 	color_dropdown.clear()
+	same_number_dropdown.clear() # <-- Glöm inte att rensa denna också!
 	
 	# --- DROPDOWN 1: Vilken handling? ---
 	action_dropdown.add_item("Play first valid card")             # Index 0
@@ -25,16 +27,28 @@ func _ready():
 	color_dropdown.add_item("Set Color: 3rd most numerous")       # Index 2
 	color_dropdown.add_item("Set Color: Least numerous")          # Index 3
 	
+	# --- DROPDOWN 3: Strategi för Samma Nummer ---
+	same_number_dropdown.add_item("Prioritize Current Color")     # Index 0
+	same_number_dropdown.add_item("Prioritize Most Common Color") # Index 1
+	same_number_dropdown.add_item("Prioritize Color Change")      # Index 2
+	
 	set_slot(0, true, 0, Color.WHITE, false, 0, Color.WHITE)
 	
 	action_dropdown.item_selected.connect(_on_action_selected)
 	_on_action_selected(action_dropdown.selected)
 
 func _on_action_selected(index: int):
-	# Index 2 (Wild) och Index 3 (+4) behöver båda ett färgval!
-	if index == 2 or index == 3 or index == 4:
+	# Bara Index 3 (Wild) och 4 (+4) ska visa färgvalet
+	if index == 3 or index == 4:
 		color_dropdown.show()
+		same_number_dropdown.hide()
+	# 9 = Play Same Number Card
+	elif index == 9:
+		color_dropdown.hide()
+		same_number_dropdown.show()
+	# Alla andra val
 	else:
 		color_dropdown.hide()
+		same_number_dropdown.hide()
 		
 	size.y = 0
