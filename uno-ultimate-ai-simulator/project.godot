@@ -17,6 +17,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 config/name="UNO-ultimate-ai-simulator"
 run/main_scene="uid://dkmud1ys5kvv6"
 config/features=PackedStringArray("4.6", "Forward Plus")
+boot_splash/image="uid://dlnksplgfsq00"
 
 [autoload]
 
