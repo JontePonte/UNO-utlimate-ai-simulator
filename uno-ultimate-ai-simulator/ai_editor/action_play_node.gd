@@ -10,16 +10,16 @@ func _ready():
 	same_number_dropdown.clear() # <-- Glöm inte att rensa denna också!
 	
 	# --- DROPDOWN 1: Vilken handling? ---
-	action_dropdown.add_item("Play first valid card")             # Index 0
-	action_dropdown.add_item("Play first special card")           # Index 1
-	action_dropdown.add_item("Play first attack card")            # Index 2
-	action_dropdown.add_item("Play Wild Card")                    # Index 3
-	action_dropdown.add_item("Play +4 Wild Card")                 # Index 4
-	action_dropdown.add_item("Play +2 Card")                      # Index 5
-	action_dropdown.add_item("Play Skip Card")                    # Index 6
-	action_dropdown.add_item("Play Reverse Card")                 # Index 7
-	action_dropdown.add_item("Play Same Color Card")              # Index 8
-	action_dropdown.add_item("Play Same Number Card")             # Index 9
+	action_dropdown.add_item("Play first valid card (from left)")          # Index 0
+	action_dropdown.add_item("Play first special card (from left)")        # Index 1
+	action_dropdown.add_item("Play first attack card (from left)")         # Index 2
+	action_dropdown.add_item("Play Wild Card")                             # Index 3
+	action_dropdown.add_item("Play +4 Wild Card")                          # Index 4
+	action_dropdown.add_item("Play +2 Card")                               # Index 5
+	action_dropdown.add_item("Play Skip Card")                             # Index 6
+	action_dropdown.add_item("Play Reverse Card")                          # Index 7
+	action_dropdown.add_item("Play Same Color Card")                       # Index 8
+	action_dropdown.add_item("Play Same Number Card")                      # Index 9
 	
 	# --- DROPDOWN 2: Vilken färg? (Syns bara för Wild) ---
 	color_dropdown.add_item("Set Color: Most numerous")           # Index 0
